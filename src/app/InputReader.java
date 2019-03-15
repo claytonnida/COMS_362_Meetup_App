@@ -133,8 +133,6 @@ public class InputReader {
 		return inputYesNoCheck(this.readInputString(), output);
 	}
 
-
-
 	public String readInputString() {
 		 return scanner.nextLine();
 	 }
