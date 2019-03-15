@@ -1,4 +1,6 @@
-package app;
+package app.interfaces;
+
+import app.Profile;
 
 public interface AccountInterface
 {

@@ -1,6 +1,8 @@
 package app;
 
-public class Account implements AccountInterface 
+import app.interfaces.AccountInterface;
+
+public class Account implements AccountInterface
 {
 	private String username;
 	private String password;

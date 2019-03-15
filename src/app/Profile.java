@@ -4,14 +4,14 @@ import java.lang.reflect.Field;
 
 public class Profile implements ProfileInterface
 {
-	String aboutMe = "none";
-	int age = 0;
-	String genderId = "none";
-	String sexualPref = "none";
-	String major = "none";
-	String spiritAnimal = "none";
-	String zodiacSign = "none";
-	String[] options = { "aboutMe", "age", "genderId", "sexualPref", "major", "spiritAnimal", "zodiacSign", "done" };
+	private String aboutMe;
+	private int age = 0;
+	private String genderId;
+	private String sexualPref;
+	private String major;
+	private String spiritAnimal;
+	private String zodiacSign;
+	private final String[] options = {"aboutme", "age", "genderid", "sexualpref", "major", "spiritanimal", "zodiacsign", "done"};
 
 	@Override
 	public void createProfile()
@@ -39,10 +39,10 @@ public class Profile implements ProfileInterface
 	 */
 	public void editProfileFields(){
 		boolean edit = true;
-		while(edit){
-			String option = InputReader.readFromOptions("Which field would you like to edit?",options);
+		while(edit) {
+			String option = InputReader.readFromOptions("Which field would you like to edit?", options);
 
-			switch (option){
+			switch(option) {
 				case "done":
 					edit = false;
 					break;
@@ -161,19 +161,21 @@ public class Profile implements ProfileInterface
 	/**
 	 * A series of prompts to guide user through editing their about me section
 	 */
-	private void editAboutMe(){
+	private void editAboutMe() {
 		System.out.println("Your current 'About Me' section is:");
 		System.out.println(aboutMe);
 		String input = (InputReader.collectInput("Please describe yourself."));
 
-		boolean  confirm = InputReader.requestConfirmation(input);
-		if(confirm){
+		boolean confirm = InputReader.requestConfirmation(input);
+		if(confirm) {
 			setAboutMe(input);
-		}else{
+		}
+		else {
 			boolean cancel = InputReader.requestCancel();
-			if(cancel){
+			if(cancel) {
 				return;
-			}else{
+			}
+			else {
 				editAboutMe();
 			}
 		}
@@ -187,14 +189,16 @@ public class Profile implements ProfileInterface
 		System.out.println(genderId);
 		String input = (InputReader.collectInput("Please enter a new gender identity:"));
 
-		boolean  confirm = InputReader.requestConfirmation(input);
-		if(confirm){
+		boolean confirm = InputReader.requestConfirmation(input);
+		if(confirm) {
 			setGenderId(input);
-		}else{
+		}
+		else {
 			boolean cancel = InputReader.requestCancel();
-			if(cancel){
+			if(cancel) {
 				return;
-			}else{
+			}
+			else {
 				editGenderId();
 			}
 		}
@@ -203,19 +207,21 @@ public class Profile implements ProfileInterface
 	/**
 	 * A series of prompts to guide user through editing their age
 	 */
-	private void editAge(){
+	private void editAge() {
 		System.out.print("Your current age is:\t");
 		System.out.println(genderId);
 		int input = (InputReader.readInputInt("Please enter a age:"));
 
-		boolean  confirm = InputReader.requestConfirmation(input);
-		if(confirm){
+		boolean confirm = InputReader.requestConfirmation(input);
+		if(confirm) {
 			setAge(input);
-		}else{
+		}
+		else {
 			boolean cancel = InputReader.requestCancel();
-			if(cancel){
+			if(cancel) {
 				return;
-			}else{
+			}
+			else {
 				editAge();
 			}
 		}
