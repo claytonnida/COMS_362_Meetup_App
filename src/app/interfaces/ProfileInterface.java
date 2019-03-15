@@ -4,7 +4,6 @@ import app.Account;
 
 public interface ProfileInterface
 {
-	void createProfile();
 
 	void removeProfile(Account myAccount);
 

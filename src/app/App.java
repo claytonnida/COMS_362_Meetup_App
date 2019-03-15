@@ -1,6 +1,8 @@
 package app;
 
-public class App 
+import app.Controllers.ProfileController;
+
+public class App
 {
 	//TODO create account here or in Account.java
 
@@ -9,7 +11,7 @@ public class App
 		InputReader inputReader = new InputReader();
 		Account myAccount;
 		
-		System.out.println("Welcome! Would you like to create an account? (y/n)");
+		System.out.println("Welcome!");
 		
 		if(InputReader.inputYesNo("Would you like to create an account?"))
 		{
@@ -21,13 +23,11 @@ public class App
 			inputReader.closeInputReader();
 			System.exit(0);
 		}
+
 		
-		System.out.println("Would you like to create your profile? (y/n)");
-		
-		if(InputReader.inputYesNo("Would you like to create your profile? (y/n)"))
+		if(InputReader.inputYesNo("Would you like to create your profile?"))
 		{
-			Profile myProfile = new Profile();
-			myProfile.createProfile();
+			Profile myProfile = ProfileController.createProfile();
 			//TODO uncomment below when createAccount() is done
 			//myAccount.setProfile(myProfile);
 		}
