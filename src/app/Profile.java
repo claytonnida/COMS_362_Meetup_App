@@ -33,11 +33,10 @@ public class Profile implements ProfileInterface
 		System.out.println("Profile creation complete.");
 	}
 
-	public static void main(String[] args){
-		Profile p = new Profile();
-		p.createProfile();
-	}
 
+	/**
+	 * A series of prompts to guide user through editing their profile
+	 */
 	public void editProfileFields(){
 		boolean edit = true;
 		while(edit){
@@ -71,6 +70,10 @@ public class Profile implements ProfileInterface
 			}
 		}
 	}
+
+	/**
+	 * A series of prompts to guide user through editing their zodiac sign
+	 */
 	private void editZodiacSign(){
 		System.out.print("Your current zodiac sign is:\t");
 		System.out.println(sexualPref);
@@ -90,6 +93,9 @@ public class Profile implements ProfileInterface
 		}
 	}
 
+	/**
+	 * A series of prompts to guide user through editing their spirit animal
+	 */
 	private void editSpiritAnimal(){
 		System.out.print("Your current spirit animal is:\t");
 		System.out.println(sexualPref);
@@ -109,6 +115,9 @@ public class Profile implements ProfileInterface
 		}
 	}
 
+	/**
+	 * A series of prompts to guide user through editing their major
+	 */
 	private void editMajor(){
 		System.out.print("Your current major is:\t");
 		System.out.println(sexualPref);
@@ -128,6 +137,9 @@ public class Profile implements ProfileInterface
 		}
 	}
 
+	/**
+	 * A series of prompts to guide user through editing their sexual preference
+	 */
 	private void editSexPref(){
 		System.out.print("Your current sexual preference is:\t");
 		System.out.println(sexualPref);
@@ -146,6 +158,9 @@ public class Profile implements ProfileInterface
 		}
 	}
 
+	/**
+	 * A series of prompts to guide user through editing their about me section
+	 */
 	private void editAboutMe(){
 		System.out.println("Your current 'About Me' section is:");
 		System.out.println(aboutMe);
@@ -164,6 +179,9 @@ public class Profile implements ProfileInterface
 		}
 	}
 
+	/**
+	 * A series of prompts to guide user through editing their gender identity
+	 */
 	private void editGenderId(){
 		System.out.print("Your current gender identity is:\t");
 		System.out.println(genderId);
@@ -182,6 +200,9 @@ public class Profile implements ProfileInterface
 		}
 	}
 
+	/**
+	 * A series of prompts to guide user through editing their age
+	 */
 	private void editAge(){
 		System.out.print("Your current age is:\t");
 		System.out.println(genderId);
@@ -202,158 +223,6 @@ public class Profile implements ProfileInterface
 
 
 
-	private void editProfileHelper(String option, InputReader inputReader)
-	{
-		switch (option)
-		{
-			case "aboutme":
-				System.out.println("What would you like your 'About Me' to be? Currently it is: " + getAboutMe()
-						+ "\n Type it below and hit enter when finished.");
-				setAboutMe(inputReader.readInputString());
-				System.out.println("You entered: " + getAboutMe() + "\n Is that okay? (y/n)");
-				if (inputReader.inputYesNoCheck(inputReader.readInputString(),
-						"You entered: " + getAboutMe() + "\n Is that okay? (y/n)"))
-				{
-					System.out.println("Current profile: \n" + getProfileDetails() + "\n");
-					System.out.println("What else would you like to change? ");
-					printOptions();
-					editProfileHelper(inputReader.readInputString(), inputReader);
-				}
-				else
-				{
-					editProfileHelper(option, inputReader);
-				}
-				break;
-			case "age":
-				System.out.println("What would you like your 'Age' to be? Currently it is: " + getAge()
-						+ "\n Type it below and hit enter when finished.");
-				setAge(inputReader.readInputInt());
-				System.out.println("You entered: " + getAge() + "\n Is that okay? (y/n)");
-				if (inputReader.inputYesNoCheck(inputReader.readInputString(),
-						"You entered: " + getAge() + " \n Is that okay? (y/n)"))
-				{
-					System.out.println("Current profile: \n" + getProfileDetails() + "\n");
-					System.out.println("What else would you like to change? ");
-					printOptions();
-					editProfileHelper(inputReader.readInputString(), inputReader);
-				}
-				else
-				{
-					editProfileHelper(option, inputReader);
-				}
-				break;
-			case "genderid":
-				System.out.println("What would you like your 'Gender Identity' to be? Currently it is: " + getGenderId()
-						+ "\n Type it below and hit enter when finished.");
-				setGenderId(inputReader.readInputString());
-				System.out.println("You entered: " + getGenderId() + "\n Is that okay? (y/n)");
-				if (inputReader.inputYesNoCheck(inputReader.readInputString(),
-						"You entered: " + getGenderId() + "\n Is that okay? (y/n)"))
-				{
-					System.out.println("Current profile: \n" + getProfileDetails() + "\n");
-					System.out.println("What else would you like to change? ");
-					printOptions();
-					editProfileHelper(inputReader.readInputString(), inputReader);
-				}
-				else
-				{
-					editProfileHelper(option, inputReader);
-				}
-				break;
-			case "sexualpref":
-				System.out.println("What would you like your 'Sexual Preference' to be? Currently it is: "
-						+ getSexualPref() + "\n Type it below and hit enter when finished.");
-				setSexualPref(inputReader.readInputString());
-				System.out.println("You entered: " + getSexualPref() + "\n Is that okay? (y/n)");
-				if (inputReader.inputYesNoCheck(inputReader.readInputString(),
-						"You entered: " + getSexualPref() + "\n Is that okay? (y/n)"))
-				{
-					System.out.println("Current profile: \n" + getProfileDetails() + "\n");
-					System.out.println("What else would you like to change? ");
-					printOptions();
-					editProfileHelper(inputReader.readInputString(), inputReader);
-				}
-				else
-				{
-					editProfileHelper(option, inputReader);
-				}
-				break;
-			case "major":
-				System.out.println("What would you like your 'Major' to be? Currently it is: " + getMajor()
-						+ "\n Type it below and hit enter when finished.");
-				setMajor(inputReader.readInputString());
-				System.out.println("You entered: " + getMajor() + "\n Is that okay? (y/n)");
-				if (inputReader.inputYesNoCheck(inputReader.readInputString(),
-						"You entered: " + getMajor() + "\n Is that okay? (y/n)"))
-				{
-					System.out.println("Current profile: \n" + getProfileDetails() + "\n");
-					System.out.println("What else would you like to change? ");
-					printOptions();
-					editProfileHelper(inputReader.readInputString(), inputReader);
-				}
-				else
-				{
-					editProfileHelper(option, inputReader);
-				}
-				break;
-			case "spiritanimal":
-				System.out.println("What would you like your 'Spirit Animal' to be? Currently it is: "
-						+ getSpiritAnimal() + "\n Type it below and hit enter when finished.");
-				setSpiritAnimal(inputReader.readInputString());
-				System.out.println("You entered: " + getSpiritAnimal() + "\n Is that okay? (y/n)");
-				if (inputReader.inputYesNoCheck(inputReader.readInputString(),
-						"You entered: " + getSpiritAnimal() + "\n Is that okay? (y/n)"))
-				{
-					System.out.println("Current profile: \n" + getProfileDetails() + "\n");
-					System.out.println("What else would you like to change? ");
-					printOptions();
-					editProfileHelper(inputReader.readInputString(), inputReader);
-				}
-				else
-				{
-					editProfileHelper(option, inputReader);
-				}
-				break;
-			case "zodiacsign":
-				System.out.println("What would you like your 'Zodiac Sign' to be? Currently it is: " + getZodiac()
-						+ "\n Type it below and hit enter when finished.");
-				setZodiac(inputReader.readInputString());
-				System.out.println("You entered: " + getZodiac() + "\n Is that okay? (y/n)");
-				if (inputReader.inputYesNoCheck(inputReader.readInputString(),
-						"You entered: " + getZodiac() + "\n Is that okay? (y/n)"))
-				{
-					System.out.println("Current profile: \n" + getProfileDetails() + "\n");
-					System.out.println("What else would you like to change? ");
-					printOptions();
-					editProfileHelper(inputReader.readInputString(), inputReader);
-				}
-				else
-				{
-					editProfileHelper(option, inputReader);
-				}
-				break;
-			case "done":
-				System.out.println(getProfileDetails());
-				System.out.println("\nProfile saved.\n");
-				break;
-
-			default:
-				System.out.println("I'm sorry, that wasn't one of the options. Please try again.");
-				System.out.println("What would you like to edit? To edit, type one of the following options: ");
-				printOptions();
-				System.out.println("the 'done' selection will finish profile creation.");
-				editProfileHelper(inputReader.readInputString(), inputReader);
-				break;
-		}
-	}
-
-	private void printOptions()
-	{
-		for (int i = 0; i < options.length; i++)
-		{
-			System.out.println(options[i]);
-		}
-	}
 
 	@Override
 	public void removeProfile(Account myAccount)
@@ -361,19 +230,6 @@ public class Profile implements ProfileInterface
 		// myAccount.setProfile(null);
 	}
 
-	@Override
-	public String getProfileDetails()
-	{
-		String profileDetails = "About Me: " + getAboutMe() +
-								"\nAge: " + getAge() +
-								"\nGender Identity: " + getGenderId() +
-								"\nSexual Preference: " + getSexualPref() +
-								"\nMajor: " + getMajor() +
-								"\nSpirit Animal: " + getSpiritAnimal() +
-								"\nZodiac Sign: " + getZodiac();
-
-		return profileDetails;
-	}
 
 	@Override
 	public void setAboutMe(String input)
@@ -460,7 +316,7 @@ public class Profile implements ProfileInterface
 	}
 
 	@Override
-	public String toString(){
+	public String getProfileDetails(){
 		String profileDetails = "About Me: " + getAboutMe() +
 				"\nAge: " + getAge() +
 				"\nGender Identity: " + getGenderId() +
@@ -470,5 +326,9 @@ public class Profile implements ProfileInterface
 				"\nZodiac Sign: " + getZodiac();
 
 		return profileDetails;
+	}
+	@Override
+	public String toString(){
+		return getProfileDetails();
 	}
 }

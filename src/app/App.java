@@ -11,7 +11,7 @@ public class App
 		
 		System.out.println("Welcome! Would you like to create an account? (y/n)");
 		
-		if(inputReader.inputYesNoCheck(inputReader.readInputString(), "Would you like to create an account? (y/n)"))
+		if(InputReader.inputYesNo("Would you like to create an account?"))
 		{
 			//TODO myAccount = createAccout();
 		}
@@ -24,7 +24,7 @@ public class App
 		
 		System.out.println("Would you like to create your profile? (y/n)");
 		
-		if(inputReader.inputYesNoCheck(inputReader.readInputString(), "Would you like to create your profile? (y/n)"))
+		if(InputReader.inputYesNo("Would you like to create your profile? (y/n)"))
 		{
 			Profile myProfile = new Profile();
 			myProfile.createProfile();
@@ -38,4 +38,8 @@ public class App
 		inputReader.closeInputReader();
 	}
 
+	private static void shutdownApp(){
+		InputReader.closeInputReader();
+		System.exit(0);
+	}
 }

@@ -9,10 +9,6 @@ public class InputReader {
 	//utility methods
 	private static Scanner scanner = new Scanner(System.in);
 
-	public InputReader() 
-	{
-		scanner = new Scanner(System.in);
-	}
 
 
 	/**
@@ -106,50 +102,29 @@ public class InputReader {
 		}
 	}
 
+	/**
+	 * Prints the object and asks user if that is what they want
+	 * @param input
+	 * @return
+	 */
 	public static boolean requestConfirmation(Object input){
 		return InputReader.inputYesNo(String.format("You enterd: \n\t%s\nConfirm?",
                 input.toString().replaceAll("\n","\n\t")));
 	}
 
+	/**
+	 * Asks user if they would like to cancel
+	 * Returning TRUE means user wishes to cancel
+	 * @return
+	 */
 	public static boolean requestCancel(){
 		return InputReader.inputYesNo("Would you like to cancel?");
 	}
 
-	public boolean inputYesNoCheck(String input, String output) {
-		if(input.equals("y")) {
-			return true;
-		}
-		if(input.equals("n")) {
-			return false;
-		}
-
-		System.out.println("I'm sorry I didn't understand that.");
-		System.out.println(output);
-
-		return inputYesNoCheck(this.readInputString(), output);
-	}
 
 
-
-	public String readInputString() {
-		 return scanner.nextLine();
-	 }
-
-	public int readInputInt() {
-		 try {
-			 return Integer.valueOf(scanner.nextLine());
-		 }
-		 catch(NumberFormatException e) {
-			 System.out.println("You did not enter a number. Try again.");
-			 return readInputInt();
-		 }
-	 }
-
-	public void closeInputReader() {
+	public static void closeInputReader() {
 		 scanner.close();
 	 }
 
-	public void openInputReader() {
-		 scanner = new Scanner(System.in);
-	 }
 }
