@@ -24,11 +24,13 @@ public class InputReader {
 
 	/**
 	 * Displays the prompt appended by string literal " [y/n]"
-	 * Returns true if user enters string containing y,
-	 * Returns false if user enters string containing n,
-	 * Returns true if user enters string containing y and n
+	 *
+	 *
 	 * @param prompt
 	 * @return
+	 *      true, if user enters string containing y
+	 *      false, if user enters string containing n
+	 *      true, if user enters string containing y and n
 	 */
 	public static boolean inputYesNo(String prompt) {
 		System.out.print(String.format("%s [y/n]\t", prompt));

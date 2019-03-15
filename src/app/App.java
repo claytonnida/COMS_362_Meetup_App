@@ -9,16 +9,36 @@ public class App
 	public static void main(String[] args) 
 	{
 		InputReader inputReader = new InputReader();
-		Account myAccount;
+		Account myAccount = null;
 		
 		System.out.println("Welcome!");
-		
+
 		if(InputReader.inputYesNo("Would you like to create an account?"))
 		{
 			//TODO myAccount = createAccout();
+		System.out.println("Welcome! Would you like to create an account? (y/n)");
+
+		if(inputReader.inputYesNoCheck(inputReader.readInputString(), "Would you like to create an account? (y/n)")) {
+			while(true) {
+				System.out.println("Please enter a username for the account.");
+				String username = inputReader.readInputString();
+
+				System.out.println("Please enter a password for the account.");
+				String password = inputReader.readInputString();
+
+				System.out.println("Enter your password again to confirm.");
+				String comparisonPassword = inputReader.readInputString();
+				try {
+					myAccount = AccountController.createAccount(username, password, comparisonPassword);
+					break;
+				}
+				catch(IllegalArgumentException e) {
+					System.out.println("Password creation failed! " + e);
+					System.out.println("Restarting Account creation");
+				}
+			}
 		}
-		else
-		{
+		else {
 			System.out.println("No? Okay then. Have a good day!");
 			inputReader.closeInputReader();
 			System.exit(0);
@@ -27,9 +47,9 @@ public class App
 		
 		if(InputReader.inputYesNo("Would you like to create your profile?"))
 		{
-			Profile myProfile = ProfileController.createProfile();
-			//TODO uncomment below when createAccount() is done
-			//myAccount.setProfile(myProfile);
+			Profile myProfile = new Profile();
+			myProfile.createProfile();
+			myAccount.setProfile(myProfile);
 		}
 		else
 		{
