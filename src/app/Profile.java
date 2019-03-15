@@ -2,7 +2,7 @@ package app;
 
 import app.interfaces.ProfileInterface;
 
-import java.lang.reflect.Field;
+
 
 public class Profile implements ProfileInterface
 {
@@ -20,11 +20,7 @@ public class Profile implements ProfileInterface
 
 
 
-	@Override
-	public void removeProfile(Account myAccount)
-	{
-		// myAccount.setProfile(null);
-	}
+
 
 
 	@Override

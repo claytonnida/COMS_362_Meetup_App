@@ -4,9 +4,6 @@ import app.Account;
 
 public interface ProfileInterface
 {
-
-	void removeProfile(Account myAccount);
-
 	String getProfileDetails();
 
 	void setAboutMe(String input);

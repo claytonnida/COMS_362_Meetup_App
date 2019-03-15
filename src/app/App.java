@@ -8,26 +8,20 @@ public class App
 
 	public static void main(String[] args) 
 	{
-		InputReader inputReader = new InputReader();
 		Account myAccount = null;
 		
 		System.out.println("Welcome!");
 
-		if(InputReader.inputYesNo("Would you like to create an account?"))
-		{
-			//TODO myAccount = createAccout();
-		System.out.println("Welcome! Would you like to create an account? (y/n)");
 
-		if(inputReader.inputYesNoCheck(inputReader.readInputString(), "Would you like to create an account? (y/n)")) {
+		if(InputReader.inputYesNo("Would you like to create an account?")) {
 			while(true) {
-				System.out.println("Please enter a username for the account.");
-				String username = inputReader.readInputString();
+				System.out.println();
+				String username = InputReader.collectInput("Please enter a username for the account.");
 
-				System.out.println("Please enter a password for the account.");
-				String password = inputReader.readInputString();
 
-				System.out.println("Enter your password again to confirm.");
-				String comparisonPassword = inputReader.readInputString();
+				String password = InputReader.collectInput("Please enter a password for the account.");
+
+				String comparisonPassword = InputReader.collectInput("Enter your password again to confirm.");
 				try {
 					myAccount = AccountController.createAccount(username, password, comparisonPassword);
 					break;
@@ -40,22 +34,21 @@ public class App
 		}
 		else {
 			System.out.println("No? Okay then. Have a good day!");
-			inputReader.closeInputReader();
+			InputReader.closeInputReader();
 			System.exit(0);
 		}
 
 		
 		if(InputReader.inputYesNo("Would you like to create your profile?"))
 		{
-			Profile myProfile = new Profile();
-			myProfile.createProfile();
+			Profile myProfile = ProfileController.createProfile();
 			myAccount.setProfile(myProfile);
 		}
 		else
 		{
 			System.out.println("No? That's okay! You can always create it later.");
 		}
-		inputReader.closeInputReader();
+		InputReader.closeInputReader();
 	}
 
 	private static void shutdownApp(){

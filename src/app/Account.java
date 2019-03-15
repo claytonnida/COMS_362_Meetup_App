@@ -54,4 +54,7 @@ public class Account implements AccountInterface
 		myProfile = newProfile;
 	}
 
+	@Override
+	public void removeProfile() {setProfile(null);}
+
 }

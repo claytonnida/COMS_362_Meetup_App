@@ -19,4 +19,6 @@ public interface AccountInterface
 	Profile getProfile();
 	
 	void setProfile(Profile newProfile);
+
+	void removeProfile();
 }
