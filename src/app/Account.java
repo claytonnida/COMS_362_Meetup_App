@@ -8,6 +8,11 @@ public class Account implements AccountInterface
 	private String password;
 	private String email;
 	private Profile myProfile;
+
+	public Account(String username, String password) {
+		this.username = username;
+		this.password = password;
+	}
 	
 	@Override
 	public void setUsername(String input) {
@@ -40,14 +45,12 @@ public class Account implements AccountInterface
 	}
 
 	@Override
-	public Profile getProfile()
-	{
+	public Profile getProfile() {
 		return myProfile;
 	}
 
 	@Override
-	public void setProfile(Profile newProfile)
-	{
+	public void setProfile(Profile newProfile) {
 		myProfile = newProfile;
 	}
 

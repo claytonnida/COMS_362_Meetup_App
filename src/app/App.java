@@ -13,7 +13,7 @@ public class App
 		
 		if(inputReader.inputYesNoCheck(inputReader.readInputString(), "Would you like to create an account? (y/n)"))
 		{
-			//TODO myAccount = createAccout();
+//			myAccount = AccountController.createAccount();
 		}
 		else
 		{

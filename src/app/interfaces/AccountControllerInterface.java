@@ -17,14 +17,14 @@ public interface AccountControllerInterface {
 	/**
 	 * Checks whether the two given password Strings match.
 	 *
-	 * @param pwd1
+	 * @param password
 	 * 		The password String to confirm
-	 * @param pwd2
+	 * @param comparisonPassword
 	 * 		The String used to confirm the password
 	 *
 	 * @return True, if the two Strings match. Otherwise, false.
 	 */
-	boolean doPasswordsMatch(String pwd1, String pwd2);
+	boolean doPasswordsMatch(String password, String comparisonPassword);
 
 	/**
 	 * Creates an {@link Account} instance and returns it.
