@@ -1,5 +1,7 @@
 package app;
 
+import app.models.Account;
+
 public class AccountController {
 
 	/**

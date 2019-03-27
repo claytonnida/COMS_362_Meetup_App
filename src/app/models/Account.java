@@ -1,6 +1,7 @@
-package app;
+package app.models;
 
 import app.interfaces.AccountInterface;
+import app.models.Profile;
 
 public class Account implements AccountInterface
 {
@@ -8,12 +9,30 @@ public class Account implements AccountInterface
 	private String password;
 	private String email;
 	private Profile myProfile;
+	private int profile;
+	private int id;
 
 	public Account(String username, String password) {
 		this.username = username;
 		this.password = password;
 	}
-	
+
+	public int getProfileid() {
+		return profile;
+	}
+
+	public void setProfileid(int profileid) {
+		this.profile = profileid;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	@Override
 	public void setUsername(String input) {
 		username = input;

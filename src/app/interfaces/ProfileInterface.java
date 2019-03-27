@@ -1,30 +1,29 @@
 package app.interfaces;
 
-import app.Account;
 
 public interface ProfileInterface
 {
 	String getProfileDetails();
 
-	void setAboutMe(String input);
+	void setAboutme(String input);
 
-	String getAboutMe();
+	String getAboutme();
 
 	void setAge(int input);
 
 	int getAge();
 
-	void setSexualPref(String input);
+	void setSexualpref(String input);
 
-	String getSexualPref();
+	String getSexualpref();
 
-	void setGenderId(String input);
+	void setGenderid(String input);
 
-	String getGenderId();
+	String getGenderid();
 
-	void setSpiritAnimal(String input);
+	void setSpiritanimal(String input);
 
-	String getSpiritAnimal();
+	String getSpiritanimal();
 
 	void setMajor(String input);
 

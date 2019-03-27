@@ -1,6 +1,6 @@
 package app.interfaces;
 
-import app.Profile;
+import app.models.Profile;
 
 public interface AccountInterface
 {

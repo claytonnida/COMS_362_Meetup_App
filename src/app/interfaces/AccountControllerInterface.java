@@ -1,6 +1,7 @@
 package app.interfaces;
 
-import app.Account;
+
+import app.models.Account;
 
 public interface AccountControllerInterface {
 

@@ -1,4 +1,4 @@
-package app;
+package app.models;
 
 import app.interfaces.ProfileInterface;
 
@@ -6,13 +6,14 @@ import app.interfaces.ProfileInterface;
 
 public class Profile implements ProfileInterface
 {
-	private String aboutMe;
+	private String profileid;
+	private String aboutme;
 	private int age = 0;
-	private String genderId;
-	private String sexualPref;
+	private String genderid;
+	private String sexualpref;
 	private String major;
-	private String spiritAnimal;
-	private String zodiacSign;
+	private String spiritanimal;
+	private String zodiac;
 
 	//If you change these values, you will also need to change ProfileController.editProfileFields(...)
 	public static final String[] OPTIONS = {"About Me", "Age", "Gender Identity",
@@ -22,17 +23,24 @@ public class Profile implements ProfileInterface
 
 
 
+	public void setProfileid(String profileid){
+		this.profileid = profileid;
+	}
 
-	@Override
-	public void setAboutMe(String input)
-	{
-		aboutMe = input;
+	public String getProfileid(){
+		return profileid;
 	}
 
 	@Override
-	public String getAboutMe()
+	public void setAboutme(String input)
 	{
-		return aboutMe;
+		aboutme = input;
+	}
+
+	@Override
+	public String getAboutme()
+	{
+		return aboutme;
 	}
 
 	@Override
@@ -48,39 +56,39 @@ public class Profile implements ProfileInterface
 	}
 
 	@Override
-	public void setSexualPref(String input)
+	public void setSexualpref(String input)
 	{
-		sexualPref = input;
+		sexualpref = input;
 	}
 
 	@Override
-	public String getSexualPref()
+	public String getSexualpref()
 	{
-		return sexualPref;
+		return sexualpref;
 	}
 
 	@Override
-	public void setGenderId(String input)
+	public void setGenderid(String input)
 	{
-		genderId = input;
+		genderid = input;
 	}
 
 	@Override
-	public String getGenderId()
+	public String getGenderid()
 	{
-		return genderId;
+		return genderid;
 	}
 
 	@Override
-	public void setSpiritAnimal(String input)
+	public void setSpiritanimal(String input)
 	{
-		spiritAnimal = input;
+		spiritanimal = input;
 	}
 
 	@Override
-	public String getSpiritAnimal()
+	public String getSpiritanimal()
 	{
-		return spiritAnimal;
+		return spiritanimal;
 	}
 
 	@Override
@@ -98,23 +106,23 @@ public class Profile implements ProfileInterface
 	@Override
 	public void setZodiac(String input)
 	{
-		zodiacSign = input;
+		zodiac = input;
 	}
 
 	@Override
 	public String getZodiac()
 	{
-		return zodiacSign;
+		return zodiac;
 	}
 
 	@Override
 	public String getProfileDetails(){
-		String profileDetails = "About Me: " + getAboutMe() +
+		String profileDetails = "About Me: " + getAboutme() +
 				"\nAge: " + getAge() +
-				"\nGender Identity: " + getGenderId() +
-				"\nSexual Preference: " + getSexualPref() +
+				"\nGender Identity: " + getGenderid() +
+				"\nSexual Preference: " + getSexualpref() +
 				"\nMajor: " + getMajor() +
-				"\nSpirit Animal: " + getSpiritAnimal() +
+				"\nSpirit Animal: " + getSpiritanimal() +
 				"\nZodiac Sign: " + getZodiac();
 
 		return profileDetails;

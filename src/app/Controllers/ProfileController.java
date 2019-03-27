@@ -1,7 +1,14 @@
 package app.Controllers;
 
 import app.InputReader;
-import app.Profile;
+import app.MySQL.MySQLHelper;
+import app.models.Profile;
+import app.models.mappers.ProfileMapper;
+
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class ProfileController {
 
@@ -92,13 +99,13 @@ public class ProfileController {
      */
     private static void editSpiritAnimal(Profile p){
         System.out.print("Your current spirit animal is:\t");
-        System.out.println(p.getSpiritAnimal());
+        System.out.println(p.getSpiritanimal());
 
         String input = (InputReader.collectInput("Please enter a new spirit animal:"));
 
         boolean  confirm = InputReader.requestConfirmation(input);
         if(confirm){
-            p.setSpiritAnimal(input);
+            p.setSpiritanimal(input);
         }else{
             boolean cancel = InputReader.requestCancel();
             if(cancel){
@@ -136,12 +143,12 @@ public class ProfileController {
      */
     private static void editSexPref(Profile p){
         System.out.print("Your current sexual preference is:\t");
-        System.out.println(p.getSexualPref());
+        System.out.println(p.getSexualpref());
         String input = (InputReader.collectInput("Please enter a new sexual preference:"));
 
         boolean  confirm = InputReader.requestConfirmation(input);
         if(confirm){
-            p.setSexualPref(input);
+            p.setSexualpref(input);
         }else{
             boolean cancel = InputReader.requestCancel();
             if(cancel){
@@ -157,12 +164,12 @@ public class ProfileController {
      */
     private static void editAboutMe(Profile p) {
         System.out.println("Your current 'About Me' section is:");
-        System.out.println(p.getAboutMe());
+        System.out.println(p.getAboutme());
         String input = (InputReader.collectInput("Please describe yourself."));
 
         boolean confirm = InputReader.requestConfirmation(input);
         if(confirm) {
-            p.setAboutMe(input);
+            p.setAboutme(input);
         }
         else {
             boolean cancel = InputReader.requestCancel();
@@ -180,12 +187,12 @@ public class ProfileController {
      */
     private static void editGenderId(Profile p){
         System.out.print("Your current gender identity is:\t");
-        System.out.println(p.getGenderId());
+        System.out.println(p.getGenderid());
         String input = (InputReader.collectInput("Please enter a new gender identity:"));
 
         boolean confirm = InputReader.requestConfirmation(input);
         if(confirm) {
-            p.setGenderId(input);
+            p.setGenderid(input);
         }
         else {
             boolean cancel = InputReader.requestCancel();
@@ -218,6 +225,48 @@ public class ProfileController {
             else {
                 editAge(p);
             }
+        }
+    }
+
+    /**
+     * Update the profile as a row in the database
+     * @param p
+     * @throws SQLException
+     */
+    public static void updateProfile(Profile p)throws SQLException{
+
+            ProfileMapper pm = new ProfileMapper();
+            Statement stmt = MySQLHelper.createStatement();
+            String query = pm.toUpdateQueryQuery(p);
+            stmt.executeUpdate(query);
+    }
+
+    /**
+     * Insert the profile as a row to the database
+     * @param p
+     * @throws SQLException
+     */
+    public static void insertProfile(Profile p )throws SQLException{
+        ProfileMapper pm = new ProfileMapper();
+        Statement stmt = MySQLHelper.createStatement();
+        String query = pm.toInsertQueryQuery(p);
+        stmt.executeUpdate(query);
+
+    }
+
+    public static void listProfiles(){
+        try{
+            Statement stmt = MySQLHelper.createStatement();
+            ResultSet rs = stmt.executeQuery("Select * from meetup.profile");
+            while(rs.next()){
+                ResultSetMetaData rsmd = rs.getMetaData();
+                for(int i = 1; i < rsmd.getColumnCount(); i++){
+                    System.out.print(rs.getString(i)+",\t");
+                }
+                System.out.println();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
