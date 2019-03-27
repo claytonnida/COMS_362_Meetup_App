@@ -1,6 +1,10 @@
-package app;
+package app.Controllers;
 
 import app.models.Account;
+import app.models.Profile;
+import app.models.mappers.ReflectMapper;
+
+import java.sql.SQLException;
 
 public class AccountController {
 
@@ -98,5 +102,26 @@ public class AccountController {
 	 */
 	public static void addAccount(String username, Account account) {
 		// TODO: Add given account to the database once it is implemented in a future iteration
+	}
+
+	/**
+	 * Selects the Account from database and attempts to fill the Profile field
+	 * @param id
+	 * @return
+	 * @throws SQLException
+	 */
+	public static Account fetchAccount(int id)throws SQLException {
+		ReflectMapper<Account> mapper = new ReflectMapper<>(Account.class);
+		Account acc = mapper.toObject("Select * from meetup.account where id = "+id);
+
+		try {
+			ReflectMapper<Profile> pmapper = new ReflectMapper<>(Profile.class);
+			Profile prof = pmapper.toObject("Select * from meetup.profile where profileid = " + acc.getProfileid());
+			acc.setProfile(prof);
+		}catch (Exception e){
+			System.out.println("ERROR: Failed to Load Profile.");
+		}
+
+		return acc;
 	}
 }

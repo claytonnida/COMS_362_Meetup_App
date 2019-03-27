@@ -1,5 +1,6 @@
 package app.models.mappers;
 
+import app.Controllers.AccountController;
 import app.MySQL.MySQLHelper;
 import app.models.Account;
 import app.models.Profile;
@@ -17,11 +18,25 @@ public class ReflectMapper<T> {
 
     private Class<T> clazz;
     private String className;
+    private String useTableName;
 
     public ReflectMapper(Class<T> clazz){
         this.clazz = clazz;
-        String canonicalName = clazz.getCanonicalName().toLowerCase();
+        String canonicalName = clazz.getCanonicalName();
         className = canonicalName.split("\\.")[canonicalName.split("\\.").length-1];
+        className = Character.toLowerCase(className.charAt(0))+className.substring(1);
+
+        useTableName = "";
+        for(Character c: className.toCharArray()){
+            if(Character.isUpperCase(c)){
+                useTableName += "_"+Character.toLowerCase(c);
+            }else{
+                useTableName += Character.toLowerCase(c);
+            }
+        }
+
+        className = className.toLowerCase();
+
     }
 
     /**
@@ -70,7 +85,7 @@ public class ReflectMapper<T> {
             T obj = clazz.newInstance();
 
             ResultSetMetaData rsmd = rs.getMetaData();
-            for(int i = 1; i < rsmd.getColumnCount(); i++){
+            for(int i = 1; i <= rsmd.getColumnCount(); i++){
                 String fieldName = rsmd.getColumnName(i);
                 setField(obj,rs,fieldName);
             }
@@ -82,6 +97,30 @@ public class ReflectMapper<T> {
         }
     }
 
+    /**
+     * Returns object of type T, built from query
+     * @param query
+     * @return
+     */
+    public T toObject(String query){
+        try{
+            T obj = clazz.newInstance();
+
+            ResultSet rs = MySQLHelper.createStatement().executeQuery(query);
+            rs.next();
+
+            ResultSetMetaData rsmd = rs.getMetaData();
+            for(int i = 1; i <= rsmd.getColumnCount(); i++){
+                String fieldName = rsmd.getColumnName(i);
+                setField(obj,rs,fieldName);
+            }
+
+            return obj;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     /**
      * Sets obj.<fieldName> to rs.get*(fieldName)
@@ -116,15 +155,13 @@ public class ReflectMapper<T> {
     public String toInsertStatement(T obj){
         try{
 
-            String primaryKey = MySQLHelper.getPrimaryKeyForTable(className);
-            String query = String.format("SELECT * FROM meetup.%s LIMIT 1",className);
+            String primaryKey = MySQLHelper.getPrimaryKeyForTable(useTableName);
+            String query = String.format("describe meetup.%s",useTableName);
             ResultSet rs = MySQLHelper.createStatement().executeQuery(query);
             rs.next();
-            ResultSetMetaData rsmd = rs.getMetaData();
-            int count = rsmd.getColumnCount();
             Map<String,Object> fields = new HashMap<>();
-            for(int i = 1; i < count; i++){
-                String fieldName = rsmd.getColumnName(i);
+            while (rs.next()){
+                String fieldName = rs.getString(1);
 
                 //dont insert the primary key, because it is auto incremented
                 if(fieldName.equals(primaryKey))
@@ -153,21 +190,15 @@ public class ReflectMapper<T> {
         }
     }
 
-    public static void main(String[] args){
-        ReflectMapper<Profile> pmapper = new ReflectMapper<>(Profile.class);
-        for(Profile p: pmapper.toObjectList("Select * from meetup.profile")){
-            System.out.println(p.toString());
+
+    public static void main(String[] args) throws Exception{
+
+        ResultSet rs = MySQLHelper.createStatement().executeQuery("Select id from meetup.account");
+        while(rs.next()){
+            int id = rs.getInt(1);
+            Account acc = AccountController.fetchAccount(id);
+            System.out.println(acc);
         }
 
-        Profile p = new Profile();
-        p.setProfileid("123");
-        p.setMajor("SE");
-        p.setZodiac("None");
-        p.setAge(22);
-        p.setSexualpref("Yea");
-        p.setGenderid("God-kin");
-        p.setAboutme("Hey");
-
-        System.out.println(pmapper.toInsertStatement(p));
     }
 }

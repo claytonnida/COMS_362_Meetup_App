@@ -1,7 +1,6 @@
 package app.models;
 
 import app.interfaces.AccountInterface;
-import app.models.Profile;
 
 public class Account implements AccountInterface
 {
@@ -9,7 +8,7 @@ public class Account implements AccountInterface
 	private String password;
 	private String email;
 	private Profile myProfile;
-	private int profile;
+	private int profileid;
 	private int id;
 
 	public Account(String username, String password) {
@@ -17,13 +16,9 @@ public class Account implements AccountInterface
 		this.password = password;
 	}
 
-	public int getProfileid() {
-		return profile;
-	}
+	//Required for The ReflectMapper
+	public Account(){}
 
-	public void setProfileid(int profileid) {
-		this.profile = profileid;
-	}
 
 	public int getId() {
 		return id;
@@ -63,9 +58,13 @@ public class Account implements AccountInterface
 		return email;
 	}
 
-	@Override
 	public Profile getProfile() {
 		return myProfile;
+	}
+
+	@Override
+	public void setProfileid(int id) {
+		profileid = id;
 	}
 
 	@Override
@@ -73,7 +72,21 @@ public class Account implements AccountInterface
 		myProfile = newProfile;
 	}
 
-	@Override
-	public void removeProfile() {setProfile(null);}
 
+	@Override
+	public int getProfileid(){
+		return profileid;
+	}
+
+	@Override
+	public void removeProfile() {
+		setProfile(null);}
+
+	public String toString(){
+		String str = String.format("Username: %s\nProfile: \n\t%s",getUsername(),
+				((getProfile()==null)?
+						"null":
+						getProfile().toString().replaceAll("\n","\n\t")));
+		return str;
+	}
 }

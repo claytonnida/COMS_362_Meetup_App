@@ -16,8 +16,12 @@ public interface AccountInterface
 
 	String getEmail();
 	
+	int getProfileid();
+
 	Profile getProfile();
 	
+	void setProfileid(int id);
+
 	void setProfile(Profile newProfile);
 
 	void removeProfile();

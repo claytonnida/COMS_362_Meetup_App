@@ -154,6 +154,8 @@ public class MySQLHelper {
     }
 
     public static void main(String[] args)throws Exception{
-        System.out.println(getPrimaryKeyForTable("profile"));
+        //describeDataBase();
+        createStatement().executeUpdate("Delete from meetup.account where id = 1");
+
     }
 }
