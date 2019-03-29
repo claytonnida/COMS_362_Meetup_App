@@ -4,6 +4,7 @@ import app.models.GroupAssociation;
 import app.models.GroupChat;
 import app.pages.Context;
 import app.pages.GroupChatPage;
+import app.pages.GroupSearchPage;
 
 public class PageUsage {
     public static void main(String[] args){
@@ -46,6 +47,8 @@ public class PageUsage {
         }catch (Exception e){
             e.printStackTrace();
         }
+
+
     }
 
     public void correctPageOpener(){

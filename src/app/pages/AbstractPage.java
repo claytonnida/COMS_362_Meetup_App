@@ -15,6 +15,9 @@ public abstract class AbstractPage {
     //Use to validate that proper context for populating the page is provided
     protected Map<String,Class> requiredContextValues = new HashMap<>();
 
+    //Use to validate that proper context for populating the page is provided, using UNIVERSAL_CONTEXT
+    protected Map<String,Class> requiredUniversalContextValues = new HashMap<>();
+
     public AbstractPage(Context pageContext){
         if(pageContext == null){
             this.pageContext = new Context();
@@ -32,7 +35,13 @@ public abstract class AbstractPage {
      */
     public final void open() throws IllegalArgumentException {
         try {
-            validateContext();
+            validateContext(pageContext,requiredContextValues);
+        }catch (IllegalArgumentException e){
+            throw e;
+        }
+
+        try {
+            validateContext(Context.UNIVERSAL_CONTEXT,requiredUniversalContextValues);
         }catch (IllegalArgumentException e){
             throw e;
         }
@@ -49,26 +58,26 @@ public abstract class AbstractPage {
      * Performs the validation of the provided context
      * @throws IllegalArgumentException
      */
-    private final void validateContext() throws IllegalArgumentException{
+    private final void validateContext(Context context,Map<String,Class> required) throws IllegalArgumentException{
 
         String message = "\n";
-        String messageTemplate = "\t%s: Context requires key:%s mapped to value of type: %s\n";
+        String messageTemplate = "\t%s: Context requires key:'%s' mapped to value of type: '%s'";
 
         //iterate through required args
-        Iterator<String> iter = requiredContextValues.keySet().iterator();
+        Iterator<String> iter = required.keySet().iterator();
         while(iter.hasNext()){
             String key = iter.next();
-            Class reqClass = requiredContextValues.get(key);
+            Class reqClass = required.get(key);
 
             //Was the argument provided?
-            if(pageContext.getVariable(key)==null){
-                message += String.format(messageTemplate,"MISSING VARIABLE",key,reqClass.toString());
+            if(context.getVariable(key)==null){
+                message += String.format(messageTemplate+"\n","MISSING VARIABLE",key,reqClass.toString());
 
             //Was the provided argument of the correct type?
             }else{
-                Class c = pageContext.getVariable(key).getClass();
+                Class c = context.getVariable(key).getClass();
                 if(c != reqClass)
-                    message += String.format(messageTemplate,"INCORRECT VARIABLE TYPE",key,reqClass.toString());
+                    message += String.format(messageTemplate+", but was given: '%s'\n","INCORRECT VARIABLE TYPE",key,reqClass.toString(),c.toString());
             }
         }
 
