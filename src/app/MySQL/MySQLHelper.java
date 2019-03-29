@@ -1,6 +1,7 @@
 package app.MySQL;
 
 import app.Controllers.ProfileController;
+import app.InputReader;
 import app.models.Profile;
 
 import java.sql.*;
@@ -154,8 +155,54 @@ public class MySQLHelper {
     }
 
     public static void main(String[] args)throws Exception{
-        //describeDataBase();
-        createStatement().executeUpdate("Delete from meetup.account where id = 1");
+        createStatement().executeUpdate("");
+        describeDataBase();
+        //createStatement().executeUpdate("Delete from meetup.account where id = 1");
 
+    }
+
+    private static void resetDatabase()throws SQLException{
+        if(InputReader.inputYesNo("Are your really sure?")
+            && InputReader.inputYesNo("Like... REALLY sure?")){
+
+            Statement stmt = createStatement();
+            stmt.executeUpdate("create table meetup.group (" +
+                    "group_id INT NOT NULL AUTO_INCREMENT, " +
+                    "name VARCHAR(100), " +
+                    "ispublic VARCHAR(20), " +
+                    "created_by INT(11), " +
+                    "PRIMARY KEY ( group_id )" +
+                    ");");
+
+            stmt.executeUpdate("create table meetup.profile (" +
+                    "id INT NOT NULL AUTO_INCREMENT, " +
+                    "name VARCHAR(100), " +
+                    "aboutme VARCHAR(500), " +
+                    "age INT(2), " +
+                    "aboutMe VARCHAR(500), " +
+                    "genderId VARCHAR(500), " +
+                    "sexualPref VARCHAR(500), " +
+                    "zodiac VARCHAR(500), " +
+                    "major VARCHAR(500), " +
+                    "spiritAnimal VARCHAR(500), " +
+                    "appearOffline INT(1), " +
+                    "PRIMARY KEY ( id )" +
+                    ");");
+
+            stmt.executeUpdate("create table meetup. (" +
+                    "id INT NOT NULL AUTO_INCREMENT, " +
+                    "name VARCHAR(100), " +
+                    "aboutme VARCHAR(500), " +
+                    "age INT(2), " +
+                    "aboutMe VARCHAR(500), " +
+                    "genderId VARCHAR(500), " +
+                    "sexualPref VARCHAR(500), " +
+                    "zodiac VARCHAR(500), " +
+                    "major VARCHAR(500), " +
+                    "spiritAnimal VARCHAR(500), " +
+                    "appearOffline INT(1), " +
+                    "PRIMARY KEY ( id )" +
+                    ");");
+        }
     }
 }
