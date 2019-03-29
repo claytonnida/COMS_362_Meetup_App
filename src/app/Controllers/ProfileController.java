@@ -99,13 +99,13 @@ public class ProfileController {
      */
     private static void editSpiritAnimal(Profile p){
         System.out.print("Your current spirit animal is:\t");
-        System.out.println(p.getSpiritanimal());
+        System.out.println(p.getSpiritAnimal());
 
         String input = (InputReader.collectInput("Please enter a new spirit animal:"));
 
         boolean  confirm = InputReader.requestConfirmation(input);
         if(confirm){
-            p.setSpiritanimal(input);
+            p.setSpiritAnimal(input);
         }else{
             boolean cancel = InputReader.requestCancel();
             if(cancel){
@@ -143,12 +143,12 @@ public class ProfileController {
      */
     private static void editSexPref(Profile p){
         System.out.print("Your current sexual preference is:\t");
-        System.out.println(p.getSexualpref());
+        System.out.println(p.getSexualPref());
         String input = (InputReader.collectInput("Please enter a new sexual preference:"));
 
         boolean  confirm = InputReader.requestConfirmation(input);
         if(confirm){
-            p.setSexualpref(input);
+            p.setSexualPref(input);
         }else{
             boolean cancel = InputReader.requestCancel();
             if(cancel){
@@ -164,12 +164,12 @@ public class ProfileController {
      */
     private static void editAboutMe(Profile p) {
         System.out.println("Your current 'About Me' section is:");
-        System.out.println(p.getAboutme());
+        System.out.println(p.getAboutMe());
         String input = (InputReader.collectInput("Please describe yourself."));
 
         boolean confirm = InputReader.requestConfirmation(input);
         if(confirm) {
-            p.setAboutme(input);
+            p.setAboutMe(input);
         }
         else {
             boolean cancel = InputReader.requestCancel();
@@ -187,12 +187,12 @@ public class ProfileController {
      */
     private static void editGenderId(Profile p){
         System.out.print("Your current gender identity is:\t");
-        System.out.println(p.getGenderid());
+        System.out.println(p.getGenderId());
         String input = (InputReader.collectInput("Please enter a new gender identity:"));
 
         boolean confirm = InputReader.requestConfirmation(input);
         if(confirm) {
-            p.setGenderid(input);
+            p.setGenderId(input);
         }
         else {
             boolean cancel = InputReader.requestCancel();

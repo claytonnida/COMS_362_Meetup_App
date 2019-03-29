@@ -4,7 +4,7 @@ public class Group {
 
     private int group_id;
     private String name;
-    private String ispublic;
+    private String isPublic;
     private int created_by;
 
     public int getCreated_by() {
@@ -31,11 +31,11 @@ public class Group {
         this.name = name;
     }
 
-    public String getIspublic() {
-        return ispublic;
+    public String getIsPublic() {
+        return isPublic;
     }
 
-    public void setIspublic(String ispublic) {
-        this.ispublic = ispublic;
+    public void setIsPublic(String isPublic) {
+        this.isPublic = isPublic;
     }
 }

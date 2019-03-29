@@ -155,7 +155,7 @@ public class MySQLHelper {
     }
 
     public static void main(String[] args)throws Exception{
-        createStatement().executeUpdate("");
+        resetDatabase();
         describeDataBase();
         //createStatement().executeUpdate("Delete from meetup.account where id = 1");
 
@@ -167,14 +167,14 @@ public class MySQLHelper {
 
             ResultSet rs = createStatement().executeQuery("show tables in meetup");
             while(rs.next()){
-                createStatement().executeUpdate("Drop table "+rs.getString(1));
+                createStatement().executeUpdate("Drop table meetup."+rs.getString(1));
             }
 
             Statement stmt = createStatement();
             stmt.executeUpdate("create table meetup.group (" +
                     "id INT NOT NULL AUTO_INCREMENT, " +
                     "name VARCHAR(100), " +
-                    "ispublic VARCHAR(20), " +
+                    "isPublic VARCHAR(20), " +
                     "created_by INT(11), " +
                     "PRIMARY KEY ( id )" +
                     ");");
@@ -182,7 +182,6 @@ public class MySQLHelper {
             stmt.executeUpdate("create table meetup.profile (" +
                     "id INT NOT NULL AUTO_INCREMENT, " +
                     "name VARCHAR(100), " +
-                    "aboutme VARCHAR(500), " +
                     "age INT(2), " +
                     "aboutMe VARCHAR(500), " +
                     "genderId VARCHAR(20), " +
