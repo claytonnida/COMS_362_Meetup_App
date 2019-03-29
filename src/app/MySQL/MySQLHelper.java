@@ -154,6 +154,36 @@ public class MySQLHelper {
         return null;
     }
 
+    /**
+     * Handles query updates for you
+     * @param query
+     * @return
+     */
+    public static boolean executeUpdate(String query){
+        try{
+            createStatement().executeUpdate(query);
+            return true;
+        }catch (SQLException sql){
+            System.out.println("Oops! Server error! Sorry, whatever was supposed to happen didn't.");
+            return false;
+        }
+    }
+
+    /**
+     * Handles queries for you
+     * @param query
+     * @return
+     */
+    public static boolean executeQuery(String query){
+        try{
+            createStatement().executeUpdate(query);
+            return true;
+        }catch (SQLException sql){
+            System.out.println("Oops! Server error! Sorry, whatever was supposed to happen didn't.");
+            return false;
+        }
+    }
+
     public static void main(String[] args)throws Exception{
         resetDatabase();
         describeDataBase();
