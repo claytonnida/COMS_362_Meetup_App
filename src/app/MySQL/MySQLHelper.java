@@ -165,13 +165,18 @@ public class MySQLHelper {
         if(InputReader.inputYesNo("Are your really sure?")
             && InputReader.inputYesNo("Like... REALLY sure?")){
 
+            ResultSet rs = createStatement().executeQuery("show tables in meetup");
+            while(rs.next()){
+                createStatement().executeUpdate("Drop table "+rs.getString(1));
+            }
+
             Statement stmt = createStatement();
             stmt.executeUpdate("create table meetup.group (" +
-                    "group_id INT NOT NULL AUTO_INCREMENT, " +
+                    "id INT NOT NULL AUTO_INCREMENT, " +
                     "name VARCHAR(100), " +
                     "ispublic VARCHAR(20), " +
                     "created_by INT(11), " +
-                    "PRIMARY KEY ( group_id )" +
+                    "PRIMARY KEY ( id )" +
                     ");");
 
             stmt.executeUpdate("create table meetup.profile (" +
@@ -180,29 +185,29 @@ public class MySQLHelper {
                     "aboutme VARCHAR(500), " +
                     "age INT(2), " +
                     "aboutMe VARCHAR(500), " +
-                    "genderId VARCHAR(500), " +
-                    "sexualPref VARCHAR(500), " +
-                    "zodiac VARCHAR(500), " +
-                    "major VARCHAR(500), " +
-                    "spiritAnimal VARCHAR(500), " +
+                    "genderId VARCHAR(20), " +
+                    "sexualPref VARCHAR(20), " +
+                    "zodiac VARCHAR(20), " +
+                    "major VARCHAR(20), " +
+                    "spiritAnimal VARCHAR(20), " +
                     "appearOffline INT(1), " +
                     "PRIMARY KEY ( id )" +
                     ");");
 
-            stmt.executeUpdate("create table meetup. (" +
+            stmt.executeUpdate("create table meetup.account (" +
                     "id INT NOT NULL AUTO_INCREMENT, " +
-                    "name VARCHAR(100), " +
-                    "aboutme VARCHAR(500), " +
-                    "age INT(2), " +
-                    "aboutMe VARCHAR(500), " +
-                    "genderId VARCHAR(500), " +
-                    "sexualPref VARCHAR(500), " +
-                    "zodiac VARCHAR(500), " +
-                    "major VARCHAR(500), " +
-                    "spiritAnimal VARCHAR(500), " +
-                    "appearOffline INT(1), " +
+                    "username VARCHAR(50), " +
+                    "password VARCHAR(20), " +
+                    "profileid INT(11), " +
                     "PRIMARY KEY ( id )" +
                     ");");
+
+            stmt.executeUpdate("create table meetup.groupAssociation (" +
+                    "profileid INT(11), " +
+                    "groupid INT(11) " +
+                    ");");
+
+
         }
     }
 }

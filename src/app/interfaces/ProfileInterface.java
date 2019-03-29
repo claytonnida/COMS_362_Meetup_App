@@ -3,33 +3,46 @@ package app.interfaces;
 
 public interface ProfileInterface
 {
-	String getProfileDetails();
+	public int getId() ;
 
-	void setAboutme(String input);
+	public void setId(int id) ;
 
-	String getAboutme();
+	public String getAboutMe() ;
 
-	void setAge(int input);
+	public void setAboutMe(String aboutMe) ;
 
-	int getAge();
+	public int getAge() ;
 
-	void setSexualpref(String input);
+	public void setAge(int age) ;
 
-	String getSexualpref();
+	public String getGenderId() ;
 
-	void setGenderid(String input);
+	public void setGenderId(String genderId) ;
 
-	String getGenderid();
+	public String getSexualPref() ;
 
-	void setSpiritanimal(String input);
+	public void setSexualPref(String sexualPref) ;
 
-	String getSpiritanimal();
 
-	void setMajor(String input);
+	public String getMajor() ;
 
-	String getMajor();
+	public void setMajor(String major) ;
 
-	void setZodiac(String input);
+	public String getSpiritAnimal() ;
 
-	String getZodiac();
+	public void setSpiritAnimal(String spiritAnimal) ;
+
+
+	public String getZodiac() ;
+
+
+	public void setZodiac(String zodiac) ;
+
+	public String getName() ;
+
+	public void setName(String name) ;
+
+	public int getAppearOffline() ;
+
+	public void setAppearOffline(int appearOffline);
 }

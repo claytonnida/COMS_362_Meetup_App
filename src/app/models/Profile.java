@@ -6,123 +6,114 @@ import app.interfaces.ProfileInterface;
 
 public class Profile implements ProfileInterface
 {
-	private String profileid;
-	private String aboutme;
+	private int id;
+	private String aboutMe;
 	private int age = 0;
-	private String genderid;
-	private String sexualpref;
+	private String genderId;
+	private String sexualPref;
 	private String major;
-	private String spiritanimal;
+	private String spiritAnimal;
 	private String zodiac;
+	private String name;
+	private int appearOffline;
 
 	//If you change these values, you will also need to change ProfileController.editProfileFields(...)
 	public static final String[] OPTIONS = {"About Me", "Age", "Gender Identity",
             "Sexual Preference", "Major", "Spirit Animal", "Zodiac Sign", "done"};
 
 
-
-
-
-	public void setProfileid(String profileid){
-		this.profileid = profileid;
+	public int getId() {
+		return id;
 	}
 
-	public String getProfileid(){
-		return profileid;
+	public void setId(int id) {
+		this.id = id;
 	}
 
-	@Override
-	public void setAboutme(String input)
-	{
-		aboutme = input;
+	public String getAboutMe() {
+		return aboutMe;
 	}
 
-	@Override
-	public String getAboutme()
-	{
-		return aboutme;
+	public void setAboutMe(String aboutMe) {
+		this.aboutMe = aboutMe;
 	}
 
-	@Override
-	public void setAge(int input)
-	{
-		age = input;
-	}
-
-	@Override
-	public int getAge()
-	{
+	public int getAge() {
 		return age;
 	}
 
-	@Override
-	public void setSexualpref(String input)
-	{
-		sexualpref = input;
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	public String getGenderId() {
+		return genderId;
+	}
+
+	public void setGenderId(String genderId) {
+		this.genderId = genderId;
+	}
+
+	public String getSexualPref() {
+		return sexualPref;
+	}
+
+	public void setSexualPref(String sexualPref) {
+		this.sexualPref = sexualPref;
 	}
 
 	@Override
-	public String getSexualpref()
-	{
-		return sexualpref;
-	}
-
-	@Override
-	public void setGenderid(String input)
-	{
-		genderid = input;
-	}
-
-	@Override
-	public String getGenderid()
-	{
-		return genderid;
-	}
-
-	@Override
-	public void setSpiritanimal(String input)
-	{
-		spiritanimal = input;
-	}
-
-	@Override
-	public String getSpiritanimal()
-	{
-		return spiritanimal;
-	}
-
-	@Override
-	public void setMajor(String input)
-	{
-		major = input;
-	}
-
-	@Override
-	public String getMajor()
-	{
+	public String getMajor() {
 		return major;
 	}
 
 	@Override
-	public void setZodiac(String input)
-	{
-		zodiac = input;
+	public void setMajor(String major) {
+		this.major = major;
+	}
+
+	public String getSpiritAnimal() {
+		return spiritAnimal;
+	}
+
+	public void setSpiritAnimal(String spiritAnimal) {
+		this.spiritAnimal = spiritAnimal;
 	}
 
 	@Override
-	public String getZodiac()
-	{
+	public String getZodiac() {
 		return zodiac;
 	}
 
 	@Override
+	public void setZodiac(String zodiac) {
+		this.zodiac = zodiac;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getAppearOffline() {
+		return appearOffline;
+	}
+
+	public void setAppearOffline(int appearOffline) {
+		this.appearOffline = appearOffline;
+	}
+
 	public String getProfileDetails(){
-		String profileDetails = "About Me: " + getAboutme() +
+		String profileDetails = "Name: " + getName() +
+				"\nAbout Me: " + getAboutMe() +
 				"\nAge: " + getAge() +
-				"\nGender Identity: " + getGenderid() +
-				"\nSexual Preference: " + getSexualpref() +
+				"\nGender Identity: " + getGenderId() +
+				"\nSexual Preference: " + getSexualPref() +
 				"\nMajor: " + getMajor() +
-				"\nSpirit Animal: " + getSpiritanimal() +
+				"\nSpirit Animal: " + getSpiritAnimal() +
 				"\nZodiac Sign: " + getZodiac();
 
 		return profileDetails;
