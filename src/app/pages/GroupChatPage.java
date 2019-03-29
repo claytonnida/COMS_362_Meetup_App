@@ -23,12 +23,4 @@ public class GroupChatPage extends AbstractPage {
 
     }
 
-    public static void main(String[] args){
-        GroupChatPage gcp = new GroupChatPage(null);
-        try{
-            gcp.open();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 }
