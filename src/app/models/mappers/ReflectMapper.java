@@ -8,6 +8,7 @@ import app.models.Profile;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,8 +61,8 @@ public class ReflectMapper<T> {
      * @param rs
      * @return
      */
-    public List<T> toObjectList(ResultSet rs){
-        try{
+    public List<T> toObjectList(ResultSet rs)throws SQLException{
+
             List<T> list = new ArrayList<>();
             while(rs.next()){
                 T obj = toObject(rs);
@@ -69,10 +70,6 @@ public class ReflectMapper<T> {
                     list.add(obj);
             }
             return list;
-        }catch (Exception e){
-            e.printStackTrace();
-            return null;
-        }
     }
 
     /**
@@ -80,19 +77,22 @@ public class ReflectMapper<T> {
      * @param rs
      * @return
      */
-    public T toObject(ResultSet rs){
-        try{
+    public T toObject(ResultSet rs) throws SQLException {
+        try {
             T obj = clazz.newInstance();
 
             ResultSetMetaData rsmd = rs.getMetaData();
-            for(int i = 1; i <= rsmd.getColumnCount(); i++){
+            for (int i = 1; i <= rsmd.getColumnCount(); i++) {
                 String fieldName = rsmd.getColumnName(i);
-                setField(obj,rs,fieldName);
+                setField(obj, rs, fieldName);
             }
 
             return obj;
-        }catch (Exception e){
-            e.printStackTrace();
+        }catch (IllegalAccessException ie){
+            //shouldn't happen
+            return null;
+        }catch (InstantiationException i){
+            //shoudn't happen
             return null;
         }
     }
@@ -102,22 +102,30 @@ public class ReflectMapper<T> {
      * @param query
      * @return
      */
-    public T toObject(String query){
-        try{
+    public T toObject(String query) throws SQLException {
+        try {
+
             T obj = clazz.newInstance();
 
             ResultSet rs = MySQLHelper.createStatement().executeQuery(query);
-            rs.next();
+            boolean exists = rs.next();
+
+            if(!exists)
+                return null;
 
             ResultSetMetaData rsmd = rs.getMetaData();
-            for(int i = 1; i <= rsmd.getColumnCount(); i++){
+            for (int i = 1; i <= rsmd.getColumnCount(); i++) {
                 String fieldName = rsmd.getColumnName(i);
-                setField(obj,rs,fieldName);
+                setField(obj, rs, fieldName);
             }
 
             return obj;
-        }catch (Exception e){
-            e.printStackTrace();
+
+        }catch (IllegalAccessException ie){
+            //shouldn't happen
+            return null;
+        }catch (InstantiationException i){
+            //shoudn't happen
             return null;
         }
     }
@@ -129,21 +137,21 @@ public class ReflectMapper<T> {
      * @param fieldName
      */
     private void setField(T obj, ResultSet rs, String fieldName){
-        try{
+        try {
             Field field = clazz.getDeclaredField(fieldName);
             Class type = field.getType();
             boolean isAccessible = field.isAccessible();
             field.setAccessible(true);
-            if(type.getName().contains("String")){
+            if (type.getName().contains("String")) {
                 String value = rs.getString(fieldName);
-                field.set(obj,value);
-            }else{
+                field.set(obj, value);
+            } else {
                 int value = rs.getInt(fieldName);
-                field.set(obj,value);
+                field.set(obj, value);
             }
             field.setAccessible(isAccessible);
         }catch (Exception e){
-            e.printStackTrace();
+            //shouldn't happen
         }
     }
 

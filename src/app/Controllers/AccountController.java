@@ -126,18 +126,20 @@ public class AccountController {
 	}
 
 	public static Account fetchAccount(String user,String pass)throws SQLException {
-		ReflectMapper<Account> mapper = new ReflectMapper<>(Account.class);
-		String query = String.format("Select * from meetup.account where username='%s' AND password='%s'",user,pass);
-		Account acc = mapper.toObject(query);
+	    Account acc = null;
 
-		try {
-			ReflectMapper<Profile> pmapper = new ReflectMapper<>(Profile.class);
-			Profile prof = pmapper.toObject("Select * from meetup.profile where id = " + acc.getProfileid());
-			acc.setProfile(prof);
-		}catch (Exception e){
-			System.out.println("ERROR: Failed to Load Profile.");
-		}
 
+            ReflectMapper<Account> mapper = new ReflectMapper<>(Account.class);
+            String query = String.format("Select * from meetup.account where username='%s' AND password='%s'", user, pass);
+            acc = mapper.toObject(query);
+
+
+            if(acc != null) {
+
+                ReflectMapper<Profile> pmapper = new ReflectMapper<>(Profile.class);
+                Profile prof = pmapper.toObject("Select * from meetup.profile where id = " + acc.getProfileid());
+                acc.setProfile(prof);
+            }
 		return acc;
 	}
 }

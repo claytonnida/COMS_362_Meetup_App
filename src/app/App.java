@@ -15,10 +15,16 @@ public class App
 	public static Map<String,Object> sessionVariables = new HashMap<>();
 
 	public static void main(String[] args) {
-		Account myAccount = null;
 
 		System.out.println("Welcome!");
 
+		startup();
+
+		runApp();
+	}
+
+	private static void startup(){
+		Account myAccount = null;
 		String input = InputReader.readFromOptions("Welcome!", new String[]{"Login", "Sign Up", "Exit"});
 
 
@@ -49,6 +55,10 @@ public class App
 					String password = InputReader.collectInput("Please enter your password.");
 					try{
 						Account acc = AccountController.fetchAccount(username,password);
+
+						if(acc == null){
+							throw new Exception();
+						}
 						sessionVariables.put("account",acc);
 						System.out.println("Successfully loaded everythinng");
 					}catch (Exception e){
@@ -56,6 +66,8 @@ public class App
 						keepTrying = InputReader.inputYesNo("Try Again?");
 					}
 				}
+				if(account==null)
+					startup();
 			case "Exit":
 				System.out.println("No? Okay then. Have a good day!");
 				InputReader.closeInputReader();
@@ -63,9 +75,6 @@ public class App
 
 
 		}
-
-
-		runApp();
 	}
 
 	private static void runApp(){
