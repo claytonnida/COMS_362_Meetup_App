@@ -64,22 +64,6 @@ public class App
 
 		}
 
-		if(InputReader.inputYesNo("Would you like to create your profile?"))
-		{
-			Profile myProfile = ProfileController.createProfile();
-			myAccount.setProfile(myProfile);
-			try {
-				ProfileController.insertProfile(myProfile);
-				System.out.println("Save Successful");
-			}catch (Exception e){
-				e.printStackTrace();
-				System.out.println("Save Unsuccessful");
-			}
-		}
-		else
-		{
-			System.out.println("No? That's okay! You can always create it later.");
-		}
 
 		runApp();
 	}
@@ -97,6 +81,8 @@ public class App
 				ProfileController.editProfileFields(((Account)sessionVariables.get("account")).getProfile());
 				break;
 			case "Manage Groups":
+				//TODO this
+				System.out.println("PSYCHE!!");
 				break;
 		}
 	}
