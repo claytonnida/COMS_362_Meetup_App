@@ -3,46 +3,43 @@ package app.interfaces;
 
 public interface ProfileInterface
 {
-	public int getId() ;
+	int getId() ;
 
-	public void setId(int id) ;
+	void setId(int id) ;
 
-	public String getAboutMe() ;
+	String getAboutMe() ;
 
-	public void setAboutMe(String aboutMe) ;
+	void setAboutMe(String aboutMe) ;
 
-	public int getAge() ;
+	int getAge() ;
 
-	public void setAge(int age) ;
+	void setAge(int age) ;
 
-	public String getGenderId() ;
+	String getGenderId() ;
 
-	public void setGenderId(String genderId) ;
+	void setGenderId(String genderId) ;
 
-	public String getSexualPref() ;
+	String getSexualPref() ;
 
-	public void setSexualPref(String sexualPref) ;
+	void setSexualPref(String sexualPref) ;
 
+	String getMajor() ;
 
-	public String getMajor() ;
+	void setMajor(String major) ;
 
-	public void setMajor(String major) ;
+	String getSpiritAnimal() ;
 
-	public String getSpiritAnimal() ;
+	void setSpiritAnimal(String spiritAnimal) ;
 
-	public void setSpiritAnimal(String spiritAnimal) ;
+	String getZodiac() ;
 
+	void setZodiac(String zodiac) ;
 
-	public String getZodiac() ;
+	String getName() ;
 
+	void setName(String name) ;
 
-	public void setZodiac(String zodiac) ;
+	int getAppearOffline() ;
 
-	public String getName() ;
-
-	public void setName(String name) ;
-
-	public int getAppearOffline() ;
-
-	public void setAppearOffline(int appearOffline);
+	void setAppearOffline(int appearOffline);
 }
