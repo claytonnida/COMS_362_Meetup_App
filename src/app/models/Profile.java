@@ -18,7 +18,7 @@ public class Profile implements ProfileInterface
 	private int appearOffline;
 
 	//If you change these values, you will also need to change ProfileController.editProfileFields(...)
-	public static final String[] OPTIONS = {"About Me", "Age", "Gender Identity",
+	public static final String[] OPTIONS = {"Name","About Me", "Age", "Gender Identity",
             "Sexual Preference", "Major", "Spirit Animal", "Zodiac Sign", "done"};
 
 

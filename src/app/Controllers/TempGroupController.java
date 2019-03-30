@@ -12,6 +12,7 @@ public class TempGroupController {
 
     public static void createGroup(Profile p){
         Group group = new Group();
+        group.setCreated_by(p.getId());
 
         System.out.println("Creating a new group");
         boolean editGroup = true;
