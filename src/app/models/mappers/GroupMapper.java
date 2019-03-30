@@ -27,7 +27,7 @@ public class GroupMapper implements ResultMapper<Group> {
 	 */
 	public String toUpdateQueryQuery(Group object) {
 		ReflectMapper<Group> pmapper = new ReflectMapper<>(Group.class);
-		return null;//TODO
+		return pmapper.toUpdateStatement(object);
 	}
 
 	@Override

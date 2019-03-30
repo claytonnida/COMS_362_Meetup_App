@@ -198,6 +198,48 @@ public class ReflectMapper<T> {
         }
     }
 
+    /**
+     * Creates an insert SQL statement for the provided object
+     * @param obj
+     * @return
+     */
+    public String toUpdateStatement(T obj){
+        try{
+
+            String primaryKey = MySQLHelper.getPrimaryKeyForTable(useTableName);
+            String query = String.format("describe meetup.%s",useTableName);
+            ResultSet rs = MySQLHelper.createStatement().executeQuery(query);
+            rs.next();
+            Map<String,Object> fields = new HashMap<>();
+            while (rs.next()){
+                String fieldName = rs.getString(1);
+
+                //dont insert the primary key, because it is auto incremented
+                if(fieldName.equals(primaryKey))
+                    continue;
+
+                //get field and make it accessible
+                Field field = clazz.getDeclaredField(fieldName);
+                boolean isAccessible = field.isAccessible();
+                field.setAccessible(true);
+
+                //get the value of the field from obj
+                Object val = field.get(obj);
+
+                //if field is null, don't insert it
+                if(val == null)
+                    continue;
+
+
+                fields.put(fieldName,val);
+                field.setAccessible(isAccessible);
+            }
+            return MySQLHelper.buildUpdateStatement(className,fields);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public static void main(String[] args) throws Exception{
 

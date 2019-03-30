@@ -71,6 +71,18 @@ public class ProfileController {
                     editZodiacSign(p);
                     break;
             }
+
+
+        }
+
+        try {
+            if(InputReader.requestConfirmation(p))
+                ProfileController.saveProfile(p);
+            else
+                System.out.println("Profile changes discarded.");
+        }catch (SQLException e){
+            e.printStackTrace();
+            System.out.println("Couldn't save profile to server at this time.");
         }
     }
 
@@ -319,6 +331,32 @@ public class ProfileController {
             }
         }catch (Exception e){
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Sends the profile to database.
+     * If profile.id == 0, this method will create an Insert query
+     * else this method will create an Update query
+     * @param p
+     * @return
+     * @throws SQLException
+     */
+    public static int saveProfile(Profile p)throws SQLException{
+        ProfileMapper pm = new ProfileMapper();
+
+        if(p.getId() == 0) {
+            String query = pm.toInsertQueryQuery(p);
+            Statement stmt = MySQLHelper.createStatement();
+            stmt.executeUpdate(query);
+
+            ResultSet rs = stmt.executeQuery("Select @@identity");
+            rs.next();
+            return rs.getInt(1);
+        }else {
+            String query = pm.toUpdateQueryQuery(p) + " where id="+p.getId();
+            MySQLHelper.createStatement().executeUpdate(query);
+            return p.getId();
         }
     }
 

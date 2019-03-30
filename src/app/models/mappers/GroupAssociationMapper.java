@@ -27,7 +27,7 @@ public class GroupAssociationMapper implements ResultMapper<GroupAssociation> {
 	 */
 	public String toUpdateQueryQuery(GroupAssociation object) {
 		ReflectMapper<GroupAssociation> pmapper = new ReflectMapper<>(GroupAssociation.class);
-		return null;//TODO
+		return pmapper.toUpdateStatement(object);
 	}
 
 	@Override
