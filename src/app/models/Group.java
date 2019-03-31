@@ -6,6 +6,7 @@ public class Group {
     private String name;
     private String isPublic;
     private int created_by;
+    public static final String[] visibilityOptions = new String[]{"Public","Private"};
 
     public int getCreated_by() {
         return created_by;

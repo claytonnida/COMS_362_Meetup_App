@@ -20,9 +20,10 @@ public class MySQLHelper {
         }catch (ClassNotFoundException cnf){
             System.out.println("DEPENDENCY ERROR!! Don't worry, its an easy fix for us!\n" +
                     "1.\tDownload 'mysql-connector-java' version '5.1.39' from 'https://dev.mysql.com/downloads/connector/j/5.1.html'\n" +
-                    "2.\tGo to File > Project Structure > Modules > Dependencies\n" +
-                    "3.\tClick the PLUS icon and add 'jars or directories'\n" +
-                    "4.\tChoose the jar file you downloaded (NOT the binary one)");
+                    "2.\tUnzip the folder and note the directory you are extracting to.\n" +
+                    "3.\tGo to File > Project Structure > Modules > Dependencies\n" +
+                    "4.\tClick the PLUS icon and add 'jars or directories'\n" +
+                    "5.\tChoose the jar file you downloaded (NOT the binary one)");
 
         }catch (Exception e){
             System.out.println("ABANDON HOPE!! I don't know what's wrong!");
@@ -152,6 +153,36 @@ public class MySQLHelper {
 
 
         return null;
+    }
+
+    /**
+     * Handles query updates for you
+     * @param query
+     * @return
+     */
+    public static boolean executeUpdate(String query){
+        try{
+            createStatement().executeUpdate(query);
+            return true;
+        }catch (SQLException sql){
+            System.out.println("Oops! Server error! Sorry, whatever was supposed to happen didn't.");
+            return false;
+        }
+    }
+
+    /**
+     * Handles queries for you
+     * @param query
+     * @return
+     */
+    public static boolean executeQuery(String query){
+        try{
+            createStatement().executeUpdate(query);
+            return true;
+        }catch (SQLException sql){
+            System.out.println("Oops! Server error! Sorry, whatever was supposed to happen didn't.");
+            return false;
+        }
     }
 
     public static void main(String[] args)throws Exception{

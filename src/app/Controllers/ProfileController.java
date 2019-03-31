@@ -52,6 +52,9 @@ public class ProfileController {
                 case "done":
                     edit = false;
                     break;
+                case "Name":
+                    editName(p);
+                    break;
                 case "About Me":
                     editAboutMe(p);
                     break;
@@ -137,6 +140,33 @@ public class ProfileController {
 
 
     /**
+     * A series of prompts to guide user through editing their online status
+     */
+    private static void editOnlineStatus(Profile p){
+        System.out.print("Your are currently appearing:\t");
+        System.out.println((p.getAppearOffline()==1?"Offline":"Online"));
+
+        String input = (InputReader.readFromOptions("Select Online Status",new String[]{"Online","Appear Offline"}));
+
+
+        boolean  confirm = InputReader.requestConfirmation(input);
+        if(confirm){
+            if(input.contains("Offline")){
+                p.setAppearOffline(1);
+            }else{
+                p.setAppearOffline(0);
+            }
+        }else{
+            boolean cancel = InputReader.requestCancel();
+            if(cancel){
+                return;
+            }else{
+                editOnlineStatus(p);
+            }
+        }
+    }
+
+    /**
      * A series of prompts to guide user through editing their zodiac sign
      */
     private static void editZodiacSign(Profile p){
@@ -176,6 +206,28 @@ public class ProfileController {
                 return;
             }else{
                 editSpiritAnimal(p);
+            }
+        }
+    }
+
+    /**
+     * A series of prompts to guide user through editing their name
+     */
+    private static void editName(Profile p){
+        System.out.print("Your current name is:\t");
+        System.out.println(p.getName());
+
+        String input = (InputReader.collectInput("Please enter a new name:"));
+
+        boolean  confirm = InputReader.requestConfirmation(input);
+        if(confirm){
+            p.setName(input);
+        }else{
+            boolean cancel = InputReader.requestCancel();
+            if(cancel){
+                return;
+            }else{
+                editName(p);
             }
         }
     }

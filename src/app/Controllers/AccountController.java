@@ -124,4 +124,20 @@ public class AccountController {
 
 		return acc;
 	}
+
+	public static Account fetchAccount(String user,String pass)throws SQLException {
+		ReflectMapper<Account> mapper = new ReflectMapper<>(Account.class);
+		String query = String.format("Select * from meetup.account where username='%s' AND password='%s'",user,pass);
+		Account acc = mapper.toObject(query);
+
+		try {
+			ReflectMapper<Profile> pmapper = new ReflectMapper<>(Profile.class);
+			Profile prof = pmapper.toObject("Select * from meetup.profile where id = " + acc.getProfileid());
+			acc.setProfile(prof);
+		}catch (Exception e){
+			System.out.println("ERROR: Failed to Load Profile.");
+		}
+
+		return acc;
+	}
 }
