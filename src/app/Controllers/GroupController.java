@@ -15,7 +15,7 @@ public class GroupController implements GroupControllerInterface {
 
     @Override
     public void leaveGroup(int accountId, int groupId) {
-
+        new GroupAssociationController().leaveGroup(accountId, groupId);
     }
 
     @Override

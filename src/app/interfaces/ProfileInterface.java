@@ -1,6 +1,5 @@
 package app.interfaces;
 
-
 public interface ProfileInterface
 {
 	int getId() ;

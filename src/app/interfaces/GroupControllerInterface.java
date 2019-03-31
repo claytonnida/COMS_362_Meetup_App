@@ -14,11 +14,4 @@ public interface GroupControllerInterface {
 
     void rankGroup(int rank);
 
-
-
-
-
-
-
-
 }
