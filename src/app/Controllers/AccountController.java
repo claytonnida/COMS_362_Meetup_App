@@ -1,10 +1,14 @@
 package app.Controllers;
 
+import app.MySQL.MySQLHelper;
 import app.models.Account;
 import app.models.Profile;
+import app.models.mappers.AccountMapper;
 import app.models.mappers.ReflectMapper;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class AccountController {
 
@@ -95,14 +99,24 @@ public class AccountController {
 	/**
 	 * Adds the given {@link Account} to the database with the {@link String} used as it's primary key.
 	 *
-	 * @param username
-	 * 		The username String that will be the @{link Account}'s primary key in the database
 	 * @param account
 	 * 		The {@link Account} to be added to the database.
 	 */
-	public static void addAccount(String username, Account account) {
-		// TODO: Add given account to the database once it is implemented in a future iteration
+	public static int addAccount(Account account) throws SQLException{
+		int profileId = ProfileController.saveProfile(account.getProfile());
+		account.setProfileid(profileId);
+		account.getProfile().setId(profileId);
+
+		AccountMapper am = new AccountMapper();
+		Statement stmt = MySQLHelper.createStatement();
+		stmt.executeUpdate(am.toInsertQueryQuery(account));
+		ResultSet rs = stmt.executeQuery("Select @@identity");
+		rs.next();
+
+		return rs.getInt(1);
 	}
+
+
 
 	/**
 	 * Selects the Account from database and attempts to fill the Profile field
@@ -126,18 +140,20 @@ public class AccountController {
 	}
 
 	public static Account fetchAccount(String user,String pass)throws SQLException {
-		ReflectMapper<Account> mapper = new ReflectMapper<>(Account.class);
-		String query = String.format("Select * from meetup.account where username='%s' AND password='%s'",user,pass);
-		Account acc = mapper.toObject(query);
+	    Account acc = null;
 
-		try {
-			ReflectMapper<Profile> pmapper = new ReflectMapper<>(Profile.class);
-			Profile prof = pmapper.toObject("Select * from meetup.profile where id = " + acc.getProfileid());
-			acc.setProfile(prof);
-		}catch (Exception e){
-			System.out.println("ERROR: Failed to Load Profile.");
-		}
 
+            ReflectMapper<Account> mapper = new ReflectMapper<>(Account.class);
+            String query = String.format("Select * from meetup.account where username='%s' AND password='%s'", user, pass);
+            acc = mapper.toObject(query);
+
+
+            if(acc != null) {
+
+                ReflectMapper<Profile> pmapper = new ReflectMapper<>(Profile.class);
+                Profile prof = pmapper.toObject("Select * from meetup.profile where id = " + acc.getProfileid());
+                acc.setProfile(prof);
+            }
 		return acc;
 	}
 }
