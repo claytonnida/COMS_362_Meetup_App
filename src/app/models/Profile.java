@@ -2,6 +2,7 @@ package app.models;
 
 import app.interfaces.ProfileInterface;
 
+import java.awt.image.BufferedImage;
 
 
 public class Profile implements ProfileInterface
@@ -14,12 +15,13 @@ public class Profile implements ProfileInterface
 	private String major;
 	private String spiritAnimal;
 	private String zodiac;
-	private String name;
+	private String name = "Anonymous";
 	private int appearOffline;
+	private BufferedImage picture;
 
 	//If you change these values, you will also need to change ProfileController.editProfileFields(...)
 	public static final String[] OPTIONS = {"About Me", "Age", "Gender Identity",
-            "Sexual Preference", "Major", "Spirit Animal", "Zodiac Sign", "done"};
+            "Sexual Preference", "Major", "Spirit Animal", "Zodiac Sign", "Picture", "done"};
 
 
 	public int getId() {
@@ -61,6 +63,10 @@ public class Profile implements ProfileInterface
 	public void setSexualPref(String sexualPref) {
 		this.sexualPref = sexualPref;
 	}
+
+	public BufferedImage getPicture() { return picture; }
+
+	public void setPicture(BufferedImage picture) { this.picture = picture; }
 
 	@Override
 	public String getMajor() {

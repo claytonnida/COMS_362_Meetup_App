@@ -5,6 +5,12 @@ import app.MySQL.MySQLHelper;
 import app.models.Profile;
 import app.models.mappers.ProfileMapper;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -67,7 +73,65 @@ public class ProfileController {
                 case "Zodiac Sign":
                     editZodiacSign(p);
                     break;
+                case "Picture":
+                    setPicture(p);
+                    break;
             }
+        }
+    }
+
+    /**
+     * A series of prompts to guide the user through creating their Profile picture
+     */
+    public static void setPicture(Profile p) {
+        String input = InputReader.collectInput("Is the picture you wish to use saved in the file structure? [y/n]");
+        boolean upload_complete = false;
+        if (input.equals("y")) {
+            input = InputReader.collectInput("Good! Now please enter the name of your picture file. (include .jpg, .png, etc.)");
+            try {
+                ///////
+
+                BufferedImage input_picture = ImageIO.read(new File(input));
+                boolean confirm = InputReader.requestConfirmation(input);
+                if (confirm) {
+                    p.setPicture(input_picture);
+                    /*
+                     * This section will need to be changed once the server is set up to something more like:
+                     * try {
+                     * 		URL url = new URL(getCodeBase(), "pictures/sobble_is_best.png");
+                     * 		img = ImageIO.read(url);
+                     * }catch(IOException e){
+                     * 		System.out.println("The picture you specified seems to be unavailable, please try again");
+                     * }
+                     */
+                    ///////
+                    System.out.println("Your profile picture was added successfully! The following picture will be displayed.");
+                    JFrame frame = new JFrame();
+                    frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+                    frame.getContentPane().setLayout(new GridLayout(1, 1));
+                    ImagePanel panel = new ImagePanel(p.getPicture());
+                    frame.getContentPane().add(panel);
+                    frame.pack();
+                    frame.setVisible(true);
+                } else {
+                    boolean cancel = InputReader.requestCancel();
+                    if (cancel) {
+                        return;
+                    } else {
+                        setPicture(p);
+                    }
+                }
+            } catch (IOException e) {
+                System.out.println("The file name you specified was invalid, please try again");
+                setPicture(p);
+            }
+        }
+        else{
+            System.out.println("No worries! Just follow these simple steps to upload your picture to the file structure:");
+            System.out.println("1- Open up your File Explorer to the location of your picture");
+            System.out.println("2- Make sure you have this project open in your IDE");
+            System.out.println("3- Simply drag your image over the 'COMS_362_Meetup_App' and drop it");
+            System.out.println("4- Confirm the addition of the file to the project and then rerun the application. You should now be able to access your picture!");
         }
     }
 
@@ -267,6 +331,37 @@ public class ProfileController {
             }
         }catch (Exception e){
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * This is a helper class for the setPicture method
+     * It creates a useable/displayable Panel to display the Profile picture
+     */
+    static class ImagePanel extends JPanel
+    {
+        private final BufferedImage image;
+
+        ImagePanel(BufferedImage image)
+        {
+            this.image = image;
+        }
+
+        @Override
+        public Dimension getPreferredSize()
+        {
+            if (super.isPreferredSizeSet())
+            {
+                return super.getPreferredSize();
+            }
+            return new Dimension(image.getWidth(), image.getHeight());
+        }
+
+        @Override
+        protected void paintComponent(Graphics g)
+        {
+            super.paintComponent(g);
+            g.drawImage(image, 0, 0, null);
         }
     }
 

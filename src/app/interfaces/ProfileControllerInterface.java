@@ -10,6 +10,6 @@ public interface ProfileControllerInterface {
 
     void changeStatus(Profile p);
 
-    void setPicture(String filename);
+    void setPicture(Profile p);
 
 }

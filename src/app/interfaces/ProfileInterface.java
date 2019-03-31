@@ -1,6 +1,8 @@
 package app.interfaces;
 
 
+import java.awt.image.BufferedImage;
+
 public interface ProfileInterface
 {
 	int getId() ;
@@ -38,6 +40,10 @@ public interface ProfileInterface
 	String getName() ;
 
 	void setName(String name) ;
+
+	BufferedImage getPicture() ;
+
+	void setPicture(BufferedImage picture) ;
 
 	int getAppearOffline() ;
 
