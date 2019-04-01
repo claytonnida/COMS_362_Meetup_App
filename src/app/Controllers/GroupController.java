@@ -56,7 +56,7 @@ public class GroupController implements GroupControllerInterface {
             GroupMapper gm = new GroupMapper();
             List<Group> list = gm.createObjectList(executeQuery("Select * from meetup.group"));
             for(int i = 0; i < list.size(); i++){
-                if(!list.get(i).getName().contains(sub_string)){
+                if(!list.get(i).getName().matches("(?i).*?"+sub_string+".*")){
                     list.remove(i);
                 }
             }
@@ -129,6 +129,8 @@ public class GroupController implements GroupControllerInterface {
     }
 
     // TODO: Add JavaDocs
+    //TODO CLAYTON: this should take the group id and not the group name,
+    //  Otherwise you will delete all groups with that name
     @Override
     public void removeGroup(String gname) {
 
@@ -224,7 +226,7 @@ public class GroupController implements GroupControllerInterface {
                     manageGroups(account);
                 }
                 else {
-                    System.out.println(group.getName() + " selected");
+                    manageGroup(account,group);
                 }
                 // TODO Dan, after searching groups, you should open up GroupController.showGroups(...)
                 //   - Supply your list of groups as arg
@@ -232,10 +234,12 @@ public class GroupController implements GroupControllerInterface {
             case "My Groups":
                 groups = gc.getGroupsForUser(account.getProfile());
                 group = selectGroup(groups,account);
-                if(group==null)manageGroups(account);
-                else
-                System.out.println(group.getName()+" selected");
-                //TODO
+                if(group==null) {
+                    manageGroups(account);
+                }
+                else {
+                    manageGroup(account,group);
+                }
                 break;
         }
     }
@@ -248,7 +252,26 @@ public class GroupController implements GroupControllerInterface {
 
     public Group selectGroup(List<Group> groups, Account account){
 
-        Group g = (Group)InputReader.readFromOptions("Choose a group",new ArrayList<Selectable>(groups));
+        Group g = (Group)InputReader.readFromOptions("Choose a group",new ArrayList<>(groups));
         return g;
+    }
+
+    public void manageGroup(Account account, Group group){
+        switch (InputReader.readFromOptions("Edit "+group.getName(),
+                new String[]{"Edit Group","Leave Group","Delete Group","Edit Group","Exit"})){
+            case "Edit Group":
+                editGroupFields(group);
+                break;
+            case "Delete Group":
+
+                //TODO Implement remove group
+
+            case "Leave Group":
+                leaveGroup(account.getProfileid(),group.getId());
+                break;
+            case "Exit":
+                manageGroups(account);
+                break;
+        }
     }
 }
