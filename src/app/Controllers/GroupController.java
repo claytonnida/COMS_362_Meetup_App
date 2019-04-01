@@ -1,5 +1,6 @@
 package app.Controllers;
 
+import app.App;
 import app.InputReader;
 import app.MySQL.MySQLHelper;
 import app.interfaces.GroupControllerInterface;
@@ -149,6 +150,7 @@ public class GroupController implements GroupControllerInterface {
      */
     @Override
     public void editGroupFields(Group g){
+
         boolean edit = true;
         String[] options = new String[]{"done","name","visibility"};
         while(edit) {
@@ -215,7 +217,7 @@ public class GroupController implements GroupControllerInterface {
         Group group;
 
         switch (InputReader.readFromOptions("What do you want to do?",
-                new String[]{"Create a Group","My Groups","Search For Groups","Exit"})){
+                new String[]{"Create a Group","All Groups","My Groups","Search For Groups","Exit"})){
             case "Create a Group":
                 gc.createGroup(account.getProfile());
                 break;
@@ -233,6 +235,16 @@ public class GroupController implements GroupControllerInterface {
                 break;
             case "My Groups":
                 groups = gc.getGroupsForUser(account.getProfile());
+                group = selectGroup(groups,account);
+                if(group==null) {
+                    manageGroups(account);
+                }
+                else {
+                    manageGroup(account,group);
+                }
+                break;
+            case "All Groups":
+                groups = gc.searchGroup("");
                 group = selectGroup(groups,account);
                 if(group==null) {
                     manageGroups(account);
@@ -260,6 +272,17 @@ public class GroupController implements GroupControllerInterface {
         switch (InputReader.readFromOptions("Edit "+group.getName(),
                 new String[]{"Edit Group","Leave Group","Delete Group","Edit Group","Exit"})){
             case "Edit Group":
+                try{
+                    int id = ((Account)App.sessionVariables.get("account")).getProfile().getId();
+                    ResultSet rs = MySQLHelper.executeQuery("Select * from meetup.group where created_by = "+id
+                            +" and id = "+group.getId());
+                    if(!rs.next()){
+                        System.out.println("You are not the owner of this group.");
+                        return;
+                    }
+                }catch (SQLException e){
+                    manageGroup(account,group);
+                }
                 editGroupFields(group);
                 break;
             case "Delete Group":
