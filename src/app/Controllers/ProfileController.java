@@ -106,19 +106,6 @@ public class ProfileController implements ProfileControllerInterface {
         }
     }
 
-
-    /**
-     * A series of prompts to guide user through editing their online status.
-     *
-     * @param p {@link Profile} to edit the online status of.
-     */
-    @Override
-    public void editOnlineStatus(Profile p){
-        System.out.print("Your are currently appearing:\t");
-        System.out.println((p.getAppearOffline()==1?"Offline":"Online"));
-
-        String input = (InputReader.readFromOptions("Select Online Status",new String[]{"Online","Appear Offline"}));
-
     /**
      * A series of prompts to guide the user through creating their Profile picture
      */
@@ -164,8 +151,7 @@ public class ProfileController implements ProfileControllerInterface {
                 System.out.println("The file name you specified was invalid, please try again");
                 setPicture(p);
             }
-        }
-        else{
+        } else {
             System.out.println("No worries! Just follow these simple steps to upload your picture to the file structure:");
             System.out.println("1- Open up your File Explorer to the location of your picture");
             System.out.println("2- Make sure you have this project open in your IDE");
@@ -174,7 +160,17 @@ public class ProfileController implements ProfileControllerInterface {
         }
     }
 
+        /**
+         * A series of prompts to guide user through editing their online status.
+         *
+         * @param p {@link Profile} to edit the online status of.
+         */
+        @Override
+        public void editOnlineStatus(Profile p) {
+            System.out.print("Your are currently appearing:\t");
+            System.out.println((p.getAppearOffline() == 1 ? "Offline" : "Online"));
 
+            String input = (InputReader.readFromOptions("Select Online Status", new String[]{"Online", "Appear Offline"}));
         boolean  confirm = InputReader.requestConfirmation(input);
         if(confirm){
             if(input.contains("Offline")){

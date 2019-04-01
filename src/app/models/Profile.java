@@ -12,7 +12,6 @@ public class Profile implements ProfileInterface
 	private int appearOffline;
 
 	private String aboutMe;
-	private int age = 0;
 	private String genderId;
 	private String sexualPref;
 	private String major;
