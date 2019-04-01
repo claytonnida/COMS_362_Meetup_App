@@ -506,29 +506,28 @@ public class ProfileController implements ProfileControllerInterface {
     /**
      * Returns a version of the given {@link List<Integer>} with "offline" connections removed.
      *
-     * @param pidList {@link List<Integer>} of {@link Profile} IDs to filter.
+     * @param profileIdList {@link List<Integer>} of {@link Profile} IDs to filter.
      *
      * @return
      *      {@link List<Integer>} of IDs associated with online {@link Profile}s.
      */
     @Override
-    public List<Integer> filterOnlineConnections(List<Integer> pidList) {
+    public List<Integer> filterOnlineConnections(List<Integer> profileIdList) {
 
-        if(pidList == null) {
+        if(profileIdList == null) {
             throw new IllegalArgumentException("ERROR! Given pid List cannot be null!");
         }
 
-        Iterator<Integer> iterator = pidList.iterator();
-
+        Iterator<Integer> iterator = profileIdList.iterator();
 
         while(iterator.hasNext()) {
             Integer pid = iterator.next();
             if(appearsOffline(pid) || !checkOnlineStatus(pid)) {
-                pidList.remove(pid);
+                profileIdList.remove(pid);
             }
         }
 
-        return pidList;
+        return profileIdList;
     }
 
     /**
@@ -541,9 +540,21 @@ public class ProfileController implements ProfileControllerInterface {
      */
     @Override
     public boolean appearsOffline(int pid) {
-        // TODO: Have this actually look at the database for the "appearsOffline"  column
 
-        return false;
+        ResultSet rs = MySQLHelper.executeQuery("SELECT appearOffline FROM meetup.profile where id = " + pid);
+
+        try {
+            rs.next();
+            return rs.getInt(1) == 1;
+        }
+        catch(SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        catch(NullPointerException e) {
+            System.out.println("ERROR! The given Profile ID does not exist or the \"apearOffline\" column has a value of null!");
+            return false;
+        }
     }
 
     /**

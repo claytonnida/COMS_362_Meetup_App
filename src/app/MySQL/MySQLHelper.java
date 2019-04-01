@@ -1,6 +1,5 @@
 package app.MySQL;
 
-import app.Controllers.GroupController;
 import app.Controllers.ProfileController;
 import app.InputReader;
 import app.models.Account;
@@ -9,7 +8,10 @@ import app.models.mappers.AccountMapper;
 import app.models.mappers.ProfileMapper;
 
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class MySQLHelper {
 
@@ -73,14 +75,11 @@ public class MySQLHelper {
 
         //Describe each table
         for(String table: tables){
-            String pri = getPrimaryKeyForTable(table);
             System.out.println(table);
             String query = String.format("describe meetup.%s",table);
             ResultSet trs = s.executeQuery(query);
             while (trs.next()){
                 String description = String.format("\t%s:%s",trs.getString(1),trs.getString(2));
-                if(trs.getString(1).equals(pri))
-                    description += " (PRIMARY)";
                 System.out.println(description);
             }
         }
@@ -220,15 +219,10 @@ public class MySQLHelper {
 
     public static void main(String[] args)throws Exception{
 
-        System.out.println("Profiles");
-        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.profile"))){
-            System.out.println(s);
-        }
+	    describeDataBase();
 
-        System.out.println("Accounts");
-        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.account"))){
-            System.out.println(s);
-        }
+	    ResultSet rs = executeQuery("SELECT appearOffline FROM meetup.profile WHERE id = " + 1);
+
 
         System.out.println("Groups");
         for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.group"))){

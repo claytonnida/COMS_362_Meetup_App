@@ -2,18 +2,26 @@ package app.Controllers;
 
 import app.MySQL.MySQLHelper;
 import app.interfaces.GroupAssociationControllerInterface;
+import app.models.Group;
+import app.models.Profile;
 
 public class GroupAssociationController implements GroupAssociationControllerInterface {
 
 
     /**
-     * Removes the {@link app.models.GroupAssociation} between an {@link app.models.Account} and a {@link app.models.Group}.
+     * Removes the {@link app.models.GroupAssociation} between a {@link Profile} and a {@link Group}.
      *
-     * @param accountId The ID of the {@link app.models.Account} to disassociate.
-     * @param groupId The ID of the {@link app.models.Group} to disassociate.
+     * @param profileId The ID of the {@link Profile} to disassociate.
+     *
+     * @param groupId The ID of the {@link Group} to disassociate.
      */
     @Override
-    public void leaveGroup(int accountId, int groupId) {
-        // TODO: Remove the group association with the given account ID and group ID
+    public void leaveGroup(int profileId, int groupId) {
+        MySQLHelper.executeUpdate("DELETE FROM meetup.groupassociation " +
+                "where profileid = " + profileId +
+                " and groupid = " + groupId
+        );
+
+        System.out.println("Successfully removed GroupAssociation between profile ID: " + profileId + " and group ID: " + groupId + "!");
     }
 }
