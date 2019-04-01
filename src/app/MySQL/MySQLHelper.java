@@ -1,5 +1,6 @@
 package app.MySQL;
 
+import app.Controllers.GroupController;
 import app.Controllers.ProfileController;
 import app.InputReader;
 import app.models.Account;
@@ -218,9 +219,6 @@ public class MySQLHelper {
     }
 
     public static void main(String[] args)throws Exception{
-
-
-        //describeDataBase();
 
         System.out.println("Profiles");
         for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.profile"))){

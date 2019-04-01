@@ -53,7 +53,12 @@ public class GroupController implements GroupControllerInterface {
     public List<Group> searchGroup(String sub_string) {
         try {
             GroupMapper gm = new GroupMapper();
-            List<Group> list = gm.createObjectList(executeQuery("Select * from meetup.group where name like '%"+sub_string+"&'"));
+            List<Group> list = gm.createObjectList(executeQuery("Select * from meetup.group"));
+            for(int i = 0; i < list.size(); i++){
+                if(!list.get(i).getName().contains(sub_string)){
+                    list.remove(i);
+                }
+            }
             return list;
         } catch (SQLException e) {
             System.out.println("Sorry we cannot contact the database right now.");
@@ -203,6 +208,7 @@ public class GroupController implements GroupControllerInterface {
 
     public void manageGroups(Account account){
         GroupController gc = new GroupController();
+        List<Group> groups = null;
 
         switch (InputReader.readFromOptions("What do you want to do?",
                 new String[]{"Create a Group","My Groups","Search For Groups","Exit"})){
@@ -210,11 +216,13 @@ public class GroupController implements GroupControllerInterface {
                 gc.createGroup(account.getProfile());
                 break;
             case "Search For Groups":
+                groups = gc.searchGroup("Gro");
+                selectGroup(groups,account);
                 // TODO Dan, after searching groups, you should open up GroupController.showGroups(...)
                 //   - Supply your list of groups as arg
                 break;
             case "My Groups":
-                List<Group> groups = gc.getGroupsForUser(account.getProfile());
+                groups = gc.getGroupsForUser(account.getProfile());
                 selectGroup(groups,account);
                 //TODO
                 break;
