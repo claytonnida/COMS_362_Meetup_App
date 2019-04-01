@@ -24,8 +24,12 @@ public class GroupController implements GroupControllerInterface {
     public List<Group> searchGroup(String sub_string) {
         try {
             GroupMapper gm = new GroupMapper();
-            List<Group> list = gm.createObjectList(executeQuery("Select * from meetup.group where name like '%"+sub_string+"&'"));
-            //List<Group> list = gm.createObjectList(executeQuery("Select * from meetup.group"));
+            List<Group> list = gm.createObjectList(executeQuery("Select * from meetup.group"));
+            for(int i = 0; i < list.size(); i++){
+                if(!list.get(i).getName().contains(sub_string)){
+                    list.remove(i);
+                }
+            }
             return list;
         } catch (SQLException e) {
             System.out.println("Sorry we cannot contact the database right now.");

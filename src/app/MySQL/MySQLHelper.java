@@ -232,14 +232,6 @@ public class MySQLHelper {
             System.out.println(s);
         }
 
-        GroupController gc = new GroupController();
-        String input = InputReader.collectInput("Please enter your search terms");
-        List<app.models.Group> list = gc.searchGroup(input);
-        System.out.println(list.size());
-        for(int i = 0; i < list.size(); i++){
-            System.out.println(list.get(i).getName());
-        }
-
     }
 
     private static void resetDatabase()throws SQLException{
