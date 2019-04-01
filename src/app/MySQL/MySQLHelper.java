@@ -226,6 +226,15 @@ public class MySQLHelper {
             System.out.println(s);
         }
 
+        System.out.println("Groups");
+        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.group"))){
+            System.out.println(s);
+        }
+
+        System.out.println("GroupAssociations");
+        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.groupAssociation"))){
+            System.out.println(s);
+        }
     }
 
     private static void resetDatabase()throws SQLException{

@@ -1,5 +1,7 @@
 package app.models.mappers;
 
+import app.MySQL.MySQLHelper;
+import app.models.Group;
 import app.models.GroupAssociation;
 
 import java.sql.ResultSet;
@@ -18,6 +20,12 @@ public class GroupAssociationMapper implements ResultMapper<GroupAssociation> {
 	public List<GroupAssociation> createObjectList(ResultSet rs) throws SQLException {
 		ReflectMapper<GroupAssociation> pmapper = new ReflectMapper<>(GroupAssociation.class);
 		return pmapper.toObjectList(rs);
+	}
+
+	@Override
+	public List<GroupAssociation> createObjectList(String query) throws SQLException {
+		ResultSet rs = MySQLHelper.createStatement().executeQuery(query);
+		return createObjectList(rs);
 	}
 
 	@Override

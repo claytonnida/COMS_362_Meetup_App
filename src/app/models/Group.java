@@ -1,8 +1,9 @@
 package app.models;
 
 import app.interfaces.GroupInterface;
+import app.interfaces.Selectable;
 
-public class Group implements GroupInterface {
+public class Group implements GroupInterface, Selectable {
 
     private int group_id;
     private String name;
@@ -49,5 +50,10 @@ public class Group implements GroupInterface {
     @Override
     public void setIsPublic(String isPublic) {
         this.isPublic = isPublic;
+    }
+
+    @Override
+    public String getSelectionPrompt() {
+        return getName();
     }
 }

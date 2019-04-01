@@ -1,5 +1,7 @@
 package app.models.mappers;
 
+import app.MySQL.MySQLHelper;
+import app.models.Group;
 import app.models.Profile;
 
 import java.sql.ResultSet;
@@ -39,5 +41,11 @@ public class ProfileMapper implements ResultMapper<Profile> {
     public String toInsertQueryQuery(Profile object) {
         ReflectMapper<Profile> pmapper = new ReflectMapper<>(Profile.class);
         return pmapper.toInsertStatement(object);
+    }
+
+    @Override
+    public List<Profile> createObjectList(String query) throws SQLException {
+        ResultSet rs = MySQLHelper.createStatement().executeQuery(query);
+        return createObjectList(rs);
     }
 }

@@ -1,5 +1,6 @@
 package app.models.mappers;
 
+import app.MySQL.MySQLHelper;
 import app.models.Account;
 
 import java.sql.ResultSet;
@@ -17,6 +18,12 @@ public class AccountMapper implements ResultMapper<Account> {
     public List<Account> createObjectList(ResultSet rs) throws SQLException {
         ReflectMapper<Account> pmapper = new ReflectMapper<>(Account.class);
         return pmapper.toObjectList(rs);
+    }
+
+    @Override
+    public List<Account> createObjectList(String query) throws SQLException {
+        ResultSet rs = MySQLHelper.createStatement().executeQuery(query);
+        return createObjectList(rs);
     }
 
     @Override
