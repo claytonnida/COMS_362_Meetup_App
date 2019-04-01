@@ -3,6 +3,7 @@ package app.Controllers;
 import app.InputReader;
 import app.MySQL.MySQLHelper;
 import app.interfaces.GroupControllerInterface;
+import app.models.Account;
 import app.models.Group;
 import app.models.Profile;
 import app.models.mappers.GroupMapper;
@@ -63,6 +64,10 @@ public class GroupController implements GroupControllerInterface {
                 boolean success = MySQLHelper.executeUpdate(insertQuery);
                 if(success)
                     editGroup = false;
+            }else {
+                if(!InputReader.inputYesNo("Continue Editing?")){
+                    editGroup = false;
+                }
             }
         }
 
@@ -145,6 +150,17 @@ public class GroupController implements GroupControllerInterface {
             }else{
                 editGroupName(g);
             }
+        }
+    }
+
+    public void manageGroups(Account account){
+        GroupController gc = new GroupController();
+
+        switch (InputReader.readFromOptions("What do you want to do?",
+                new String[]{"Create a Group","Exit"})){
+            case "Create a Group":
+                gc.createGroup(account.getProfile());
+                break;
         }
     }
 }

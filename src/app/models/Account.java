@@ -16,6 +16,22 @@ public class Account implements AccountInterface
 		this.password = password;
 	}
 
+	public static Account getOfflineProfile(){
+		Account account = new Account();
+		account.setId(-1);
+		account.setProfileid(-1);
+		account.setUsername("Dev");
+		account.setPassword("dev");
+
+		Profile p = new Profile();
+		p.setId(-1);
+		p.setMajor("SE");
+		p.setName("Cool Guy Dev");
+		p.setAboutMe("Clayton turned the server off again...");
+		account.setProfile(p);
+		return account;
+	}
+
 	//Required for The ReflectMapper
 	public Account(){}
 

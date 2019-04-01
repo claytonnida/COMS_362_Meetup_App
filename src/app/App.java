@@ -2,6 +2,7 @@ package app;
 
 
 import app.Controllers.AccountController;
+import app.Controllers.GroupController;
 import app.Controllers.ProfileController;
 import app.models.Account;
 import app.models.Profile;
@@ -71,18 +72,24 @@ public class App
 				while (keepTrying && account == null){
 					String username = InputReader.collectInput("Please enter your username.");
 					String password = InputReader.collectInput("Please enter your password.");
-					try{
-						Account acc = accountController.fetchAccount(username,password);
 
-						if(acc == null){
-							throw new Exception();
-						}
-						account = acc;
+					if(username.equals("dev")&&password.equalsIgnoreCase("dev")){
+						account = Account.getOfflineProfile();
 						sessionVariables.put("account",account);
-						System.out.println("Successfully loaded everythinng");
-					}catch (Exception e){
-						System.out.println("Couldn't fetch profile");
-						keepTrying = InputReader.inputYesNo("Try Again?");
+					}else {
+						try {
+							Account acc = accountController.fetchAccount(username, password);
+
+							if (acc == null) {
+								throw new Exception();
+							}
+							account = acc;
+							sessionVariables.put("account", account);
+							System.out.println("Successfully loaded everythinng");
+						} catch (Exception e) {
+							System.out.println("Couldn't fetch profile");
+							keepTrying = InputReader.inputYesNo("Try Again?");
+						}
 					}
 				}
 				if(account==null)
@@ -101,13 +108,18 @@ public class App
 		boolean play = true;
 		while(play){
 			switch (InputReader.readFromOptions("What would you like to do?",new String[]
-					{"Edit My Profile","Manage Groups","Exit"})){
+					{"Edit My Profile","Edit Online Status","Manage Groups","Exit"})){
 				case "Edit My Profile":
 					new ProfileController().editProfileFields(((Account)sessionVariables.get("account")).getProfile());
 					break;
 				case "Manage Groups":
 					//TODO this
-					System.out.println("PSYCHE!!");
+					GroupController gc = new GroupController();
+					gc.manageGroups(((Account)sessionVariables.get("account")));
+					break;
+				case "Edit Online Status":
+					ProfileController pc = new ProfileController();
+					pc.editOnlineStatus(((Account)sessionVariables.get("account")).getProfile());
 					break;
 				case "Exit":
 					if(InputReader.inputYesNo("Are you sure you want to quit?"))
