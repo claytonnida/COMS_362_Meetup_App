@@ -8,6 +8,8 @@ import app.models.Profile;
 import app.models.mappers.GroupMapper;
 
 public class GroupController implements GroupControllerInterface {
+
+    // TODO: Add JavaDocs
     @Override
     public void searchGroup(String sub_string) {
 
@@ -18,6 +20,7 @@ public class GroupController implements GroupControllerInterface {
         new GroupAssociationController().leaveGroup(accountId, groupId);
     }
 
+    // TODO: Add JavaDocs
     @Override
     public void createGroup(Profile p) {
         Group group = new Group();
@@ -44,11 +47,13 @@ public class GroupController implements GroupControllerInterface {
         System.out.println("Group creation complete.");
     }
 
+    // TODO: Add JavaDocs
     @Override
     public void removeGroup(String gname) {
 
     }
 
+    // TODO: Add JavaDocs
     @Override
     public void rankGroup(int rank) {
 
@@ -56,8 +61,11 @@ public class GroupController implements GroupControllerInterface {
 
     /**
      * A series of prompts to guide user through editing their profile
+     *
+     * @param g The {@link Group} whose fields will be modified.
      */
-    public static void editGroupFields(Group g){
+    @Override
+    public void editGroupFields(Group g){
         boolean edit = true;
         String[] options = new String[]{"done","name","visibility"};
         while(edit) {
@@ -76,7 +84,9 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
-    public static void editGroupName(Group g){
+    // TODO: Add JavaDocs
+    @Override
+    public void editGroupName(Group g){
         System.out.print("Your current group name is:\t");
         System.out.println(g.getName());
 
@@ -95,9 +105,9 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
-
-
-    public static void editGroupVisibility(Group g){
+    // TODO: Add JavaDocs
+    @Override
+    public void editGroupVisibility(Group g){
         System.out.print("Your current group visibility is:\t");
         System.out.println(g.getName());
 

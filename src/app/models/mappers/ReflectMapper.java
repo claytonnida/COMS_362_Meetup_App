@@ -246,7 +246,7 @@ public class ReflectMapper<T> {
         ResultSet rs = MySQLHelper.createStatement().executeQuery("Select id from meetup.account");
         while(rs.next()){
             int id = rs.getInt(1);
-            Account acc = AccountController.fetchAccount(id);
+            Account acc = new AccountController().fetchAccount(id);
             System.out.println(acc);
         }
 

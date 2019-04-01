@@ -28,7 +28,11 @@ public class App
 
 	private static void startup(){
 		Account myAccount = null;
+
+		AccountController accountController = new AccountController();
+
 		String input = InputReader.readFromOptions("Welcome!", new String[]{"Login", "Sign Up", "Exit"});
+
 
 
 		switch (input) {
@@ -42,13 +46,13 @@ public class App
 
 					String comparisonPassword = InputReader.collectInput("Enter your password again to confirm.");
 					try {
-						myAccount = AccountController.createAccount(username, password, comparisonPassword);
+						myAccount = accountController.createAccount(username, password, comparisonPassword);
 						myAccount.setProfile(new Profile());
 
 
 						//TODO update to database
 						try {
-							AccountController.addAccount(myAccount);
+							accountController.addAccount(myAccount);
 						}catch (Exception e){
 							System.out.println(e.getMessage());
 						}
@@ -68,7 +72,7 @@ public class App
 					String username = InputReader.collectInput("Please enter your username.");
 					String password = InputReader.collectInput("Please enter your password.");
 					try{
-						Account acc = AccountController.fetchAccount(username,password);
+						Account acc = accountController.fetchAccount(username,password);
 
 						if(acc == null){
 							throw new Exception();
@@ -99,7 +103,7 @@ public class App
 			switch (InputReader.readFromOptions("What would you like to do?",new String[]
 					{"Edit My Profile","Manage Groups","Exit"})){
 				case "Edit My Profile":
-					ProfileController.editProfileFields(((Account)sessionVariables.get("account")).getProfile());
+					new ProfileController().editProfileFields(((Account)sessionVariables.get("account")).getProfile());
 					break;
 				case "Manage Groups":
 					//TODO this

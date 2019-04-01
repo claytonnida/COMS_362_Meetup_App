@@ -1,6 +1,7 @@
 package app.Controllers;
 
 import app.MySQL.MySQLHelper;
+import app.interfaces.AccountControllerInterface;
 import app.models.Account;
 import app.models.Profile;
 import app.models.mappers.AccountMapper;
@@ -10,7 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class AccountController {
+public class AccountController implements AccountControllerInterface {
 
 	/**
 	 * Checks the database to see whether an account with the given username already exists
@@ -20,7 +21,8 @@ public class AccountController {
 	 *
 	 * @return True, if the username does not already exist in the server. Otherwise, false.
 	 */
-	private static boolean isUsernameUnique(String username) {
+	@Override
+	public boolean isUsernameUnique(String username) {
 		//TODO: Check the database for the username once it is implemented in future iteration
 
 		return true;
@@ -36,9 +38,10 @@ public class AccountController {
 	 *
 	 * @return True, if the two Strings match. Otherwise, false.
 	 */
-	private static boolean doPasswordsMatch(String password, String comparisonPassword) {
+	@Override
+	public boolean doPasswordsMatch(String password, String comparisonPassword) {
 
-		// Passwords need to match exactly, so we don't normalize the Strings
+		// Passwords need to match exactly, so we don't normalize the Strings.
 
 		if(password == null) {
 			throw new IllegalArgumentException("The password argument cannot be null");
@@ -69,7 +72,8 @@ public class AccountController {
 	 *
 	 * @return The created @{link Account}
 	 */
-	public static Account createAccount(String username, String password, String comparisonPassword) {
+	@Override
+	public Account createAccount(String username, String password, String comparisonPassword) {
 
 		if(username == null) {
 			throw new IllegalArgumentException("ERROR: Username cannot be null");
@@ -102,8 +106,9 @@ public class AccountController {
 	 * @param account
 	 * 		The {@link Account} to be added to the database.
 	 */
-	public static int addAccount(Account account) throws SQLException{
-		int profileId = ProfileController.saveProfile(account.getProfile());
+	@Override
+	public int addAccount(Account account) throws SQLException{
+		int profileId = new ProfileController().saveProfile(account.getProfile());
 		account.setProfileid(profileId);
 		account.getProfile().setId(profileId);
 
@@ -117,14 +122,14 @@ public class AccountController {
 	}
 
 
-
 	/**
 	 * Selects the Account from database and attempts to fill the Profile field
 	 * @param id
 	 * @return
 	 * @throws SQLException
 	 */
-	public static Account fetchAccount(int id)throws SQLException {
+	@Override
+	public Account fetchAccount(int id)throws SQLException {
 		ReflectMapper<Account> mapper = new ReflectMapper<>(Account.class);
 		Account acc = mapper.toObject("Select * from meetup.account where id = "+id);
 
@@ -139,7 +144,9 @@ public class AccountController {
 		return acc;
 	}
 
-	public static Account fetchAccount(String user,String pass)throws SQLException {
+	// TODO: Add javadoc!
+	@Override
+	public Account fetchAccount(String user, String pass) throws SQLException {
 	    Account acc = null;
 
 

@@ -13,9 +13,7 @@ import java.sql.Statement;
 import java.util.Iterator;
 import java.util.List;
 
-// TODO: Make this implement the interface
-// TODO: Add comments
-public class ProfileController {
+public class ProfileController implements ProfileControllerInterface {
 
     /**
      * Creates instance of a {@link Profile} and prompts users to fill out its fields.
@@ -23,7 +21,8 @@ public class ProfileController {
      * @return
      *      Instance of {@link Profile}.
      */
-    public static Profile createProfile()
+    @Override
+    public Profile createProfile()
     {
 
         System.out.println("Time to create your profile!");
@@ -50,7 +49,8 @@ public class ProfileController {
      *
      * @param p {@link Profile} to edit the fields of.
      */
-    public static void editProfileFields(Profile p){
+    @Override
+    public void editProfileFields(Profile p){
         boolean edit = true;
         while(edit) {
             String option = InputReader.readFromOptions("Which field would you like to edit?", Profile.OPTIONS);
@@ -88,7 +88,7 @@ public class ProfileController {
 
         try {
             if(InputReader.requestConfirmation(p))
-                ProfileController.saveProfile(p);
+                saveProfile(p);
             else
                 System.out.println("Profile changes discarded.");
         }catch (SQLException e){
@@ -103,7 +103,8 @@ public class ProfileController {
      *
      * @param p {@link Profile} to edit the online status of.
      */
-    private static void editOnlineStatus(Profile p){
+    @Override
+    public void editOnlineStatus(Profile p){
         System.out.print("Your are currently appearing:\t");
         System.out.println((p.getAppearOffline()==1?"Offline":"Online"));
 
@@ -132,7 +133,8 @@ public class ProfileController {
      *
      * @param p {@link Profile} to set the zodiac sign of.
      */
-    private static void editZodiacSign(Profile p){
+    @Override
+    public void editZodiacSign(Profile p){
         System.out.print("Your current zodiac sign is:\t");
         System.out.println(p.getZodiac());
 
@@ -156,7 +158,8 @@ public class ProfileController {
      *
      * @param p {@link Profile} to set the spirit animal of.
      */
-    private static void editSpiritAnimal(Profile p){
+    @Override
+    public void editSpiritAnimal(Profile p){
         System.out.print("Your current spirit animal is:\t");
         System.out.println(p.getSpiritAnimal());
 
@@ -180,7 +183,8 @@ public class ProfileController {
      *
      * @param p {@link Profile} to set the name of.
      */
-    private static void editName(Profile p){
+    @Override
+    public void editName(Profile p){
         System.out.print("Your current name is:\t");
         System.out.println(p.getName());
 
@@ -204,7 +208,8 @@ public class ProfileController {
      *
      * @param p {@link Profile} to set the major of.
      */
-    private static void editMajor(Profile p){
+    @Override
+    public void editMajor(Profile p){
         System.out.print("Your current major is:\t");
         System.out.println(p.getMajor());
 
@@ -228,7 +233,8 @@ public class ProfileController {
      *
      * @param p {@link Profile} to set the sexual preferences of.
      */
-    private static void editSexPref(Profile p){
+    @Override
+    public void editSexPref(Profile p){
         System.out.print("Your current sexual preference is:\t");
         System.out.println(p.getSexualPref());
         String input = (InputReader.collectInput("Please enter a new sexual preference:"));
@@ -251,7 +257,8 @@ public class ProfileController {
      *
      * @param p {@link Profile} to set the "about me" section of.
      */
-    private static void editAboutMe(Profile p) {
+    @Override
+    public void editAboutMe(Profile p) {
         System.out.println("Your current 'About Me' section is:");
         System.out.println(p.getAboutMe());
         String input = (InputReader.collectInput("Please describe yourself."));
@@ -276,7 +283,8 @@ public class ProfileController {
      *
      * @param p {@link Profile} to set the gender identity of.
      */
-    private static void editGenderId(Profile p){
+    @Override
+    public void editGenderId(Profile p){
         System.out.print("Your current gender identity is:\t");
         System.out.println(p.getGenderId());
         String input = (InputReader.collectInput("Please enter a new gender identity:"));
@@ -301,7 +309,8 @@ public class ProfileController {
      *
      * @param p {@link Profile} to set the age of.
      */
-    private static void editAge(Profile p) {
+    @Override
+    public void editAge(Profile p) {
         System.out.print("Your current age is:\t");
         System.out.println(p.getAge());
         int input = (InputReader.readInputInt("Please enter a age:"));
@@ -328,7 +337,8 @@ public class ProfileController {
      *
      * @throws SQLException
      */
-    public static void updateProfile(Profile p) throws SQLException{
+    @Override
+    public void updateProfile(Profile p) throws SQLException{
 
             ProfileMapper pm = new ProfileMapper();
             Statement stmt = MySQLHelper.createStatement();
@@ -343,7 +353,8 @@ public class ProfileController {
      *
      * @throws SQLException
      */
-    public static void insertProfile(Profile p )throws SQLException{
+    @Override
+    public void insertProfile(Profile p )throws SQLException{
         ProfileMapper pm = new ProfileMapper();
         Statement stmt = MySQLHelper.createStatement();
         String query = pm.toInsertQueryQuery(p);
@@ -353,10 +364,9 @@ public class ProfileController {
 
     /**
      * Lists {@link Profile}s
-     *
-     *
      */
-    public static void listProfiles(){
+    @Override
+    public void listProfiles(){
         try{
             Statement stmt = MySQLHelper.createStatement();
             ResultSet rs = stmt.executeQuery("Select * from meetup.profile");
@@ -376,11 +386,15 @@ public class ProfileController {
      * Sends the profile to database.
      * If profile.id == 0, this method will create an Insert query
      * else this method will create an Update query
-     * @param p
-     * @return
+     *
+     * @param p {@link Profile} to save in the database.
+     *
+     * @return The ID of the {@link Profile} that has been saved or updated in the database.
+     *
      * @throws SQLException
      */
-    public static int saveProfile(Profile p)throws SQLException{
+    @Override
+    public int saveProfile(Profile p)throws SQLException{
         ProfileMapper pm = new ProfileMapper();
 
         if(p.getId() == 0) {
@@ -406,7 +420,8 @@ public class ProfileController {
      * @return
      *      {@link List<Integer>} of IDs associated with online {@link Profile}s.
      */
-    public static List<Integer> filterOnlineConnections(List<Integer> pidList) {
+    @Override
+    public List<Integer> filterOnlineConnections(List<Integer> pidList) {
 
         if(pidList == null) {
             throw new IllegalArgumentException("ERROR! Given pid List cannot be null!");
@@ -429,10 +444,12 @@ public class ProfileController {
      * Queries the database for the "appearsOffline" column for the given Profile ID.
      *
      * @param pid The ID of the {@link Profile} to query the database for.
+     *
      * @return
      *      {@code true} if the "appearsOffline" column for given {@link Profile} in the database is set to {@code true}. {@code false}, otherwise.
      */
-    private static boolean appearsOffline(int pid) {
+    @Override
+    public boolean appearsOffline(int pid) {
         // TODO: Have this actually look at the database for the "appearsOffline"  column
 
         return false;
@@ -446,7 +463,8 @@ public class ProfileController {
      * @return
      *      {@code true} if the given {@link Profile} is online. {@code false}, otherwise.
      */
-    private static boolean checkOnlineStatus(int pid) {
+    @Override
+    public boolean checkOnlineStatus(int pid) {
         // TODO: Ping the server for the actual connection status
 
         return true;
