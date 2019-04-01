@@ -1,14 +1,12 @@
 package app.MySQL;
 
-import app.Controllers.ProfileController;
 import app.InputReader;
-import app.models.Account;
-import app.models.Profile;
-import app.models.mappers.AccountMapper;
-import app.models.mappers.ProfileMapper;
 
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class MySQLHelper {
 
@@ -216,16 +214,14 @@ public class MySQLHelper {
 
     public static void main(String[] args)throws Exception{
 
-        System.out.println("Profiles");
-        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.profile"))){
-            System.out.println(s);
-        }
+	    describeDataBase();
 
-        System.out.println("Accounts");
-        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.account"))){
-            System.out.println(s);
-        }
+	    ResultSet rs = executeQuery("SELECT appearOffline FROM meetup.profile WHERE id = " + 1);
 
+	    while(rs.next()) {
+		    rs.getInt(1);
+		    System.out.println(rs.getString(2));
+        }
     }
 
     private static void resetDatabase()throws SQLException{

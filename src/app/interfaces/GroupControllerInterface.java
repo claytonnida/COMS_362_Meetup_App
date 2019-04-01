@@ -8,8 +8,15 @@ public interface GroupControllerInterface {
     // TODO: Add JavaDocs
     void searchGroup(String sub_string);
 
-    // TODO: Add JavaDocs
-    void leaveGroup(int accountId, int groupId);
+	/**
+	 * Removes the {@link app.models.GroupAssociation} between a {@link Profile} and a {@link Group}.
+	 *
+	 * @param profileId
+	 * 		The ID of the {@link Profile} to disassociate.
+	 * @param groupId
+	 * 		The ID of the {@link Group} to disassociate.
+	 */
+	void leaveGroup(int profileId, int groupId);
 
     // TODO: Add JavaDocs
     void createGroup(Profile p);

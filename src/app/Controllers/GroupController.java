@@ -15,9 +15,17 @@ public class GroupController implements GroupControllerInterface {
 
     }
 
+    /**
+     * Removes the {@link app.models.GroupAssociation} between a {@link Profile} and a {@link Group}.
+     *
+     * @param profileId
+     * 		The ID of the {@link Profile} to disassociate.
+     * @param groupId
+     * 		The ID of the {@link Group} to disassociate.
+     */
     @Override
-    public void leaveGroup(int accountId, int groupId) {
-        new GroupAssociationController().leaveGroup(accountId, groupId);
+    public void leaveGroup(int profileId, int groupId) {
+        new GroupAssociationController().leaveGroup(profileId, groupId);
     }
 
     // TODO: Add JavaDocs
