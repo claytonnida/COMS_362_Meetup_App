@@ -3,10 +3,12 @@ package app.interfaces;
 import app.models.Group;
 import app.models.Profile;
 
+import java.util.List;
+
 public interface GroupControllerInterface {
 
     // TODO: Add JavaDocs
-    void searchGroup(String sub_string);
+    List<Group> searchGroup(String sub_string);
 
     // TODO: Add JavaDocs
     void leaveGroup(int accountId, int groupId);

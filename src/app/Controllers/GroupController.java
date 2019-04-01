@@ -9,6 +9,12 @@ import app.models.Group;
 import app.models.Profile;
 import app.models.mappers.GroupMapper;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static app.MySQL.MySQLHelper.*;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -39,9 +45,21 @@ public class GroupController implements GroupControllerInterface {
     }
 
     // TODO: Add JavaDocs
+    /**
+     * This method searches and lists every group that contains any form of the user's input. If the user's input
+     * is blank, the method will simply list every group
+     * @param sub_string the search criteria provided by the user for their search
+     */
     @Override
-    public void searchGroup(String sub_string) {
-
+    public List<Group> searchGroup(String sub_string) {
+        try {
+            GroupMapper gm = new GroupMapper();
+            List<Group> list = gm.createObjectList(executeQuery("Select * from meetup.group where name like '%"+sub_string+"&'"));
+            return list;
+        } catch (SQLException e) {
+            System.out.println("Sorry we cannot contact the database right now.");
+        }
+        return new ArrayList<Group>();
     }
 
     @Override
