@@ -26,7 +26,7 @@ public class AccountMapper implements ResultMapper<Account> {
      */
     public String toUpdateQueryQuery(Account object) {
         ReflectMapper<Account> pmapper = new ReflectMapper<>(Account.class);
-        return null;//TODO
+        return pmapper.toUpdateStatement(object);
     }
 
     @Override

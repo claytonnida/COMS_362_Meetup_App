@@ -28,7 +28,7 @@ public class ProfileMapper implements ResultMapper<Profile> {
      */
     public String toUpdateQueryQuery(Profile object) {
         ReflectMapper<Profile> pmapper = new ReflectMapper<>(Profile.class);
-        return null;//TODO
+        return pmapper.toUpdateStatement(object);
     }
 
     @Override

@@ -1,8 +1,12 @@
 package app.MySQL;
 
+import app.Controllers.GroupController;
 import app.Controllers.ProfileController;
 import app.InputReader;
+import app.models.Account;
 import app.models.Profile;
+import app.models.mappers.AccountMapper;
+import app.models.mappers.ProfileMapper;
 
 import java.sql.*;
 import java.util.*;
@@ -93,7 +97,7 @@ public class MySQLHelper {
     public static String resultSetToString(ResultSet rs)throws SQLException{
         String str = "";
         ResultSetMetaData rsmd = rs.getMetaData();
-        for(int i = 1; i < rsmd.getColumnCount(); i++){
+        for(int i = 1; i <= rsmd.getColumnCount(); i++){
             if(i > 1){
                 str += ",\t";
             }
@@ -133,6 +137,30 @@ public class MySQLHelper {
         return String.format("INSERT INTO meetup.%s (%s) VALUES (%s) ",table,keys,vals);
     }
 
+    public static String buildUpdateStatement(String table, Map<String,Object> map){
+        int i = 0;
+        Iterator<String> iter = map.keySet().iterator();
+
+        String sets = "";
+        while(iter.hasNext()){
+            String key = iter.next();
+            Object val = map.get(key);
+            if(i > 0){
+                sets += ", ";
+            }
+
+            if(val.getClass().getName().contains("String")){
+                sets += key+" = '"+val.toString()+"'";
+            }else{
+                sets += key+" = "+val.toString();
+            }
+            i++;
+        }
+
+        return String.format("UPDATE meetup.%s " +
+                "SET %s ",table,sets);
+    }
+
     public static List<String> fullResultSetToStringList(ResultSet rs)throws SQLException{
         List<String> list = new ArrayList<>();
         while(rs.next()){
@@ -166,6 +194,7 @@ public class MySQLHelper {
             return true;
         }catch (SQLException sql){
             System.out.println("Oops! Server error! Sorry, whatever was supposed to happen didn't.");
+            sql.printStackTrace();
             return false;
         }
     }
@@ -175,20 +204,33 @@ public class MySQLHelper {
      * @param query
      * @return
      */
-    public static boolean executeQuery(String query){
+    public static ResultSet executeQuery(String query){
         try{
-            createStatement().executeUpdate(query);
-            return true;
+            return createStatement().executeQuery(query);
+
         }catch (SQLException sql){
             System.out.println("Oops! Server error! Sorry, whatever was supposed to happen didn't.");
-            return false;
+            sql.printStackTrace();
+            return null;
         }
     }
 
     public static void main(String[] args)throws Exception{
-        resetDatabase();
-        describeDataBase();
-        //createStatement().executeUpdate("Delete from meetup.account where id = 1");
+
+        System.out.println("Profiles");
+        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.profile"))){
+            System.out.println(s);
+        }
+
+        System.out.println("Accounts");
+        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.account"))){
+            System.out.println(s);
+        }
+
+        System.out.println("Groups");
+        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.group"))){
+            System.out.println(s);
+        }
 
     }
 
@@ -215,11 +257,11 @@ public class MySQLHelper {
                     "name VARCHAR(100), " +
                     "age INT(2), " +
                     "aboutMe VARCHAR(500), " +
-                    "genderId VARCHAR(20), " +
-                    "sexualPref VARCHAR(20), " +
-                    "zodiac VARCHAR(20), " +
-                    "major VARCHAR(20), " +
-                    "spiritAnimal VARCHAR(20), " +
+                    "genderId VARCHAR(50), " +
+                    "sexualPref VARCHAR(50), " +
+                    "zodiac VARCHAR(50), " +
+                    "major VARCHAR(50), " +
+                    "spiritAnimal VARCHAR(50), " +
                     "appearOffline INT(1), " +
                     "PRIMARY KEY ( id )" +
                     ");");
@@ -227,7 +269,7 @@ public class MySQLHelper {
             stmt.executeUpdate("create table meetup.account (" +
                     "id INT NOT NULL AUTO_INCREMENT, " +
                     "username VARCHAR(50), " +
-                    "password VARCHAR(20), " +
+                    "password VARCHAR(50), " +
                     "profileid INT(11), " +
                     "PRIMARY KEY ( id )" +
                     ");");
