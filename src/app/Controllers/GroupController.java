@@ -7,6 +7,7 @@ import app.models.Account;
 import app.models.Group;
 import app.models.Profile;
 import app.models.mappers.GroupMapper;
+import jdk.internal.util.xml.impl.Input;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -161,6 +162,15 @@ public class GroupController implements GroupControllerInterface {
             case "Create a Group":
                 gc.createGroup(account.getProfile());
                 break;
+            case "Search Groups":
+                gc.findGroups();
+                break;
         }
+    }
+
+    public List<Group> findGroups(){
+        String input = InputReader.collectInput("Please enter a sub string to search all Groups containing the search value");
+        GroupController gc = new GroupController();
+        return gc.searchGroup(input);
     }
 }
