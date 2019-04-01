@@ -560,16 +560,29 @@ public class ProfileController implements ProfileControllerInterface {
     /**
      * Pings the server to see if {@link Profile} associated with given ID is online.
      *
-     * @param pid The ID of the {@link Profile} to ping the server for.
+     * @param profileId The ID of the {@link Profile} to ping the server for.
      *
      * @return
      *      {@code true} if the given {@link Profile} is online. {@code false}, otherwise.
      */
     @Override
-    public boolean checkOnlineStatus(int pid) {
+    public boolean checkOnlineStatus(int profileId) {
         // TODO: Ping the server for the actual connection status
 
-        return true;
+        ResultSet rs = MySQLHelper.executeQuery("SELECT isOnline FROM meetup.profile where id = " + profileId);
+
+        try {
+            rs.next();
+            return rs.getInt(1) == 1;
+        }
+        catch(SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        catch(NullPointerException e) {
+            System.out.println("ERROR! The given Profile ID does not exist or the \"apearOffline\" column has a value of null!");
+            return false;
+        }
     }
 
 }
