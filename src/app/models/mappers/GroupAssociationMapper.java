@@ -1,5 +1,7 @@
 package app.models.mappers;
 
+import app.MySQL.MySQLHelper;
+import app.models.Group;
 import app.models.GroupAssociation;
 
 import java.sql.ResultSet;
@@ -21,6 +23,12 @@ public class GroupAssociationMapper implements ResultMapper<GroupAssociation> {
 	}
 
 	@Override
+	public List<GroupAssociation> createObjectList(String query) throws SQLException {
+		ResultSet rs = MySQLHelper.createStatement().executeQuery(query);
+		return createObjectList(rs);
+	}
+
+	@Override
 	/**
 	 * Creates an Update query from the provided object
 	 *
@@ -36,7 +44,8 @@ public class GroupAssociationMapper implements ResultMapper<GroupAssociation> {
 	 *
 	 */
 	public String toInsertQueryQuery(GroupAssociation object) {
-		ReflectMapper<GroupAssociation> pmapper = new ReflectMapper<>(GroupAssociation.class);
-		return pmapper.toInsertStatement(object);
+		//INSERT INTO meetup.%s (%s) VALUES (%s)
+		return String.format("Insert into meetup.groupAssociation (profileid, groupid) values (%d,%d)",
+				object.getProfileid(),object.getGroupid());
 	}
 }

@@ -14,6 +14,10 @@ public interface ResultMapper<T> {
     //Creates a list of the desired object
     public List<T> createObjectList(ResultSet rs) throws SQLException;
 
+
+    //Creates a list of the desired object from query
+    public List<T> createObjectList(String query) throws SQLException;
+
     //Should create an UPDATE statement that allows a WHERE clause to be appended
     public abstract String toUpdateQueryQuery(T object);
 

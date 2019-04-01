@@ -1,10 +1,11 @@
 package app.models;
 
 import app.interfaces.GroupInterface;
+import app.interfaces.Selectable;
 
-public class Group implements GroupInterface {
+public class Group implements GroupInterface, Selectable {
 
-    private int group_id;
+    private int id;
     private String name;
     private String isPublic;
     private int created_by;
@@ -22,13 +23,13 @@ public class Group implements GroupInterface {
     }
 
     @Override
-    public int getGroup_id() {
-        return group_id;
+    public int getId() {
+        return id;
     }
 
     @Override
-    public void setGroup_id(int group_id) {
-        this.group_id = group_id;
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
@@ -49,5 +50,10 @@ public class Group implements GroupInterface {
     @Override
     public void setIsPublic(String isPublic) {
         this.isPublic = isPublic;
+    }
+
+    @Override
+    public String getSelectionPrompt() {
+        return getName();
     }
 }

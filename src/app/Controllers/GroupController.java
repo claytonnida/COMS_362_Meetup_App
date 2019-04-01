@@ -3,9 +3,12 @@ package app.Controllers;
 import app.InputReader;
 import app.MySQL.MySQLHelper;
 import app.interfaces.GroupControllerInterface;
+import app.interfaces.Selectable;
 import app.models.Account;
 import app.models.Group;
+import app.models.GroupAssociation;
 import app.models.Profile;
+import app.models.mappers.GroupAssociationMapper;
 import app.models.mappers.GroupMapper;
 import jdk.internal.util.xml.impl.Input;
 
@@ -15,8 +18,33 @@ import java.util.List;
 
 import static app.MySQL.MySQLHelper.*;
 
+import java.sql.ResultSet;
+import java.sql.Statement;
+
 public class GroupController implements GroupControllerInterface {
 
+    public List<Group> getGroupsForUser(Profile p){
+        try {
+
+            //TODO make this a join statement
+            GroupMapper gm = new GroupMapper();
+            ResultSet rs = MySQLHelper.createStatement().executeQuery(
+                    "Select groupid from meetup.groupAssociation where profileid = "+p.getId());
+
+            List<Group> groups = new ArrayList<>();
+            while(rs.next()){
+                ResultSet gs = MySQLHelper.executeQuery("Select * from meetup.group where id = "+rs.getInt("groupid"));
+                groups.addAll(gm.createObjectList(gs));
+            }
+
+            return groups;
+        }catch (SQLException e){
+            System.out.println("Failed to fetch groups");
+            return new ArrayList<>();
+        }
+    }
+
+    // TODO: Add JavaDocs
     /**
      * This method searches and lists every group that contains any form of the user's input. If the user's input
      * is blank, the method will simply list every group
@@ -60,9 +88,8 @@ public class GroupController implements GroupControllerInterface {
                 //TODO push changes to database
                 System.out.println("Group confirmed.");
 
-                GroupMapper gm = new GroupMapper();
-                String insertQuery = gm.toInsertQueryQuery(group);
-                boolean success = MySQLHelper.executeUpdate(insertQuery);
+
+                boolean success = createGroupInDB(group);
                 if(success)
                     editGroup = false;
             }else {
@@ -73,6 +100,32 @@ public class GroupController implements GroupControllerInterface {
         }
 
         System.out.println("Group creation complete.");
+    }
+
+    public static boolean createGroupInDB(Group group){
+        try{
+            GroupMapper gm = new GroupMapper();
+            String insertQuery = gm.toInsertQueryQuery(group);
+
+            Statement stmt = MySQLHelper.createStatement();
+            stmt.executeUpdate(insertQuery);
+            ResultSet rs = stmt.executeQuery("Select @@identity");
+            rs.next();
+
+            int id = rs.getInt(1);
+            GroupAssociation ga = new GroupAssociation();
+            ga.setGroupid(id);
+            ga.setProfileid(group.getCreated_by());
+            GroupAssociationMapper gam = new GroupAssociationMapper();
+            String insert = gam.toInsertQueryQuery(ga);
+            stmt.executeUpdate(insert);
+
+            return true;
+        }catch (Exception e){
+            System.out.println("Failed to send the group to the server.");
+            e.printStackTrace();
+            return false;
+        }
     }
 
     // TODO: Add JavaDocs
@@ -143,7 +196,7 @@ public class GroupController implements GroupControllerInterface {
 
         boolean  confirm = InputReader.requestConfirmation(input);
         if(confirm){
-            g.setName(input);
+            g.setIsPublic(input);
         }else{
             boolean cancel = InputReader.requestCancel();
             if(cancel){
@@ -156,14 +209,33 @@ public class GroupController implements GroupControllerInterface {
 
     public void manageGroups(Account account){
         GroupController gc = new GroupController();
+        List<Group> groups = null;
+        Group group;
 
         switch (InputReader.readFromOptions("What do you want to do?",
-                new String[]{"Create a Group","Exit"})){
+                new String[]{"Create a Group","My Groups","Search For Groups","Exit"})){
             case "Create a Group":
                 gc.createGroup(account.getProfile());
                 break;
-            case "Search Groups":
-                gc.findGroups();
+            case "Search For Groups":
+                groups = gc.findGroups();
+                group = selectGroup(groups,account);
+                if(group==null) {
+                    manageGroups(account);
+                }
+                else {
+                    System.out.println(group.getName() + " selected");
+                }
+                // TODO Dan, after searching groups, you should open up GroupController.showGroups(...)
+                //   - Supply your list of groups as arg
+                break;
+            case "My Groups":
+                groups = gc.getGroupsForUser(account.getProfile());
+                group = selectGroup(groups,account);
+                if(group==null)manageGroups(account);
+                else
+                System.out.println(group.getName()+" selected");
+                //TODO
                 break;
         }
     }
@@ -172,5 +244,11 @@ public class GroupController implements GroupControllerInterface {
         String input = InputReader.collectInput("Please enter a sub string to search all Groups containing the search value");
         GroupController gc = new GroupController();
         return gc.searchGroup(input);
+    }
+
+    public Group selectGroup(List<Group> groups, Account account){
+
+        Group g = (Group)InputReader.readFromOptions("Choose a group",new ArrayList<Selectable>(groups));
+        return g;
     }
 }

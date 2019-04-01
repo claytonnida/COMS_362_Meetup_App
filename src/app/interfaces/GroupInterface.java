@@ -6,9 +6,9 @@ public interface GroupInterface {
 
    void setCreated_by(int created_by);
 
-   int getGroup_id();
+   int getId();
 
-   void setGroup_id(int group_id);
+   void setId(int id);
 
    String getName();
 

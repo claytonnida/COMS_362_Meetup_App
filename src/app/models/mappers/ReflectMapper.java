@@ -27,6 +27,7 @@ public class ReflectMapper<T> {
         className = canonicalName.split("\\.")[canonicalName.split("\\.").length-1];
         className = Character.toLowerCase(className.charAt(0))+className.substring(1);
 
+        /*
         useTableName = "";
         for(Character c: className.toCharArray()){
             if(Character.isUpperCase(c)){
@@ -35,6 +36,8 @@ public class ReflectMapper<T> {
                 useTableName += Character.toLowerCase(c);
             }
         }
+        */
+        useTableName = className;
 
         className = className.toLowerCase();
 

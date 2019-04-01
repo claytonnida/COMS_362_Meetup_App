@@ -1,5 +1,8 @@
 package app;
 
+import app.interfaces.Selectable;
+
+import java.util.List;
 import java.util.Scanner;
 
 public class InputReader {
@@ -10,6 +13,47 @@ public class InputReader {
 	private static Scanner scanner = new Scanner(System.in);
 
 
+	public static Selectable readFromOptions(String prompt,List<Selectable> list){
+		System.out.print(String.format("%s\n", prompt));
+		String options[] = new String[list.size()+1];
+		for(int i = 0; i < list.size(); i++){
+			options[i] = list.get(i).getSelectionPrompt();
+		}
+		options[list.size()] = "Cancel";
+
+		//List options for user
+		for(int i = 0; i < options.length; i++) {
+			//note that indexing starts at 1 and not 0 for option listing
+			System.out.println(String.format("\t[%d]\t%s", (i + 1), options[i]));
+		}
+
+		//Collect user's decision
+		System.out.print("Enter the number of your selection:\t");
+		String input = scanner.nextLine();
+		//sanitize input of non-digits to make easier usability
+		input = input.replaceAll("\\D", "");
+		int intput = 0;//haha get it?
+		try {
+			//subtract 1 to account for the offset of indexing options
+			intput = Integer.parseInt(input.trim()) - 1;
+		}
+		catch(Exception e) {
+			System.out.println("That was not a number.");
+			return readFromOptions(prompt, list);
+		}
+
+		//evaluate user's decision
+		if(options[intput].equalsIgnoreCase("Cancel")) {
+			return null;
+		}
+		if(intput >= 0 && intput < options.length-1) {
+			return list.get(intput);
+		}
+		else {
+			System.out.println("The number you entered is out of range.");
+			return readFromOptions(prompt, list);
+		}
+	}
 
 	/**
 	 * Displays the prompt and then takes user input
