@@ -5,7 +5,7 @@ import app.interfaces.Selectable;
 
 public class Group implements GroupInterface, Selectable {
 
-    private int group_id;
+    private int id;
     private String name;
     private String isPublic;
     private int created_by;
@@ -23,13 +23,13 @@ public class Group implements GroupInterface, Selectable {
     }
 
     @Override
-    public int getGroup_id() {
-        return group_id;
+    public int getId() {
+        return id;
     }
 
     @Override
-    public void setGroup_id(int group_id) {
-        this.group_id = group_id;
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override

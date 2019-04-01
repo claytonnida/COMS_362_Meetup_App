@@ -72,11 +72,14 @@ public class MySQLHelper {
 
         //Describe each table
         for(String table: tables){
+            String pri = getPrimaryKeyForTable(table);
             System.out.println(table);
             String query = String.format("describe meetup.%s",table);
             ResultSet trs = s.executeQuery(query);
             while (trs.next()){
                 String description = String.format("\t%s:%s",trs.getString(1),trs.getString(2));
+                if(trs.getString(1).equals(pri))
+                    description += " (PRIMARY)";
                 System.out.println(description);
             }
         }
@@ -215,6 +218,8 @@ public class MySQLHelper {
     }
 
     public static void main(String[] args)throws Exception{
+
+        describeDataBase();
 
         System.out.println("Profiles");
         for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.profile"))){

@@ -6,7 +6,9 @@ import app.interfaces.GroupControllerInterface;
 import app.interfaces.Selectable;
 import app.models.Account;
 import app.models.Group;
+import app.models.GroupAssociation;
 import app.models.Profile;
+import app.models.mappers.GroupAssociationMapper;
 import app.models.mappers.GroupMapper;
 
 import java.sql.SQLException;
@@ -105,10 +107,20 @@ public class GroupController implements GroupControllerInterface {
             Statement stmt = MySQLHelper.createStatement();
             stmt.executeUpdate(insertQuery);
             ResultSet rs = MySQLHelper.createStatement().executeQuery("Select @@identity");
+            rs.next();
+
+            int id = rs.getInt(1);
+            GroupAssociation ga = new GroupAssociation();
+            ga.setGroup_id(id);
+            ga.setUser_id(group.getCreated_by());
+            GroupAssociationMapper gam = new GroupAssociationMapper();
+            String insert = gam.toInsertQueryQuery(ga);
+            stmt.executeUpdate(insert);
 
             return true;
         }catch (Exception e){
             System.out.println("Failed to send the group to the server.");
+            e.printStackTrace();
             return false;
         }
     }
@@ -181,7 +193,7 @@ public class GroupController implements GroupControllerInterface {
 
         boolean  confirm = InputReader.requestConfirmation(input);
         if(confirm){
-            g.setName(input);
+            g.setIsPublic(input);
         }else{
             boolean cancel = InputReader.requestCancel();
             if(cancel){
