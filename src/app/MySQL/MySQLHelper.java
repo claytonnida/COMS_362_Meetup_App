@@ -1,5 +1,6 @@
 package app.MySQL;
 
+import app.Controllers.GroupController;
 import app.Controllers.ProfileController;
 import app.InputReader;
 import app.models.Account;
@@ -224,6 +225,19 @@ public class MySQLHelper {
         System.out.println("Accounts");
         for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.account"))){
             System.out.println(s);
+        }
+
+        System.out.println("Groups");
+        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.group"))){
+            System.out.println(s);
+        }
+
+        GroupController gc = new GroupController();
+        String input = InputReader.collectInput("Please enter your search terms");
+        List<app.models.Group> list = gc.searchGroup(input);
+        System.out.println(list.size());
+        for(int i = 0; i < list.size(); i++){
+            System.out.println(list.get(i).getName());
         }
 
     }
