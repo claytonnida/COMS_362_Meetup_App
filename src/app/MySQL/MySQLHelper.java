@@ -219,10 +219,13 @@ public class MySQLHelper {
 
     public static void main(String[] args)throws Exception{
 
-	    describeDataBase();
 
-	    ResultSet rs = executeQuery("SELECT appearOffline FROM meetup.profile WHERE id = " + 1);
+	    executeUpdate("Update meetup.profile set aboutMe = 'Nate\\'s profile' where id = 1");
 
+        System.out.println("Profiles");
+        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.profile"))){
+            System.out.println(s);
+        }
 
         System.out.println("Groups");
         for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.group"))){

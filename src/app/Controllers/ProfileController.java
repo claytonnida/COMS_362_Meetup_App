@@ -3,6 +3,8 @@ package app.Controllers;
 import app.InputReader;
 import app.MySQL.MySQLHelper;
 import app.interfaces.ProfileControllerInterface;
+import app.models.Account;
+import app.models.Group;
 import app.models.Profile;
 import app.models.mappers.ProfileMapper;
 
@@ -16,6 +18,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -572,4 +575,9 @@ public class ProfileController implements ProfileControllerInterface {
         return true;
     }
 
+    public Profile selectProfile(List<Profile> profiles, Account account){
+
+        Profile p = (Profile)InputReader.readFromOptions("Choose a group",new ArrayList<>(profiles));
+        return p;
+    }
 }

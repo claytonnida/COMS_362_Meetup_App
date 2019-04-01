@@ -276,33 +276,57 @@ public class GroupController implements GroupControllerInterface {
         return g;
     }
 
+    /**
+     * Guide user through prompts to manage a particular group
+     * @param account
+     * @param group
+     */
     public void manageGroup(Account account, Group group){
-        switch (InputReader.readFromOptions("Edit "+group.getName(),
-                new String[]{"Edit Group","Leave Group","Delete Group","Edit Group","Exit"})){
-            case "Edit Group":
-                try{
-                    int id = ((Account)App.sessionVariables.get("account")).getProfile().getId();
-                    ResultSet rs = MySQLHelper.executeQuery("Select * from meetup.group where created_by = "+id
-                            +" and id = "+group.getId());
-                    if(!rs.next()){
-                        System.out.println("You are not the owner of this group.");
-                        return;
-                    }
-                }catch (SQLException e){
-                    manageGroup(account,group);
-                }
-                editGroupFields(group);
-                break;
-            case "Delete Group":
+        String[] options = new String[]{"Edit Group","Leave Group","Delete Group","Edit Group","Exit"};
 
-                //TODO Implement remove group
+        //Ask user what they would like to do
+        switch (InputReader.readFromOptions("Edit "+group.getName(), options)){
+
 
             case "Leave Group":
                 leaveGroup(account.getProfileid(),group.getId());
                 break;
+            case "Edit Group":
+                if(isOwnerOfGroup(account,group)) {
+                    editGroupFields(group);
+                    break;
+                }else {
+                    System.out.println("Cannot edit this group because you are not the owner");
+                }
+
+            case "Delete Group":
+                if(isOwnerOfGroup(account,group)) {
+                    //TODO delete group
+                    break;
+                }else {
+                    System.out.println("Cannot delete this group because you are not the owner");
+                }
+                //TODO Implement remove group
+
+                //don't add a break; - That way we go back to manageGroups if editGroupFields is denied
             case "Exit":
                 manageGroups(account);
                 break;
+        }
+    }
+
+    public boolean isOwnerOfGroup(Account a, Group g){
+        try{
+
+            //Check if user is owner of the group, if not, they cannot edit
+            int id = a.getProfile().getId();
+            ResultSet rs = MySQLHelper.executeQuery("Select * from meetup.group where created_by = "+id
+                    +" and id = "+g.getId());
+
+            //rs.next() = false when no rows are returned. ie user is not owner
+            return rs.next();
+        }catch (SQLException e){
+            return false;
         }
     }
 }

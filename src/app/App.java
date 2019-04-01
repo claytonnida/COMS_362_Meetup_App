@@ -6,11 +6,10 @@ import app.Controllers.GroupController;
 import app.Controllers.ProfileController;
 import app.models.Account;
 import app.models.Profile;
-import app.models.mappers.AccountMapper;
 import app.models.mappers.ProfileMapper;
-import com.sun.org.apache.bcel.internal.classfile.PMGClass;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class App
@@ -104,11 +103,16 @@ public class App
 		}
 	}
 
+	/**
+	 * Leads user through prompts to use the app
+	 */
 	private static void runApp(){
 		boolean play = true;
+		ProfileController pc = new ProfileController();
 		while(play){
 			switch (InputReader.readFromOptions("What would you like to do?",new String[]
-					{"Edit My Profile","Edit Online Status","Manage Groups","Exit"})){
+					{"Edit My Profile","Edit Online Status",
+							"Browse Profiles","Manage Groups","Exit"})){
 				case "Edit My Profile":
 					new ProfileController().editProfileFields(((Account)sessionVariables.get("account")).getProfile());
 					break;
@@ -118,9 +122,19 @@ public class App
 					gc.manageGroups(((Account)sessionVariables.get("account")));
 					break;
 				case "Edit Online Status":
-					ProfileController pc = new ProfileController();
 					pc.editOnlineStatus(((Account)sessionVariables.get("account")).getProfile());
 					break;
+				case "Browse Profiles":
+					//TODO implement fully and elsewhere
+					try {
+						ProfileMapper pm = new ProfileMapper();
+						List<Profile> profileList = pm.createObjectList("Select * from meetup.profile where id != " +
+								((Account) sessionVariables.get("account")).getProfile().getId());
+						Profile p = pc.selectProfile(profileList,((Account)sessionVariables.get("account")));
+
+					}catch (Exception e){
+						System.out.println("Can't browse files at this time.");
+					}
 				case "Exit":
 					if(InputReader.inputYesNo("Are you sure you want to quit?"))
 						play = false;
