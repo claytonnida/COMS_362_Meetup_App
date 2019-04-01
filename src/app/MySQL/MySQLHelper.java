@@ -219,7 +219,8 @@ public class MySQLHelper {
 
     public static void main(String[] args)throws Exception{
 
-        describeDataBase();
+
+        //describeDataBase();
 
         System.out.println("Profiles");
         for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.profile"))){

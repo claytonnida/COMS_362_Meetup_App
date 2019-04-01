@@ -2,11 +2,11 @@ package app.interfaces;
 
 public interface GroupAssociationInterface {
 
-    int getUser_id();
+    int getProfileid();
 
-    void setUser_id(int user_id);
+    void setProfileid(int profileid);
 
-    int getGroup_id();
+    int getGroupid();
 
-    void setGroup_id(int group_id);
+    void setGroupid(int groupid);
 }

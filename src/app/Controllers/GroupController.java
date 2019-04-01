@@ -18,10 +18,7 @@ import java.util.List;
 import static app.MySQL.MySQLHelper.*;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
 public class GroupController implements GroupControllerInterface {
 
@@ -35,8 +32,8 @@ public class GroupController implements GroupControllerInterface {
 
             List<Group> groups = new ArrayList<>();
             while(rs.next()){
-                ResultSet gs = MySQLHelper.executeQuery("Select * from group where id = "+rs.getInt("groupid"));
-                groups.add(gm.createObject(gs));
+                ResultSet gs = MySQLHelper.executeQuery("Select * from meetup.group where id = "+rs.getInt("groupid"));
+                groups.addAll(gm.createObjectList(gs));
             }
 
             return groups;
@@ -106,13 +103,13 @@ public class GroupController implements GroupControllerInterface {
 
             Statement stmt = MySQLHelper.createStatement();
             stmt.executeUpdate(insertQuery);
-            ResultSet rs = MySQLHelper.createStatement().executeQuery("Select @@identity");
+            ResultSet rs = stmt.executeQuery("Select @@identity");
             rs.next();
 
             int id = rs.getInt(1);
             GroupAssociation ga = new GroupAssociation();
-            ga.setGroup_id(id);
-            ga.setUser_id(group.getCreated_by());
+            ga.setGroupid(id);
+            ga.setProfileid(group.getCreated_by());
             GroupAssociationMapper gam = new GroupAssociationMapper();
             String insert = gam.toInsertQueryQuery(ga);
             stmt.executeUpdate(insert);

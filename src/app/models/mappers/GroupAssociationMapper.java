@@ -44,7 +44,8 @@ public class GroupAssociationMapper implements ResultMapper<GroupAssociation> {
 	 *
 	 */
 	public String toInsertQueryQuery(GroupAssociation object) {
-		ReflectMapper<GroupAssociation> pmapper = new ReflectMapper<>(GroupAssociation.class);
-		return pmapper.toInsertStatement(object);
+		//INSERT INTO meetup.%s (%s) VALUES (%s)
+		return String.format("Insert into meetup.groupAssociation (profileid, groupid) values (%d,%d)",
+				object.getProfileid(),object.getGroupid());
 	}
 }
