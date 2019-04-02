@@ -12,12 +12,16 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class ProfileController implements ProfileControllerInterface {
 
@@ -110,35 +114,26 @@ public class ProfileController implements ProfileControllerInterface {
      * A series of prompts to guide the user through creating their Profile picture
      */
     public static void setPicture(Profile p) {
-        String input = InputReader.collectInput("Is the picture you wish to use saved in the file structure? [y/n]");
-        boolean upload_complete = false;
-        if (input.equals("y")) {
-            input = InputReader.collectInput("Good! Now please enter the name of your picture file. (include .jpg, .png, etc.)");
+        //String input = InputReader.collectInput("Is the picture you wish to use saved in the file structure? [y/n]");
+        //boolean upload_complete = false;
+        //if (input.equals("y")) {
+        if(p.getPictureURL() == null) {
+            String input = InputReader.collectInput("Please paste the URL of the image you wish to save");
             try {
                 ///////
 
-                BufferedImage input_picture = ImageIO.read(new File(input));
+                File image_file = new File(input);
+                String file_name = input;
+                //URL url = new URL(input);
+                //URLConnection connection = url.openConnection();
+                //connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36");
+                BufferedImage input_picture = ImageIO.read(image_file);
                 boolean confirm = InputReader.requestConfirmation(input);
                 if (confirm) {
                     p.setPicture(input_picture);
-                    /*
-                     * This section will need to be changed once the server is set up to something more like:
-                     * try {
-                     * 		URL url = new URL(getCodeBase(), "pictures/sobble_is_best.png");
-                     * 		img = ImageIO.read(url);
-                     * }catch(IOException e){
-                     * 		System.out.println("The picture you specified seems to be unavailable, please try again");
-                     * }
-                     */
-                    ///////
+                    p.setPictureURL(file_name);
                     System.out.println("Your profile picture was added successfully! The following picture will be displayed.");
-                    JFrame frame = new JFrame();
-                    frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-                    frame.getContentPane().setLayout(new GridLayout(1, 1));
-                    ImagePanel panel = new ImagePanel(p.getPicture());
-                    frame.getContentPane().add(panel);
-                    frame.pack();
-                    frame.setVisible(true);
+                    displayPicture(p.getPicture());
                 } else {
                     boolean cancel = InputReader.requestCancel();
                     if (cancel) {
@@ -151,13 +146,34 @@ public class ProfileController implements ProfileControllerInterface {
                 System.out.println("The file name you specified was invalid, please try again");
                 setPicture(p);
             }
-        } else {
-            System.out.println("No worries! Just follow these simple steps to upload your picture to the file structure:");
-            System.out.println("1- Open up your File Explorer to the location of your picture");
-            System.out.println("2- Make sure you have this project open in your IDE");
-            System.out.println("3- Simply drag your image over the 'COMS_362_Meetup_App' and drop it");
-            System.out.println("4- Confirm the addition of the file to the project and then rerun the application. You should now be able to access your picture!");
         }
+        else{
+            try {
+                File f = new File(p.getPictureURL());
+                BufferedImage img = ImageIO.read(f);
+                displayPicture(img);
+                boolean confirm = InputReader.requestConfirmation("Your current profile image is displayed as shown. Are you sure you want to change?");
+                if(confirm){
+                    p.setPictureURL(null);
+                    setPicture(p);
+                }
+                else{
+                    System.out.println("Your Profile picture will remain unchanged");
+                }
+            }
+            catch(IOException e){
+                System.out.println("Oops! Looks like an error occured. Your old Profile picture may no longer be stored in your computer");
+                p.setPictureURL(null);
+                setPicture(p);
+            }
+        }
+        //} else {
+        //    System.out.println("No worries! Just follow these simple steps to upload your picture to the file structure:");
+        //    System.out.println("1- Open up your File Explorer to the location of your picture");
+        //    System.out.println("2- Make sure you have this project open in your IDE");
+        //    System.out.println("3- Simply drag your image over the 'COMS_362_Meetup_App' and drop it");
+        //    System.out.println("4- Confirm the addition of the file to the project and then rerun the application. You should now be able to access your picture!");
+        //}
     }
 
         /**
@@ -186,6 +202,20 @@ public class ProfileController implements ProfileControllerInterface {
                 editOnlineStatus(p);
             }
         }
+    }
+
+    /**
+     * This is a helper method that will display images using JFrame
+     * @param img BufferedImage that is to be displayed
+     */
+    public static void displayPicture(BufferedImage img){
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        frame.getContentPane().setLayout(new GridLayout(1, 1));
+        ImagePanel panel = new ImagePanel(img);
+        frame.getContentPane().add(panel);
+        frame.pack();
+        frame.setVisible(true);
     }
 
     /**

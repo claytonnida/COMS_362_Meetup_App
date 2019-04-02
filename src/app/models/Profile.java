@@ -20,6 +20,8 @@ public class Profile implements ProfileInterface
 	private String name = "Anonymous";
 	private BufferedImage picture;
 
+	private String pictureURL;
+
 	//If you change these values, you will also need to change ProfileController.editProfileFields(...)
 	public static final String[] OPTIONS = {"Name", "About Me", "Age", "Gender Identity",
             "Sexual Preference", "Major", "Spirit Animal", "Zodiac Sign", "Picture", "done"};
@@ -148,6 +150,22 @@ public class Profile implements ProfileInterface
 	@Override
 	public void setAppearOffline(int appearOffline) {
 		this.appearOffline = appearOffline;
+	}
+
+	/**
+	 * Gets the Profile's picture URL stored on the local machine
+	 * @return URL for the user's current profile picture on the local
+	 */
+	public String getPictureURL() {
+		return pictureURL;
+	}
+
+	/**
+	 * Sets the Profile' picture stored on the local machine
+	 * @param pictureURL URL given for storage
+	 */
+	public void setPictureURL(String pictureURL) {
+		this.pictureURL = pictureURL;
 	}
 
 	// TODO: Javadoc
