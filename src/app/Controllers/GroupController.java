@@ -59,6 +59,11 @@ public class GroupController implements GroupControllerInterface {
             for(int i = 0; i < list.size(); i++){
                 if(!list.get(i).getName().matches("(?i).*?"+sub_string+".*")){
                     list.remove(i);
+                    i--;
+                }else
+                if(list.get(i).getIsPublic().equals("Private")){
+                    list.remove(i);
+                    i--;
                 }
             }
             return list;
@@ -225,10 +230,19 @@ public class GroupController implements GroupControllerInterface {
         Group group;
 
         switch (InputReader.readFromOptions("What do you want to do?",
-                new String[]{"Create a Group","All Groups","My Groups","Search For Groups","Exit"})){
+                new String[]{"Groups I'm In","My Groups","Create a Group","All Groups","Search For Groups","Exit"})){
             case "Create a Group":
                 gc.createGroup(account.getProfile());
                 break;
+            case "My Groups":
+                groups = getGroupsByUser(account);
+                group = selectGroup(groups,account);
+                if(group==null) {
+                    manageGroups(account);
+                }
+                else {
+                    manageGroup(account,group);
+                }
             case "Search For Groups":
                 groups = gc.findGroups();
                 group = selectGroup(groups,account);
@@ -241,7 +255,7 @@ public class GroupController implements GroupControllerInterface {
                 // TODO Dan, after searching groups, you should open up GroupController.showGroups(...)
                 //   - Supply your list of groups as arg
                 break;
-            case "My Groups":
+            case "Groups I'm In":
                 groups = gc.getGroupsForUser(account.getProfile());
                 group = selectGroup(groups,account);
                 if(group==null) {
@@ -264,6 +278,16 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
+    public List<Group> getGroupsByUser(Account account){
+        GroupMapper gm = new GroupMapper();
+        try {
+            return gm.createObjectList("Select * from meetup.group where created_by = "+account.getProfile().getId());
+        }catch (SQLException e){
+            System.out.println("Sorry, couldn't get your groups");
+            return new ArrayList<>();
+        }
+    }
+
     public List<Group> findGroups(){
         String input = InputReader.collectInput("Please enter a sub string to search all Groups containing the search value");
         GroupController gc = new GroupController();
@@ -283,6 +307,7 @@ public class GroupController implements GroupControllerInterface {
      */
     public void manageGroup(Account account, Group group){
         String[] options = new String[]{"Edit Group","Leave Group","Delete Group","Edit Group","Exit"};
+        GroupMapper gm = new GroupMapper();
 
         //Ask user what they would like to do
         switch (InputReader.readFromOptions("Edit "+group.getName(), options)){
@@ -294,6 +319,8 @@ public class GroupController implements GroupControllerInterface {
             case "Edit Group":
                 if(isOwnerOfGroup(account,group)) {
                     editGroupFields(group);
+                    String query = gm.toUpdateQueryQuery(group);
+                    MySQLHelper.executeUpdate(query);
                     break;
                 }else {
                     System.out.println("Cannot edit this group because you are not the owner");

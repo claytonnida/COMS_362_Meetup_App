@@ -89,9 +89,11 @@ public class MySQLHelper {
         try{
             Statement stmt = createStatement();
             ResultSet rs = stmt.executeQuery("show tables in meetup");
-            return rs.next();
+            boolean con = rs.next();
+            System.out.println(con?"Successful connection":"Failed to Connect");
+            return con;
         }catch (Exception e){
-            e.printStackTrace();
+            System.out.println("Failed to Connect");
             return false;
         }
     }
@@ -129,7 +131,7 @@ public class MySQLHelper {
             keys += key;
 
             if(val.getClass().getName().contains("String")){
-                vals += String.format("'%s'",val.toString());
+                vals += String.format("'%s'",val.toString().replaceAll("'","\\\\'"));
             }else{
                 vals += val.toString();
             }
@@ -152,7 +154,7 @@ public class MySQLHelper {
             }
 
             if(val.getClass().getName().contains("String")){
-                sets += key+" = '"+val.toString()+"'";
+                sets += key+" = '"+val.toString().replaceAll("'","\\\\'")+"'";
             }else{
                 sets += key+" = "+val.toString();
             }
@@ -219,8 +221,7 @@ public class MySQLHelper {
 
     public static void main(String[] args)throws Exception{
 
-
-	    executeUpdate("Update meetup.profile set aboutMe = 'Nate\\'s profile' where id = 1");
+        describeDataBase();
 
         System.out.println("Profiles");
         for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.profile"))){
