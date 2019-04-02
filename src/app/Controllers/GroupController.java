@@ -4,23 +4,20 @@ import app.App;
 import app.InputReader;
 import app.MySQL.MySQLHelper;
 import app.interfaces.GroupControllerInterface;
-import app.interfaces.Selectable;
 import app.models.Account;
 import app.models.Group;
 import app.models.GroupAssociation;
 import app.models.Profile;
 import app.models.mappers.GroupAssociationMapper;
 import app.models.mappers.GroupMapper;
-import jdk.internal.util.xml.impl.Input;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import static app.MySQL.MySQLHelper.*;
-
-import java.sql.ResultSet;
-import java.sql.Statement;
+import static app.MySQL.MySQLHelper.executeQuery;
 
 public class GroupController implements GroupControllerInterface {
 
@@ -45,11 +42,11 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
-    // TODO: Add JavaDocs
     /**
      * This method searches and lists every group that contains any form of the user's input. If the user's input
      * is blank, the method will simply list every group
-     * @param sub_string the search criteria provided by the user for their search
+     *
+     * @param sub_string The search criteria provided by the user for their search
      */
     @Override
     public List<Group> searchGroup(String sub_string) {
@@ -57,7 +54,7 @@ public class GroupController implements GroupControllerInterface {
             GroupMapper gm = new GroupMapper();
             List<Group> list = gm.createObjectList(executeQuery("Select * from meetup.group"));
             for(int i = 0; i < list.size(); i++){
-                if(!list.get(i).getName().matches("(?i).*?"+sub_string+".*")){
+                if(!list.get(i).getName().toLowerCase().contains(sub_string.toLowerCase())) {
                     list.remove(i);
                     i--;
                 }else
