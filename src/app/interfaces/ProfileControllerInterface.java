@@ -5,7 +5,6 @@ import app.models.Profile;
 import java.sql.SQLException;
 import java.util.List;
 
-//TODO: Add comments
 public interface ProfileControllerInterface {
 
     /**

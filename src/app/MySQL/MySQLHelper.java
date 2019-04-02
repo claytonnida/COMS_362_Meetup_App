@@ -1,6 +1,5 @@
 package app.MySQL;
 
-import app.Controllers.GroupController;
 import app.Controllers.ProfileController;
 import app.InputReader;
 import app.models.Account;
@@ -9,7 +8,10 @@ import app.models.mappers.AccountMapper;
 import app.models.mappers.ProfileMapper;
 
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class MySQLHelper {
 
@@ -73,14 +75,11 @@ public class MySQLHelper {
 
         //Describe each table
         for(String table: tables){
-            String pri = getPrimaryKeyForTable(table);
             System.out.println(table);
             String query = String.format("describe meetup.%s",table);
             ResultSet trs = s.executeQuery(query);
             while (trs.next()){
                 String description = String.format("\t%s:%s",trs.getString(1),trs.getString(2));
-                if(trs.getString(1).equals(pri))
-                    description += " (PRIMARY)";
                 System.out.println(description);
             }
         }
@@ -90,9 +89,11 @@ public class MySQLHelper {
         try{
             Statement stmt = createStatement();
             ResultSet rs = stmt.executeQuery("show tables in meetup");
-            return rs.next();
+            boolean con = rs.next();
+            System.out.println(con?"Successful connection":"Failed to Connect");
+            return con;
         }catch (Exception e){
-            e.printStackTrace();
+            System.out.println("Failed to Connect");
             return false;
         }
     }
@@ -130,7 +131,7 @@ public class MySQLHelper {
             keys += key;
 
             if(val.getClass().getName().contains("String")){
-                vals += String.format("'%s'",val.toString());
+                vals += String.format("'%s'",val.toString().replaceAll("'","\\\\'"));
             }else{
                 vals += val.toString();
             }
@@ -153,7 +154,7 @@ public class MySQLHelper {
             }
 
             if(val.getClass().getName().contains("String")){
-                sets += key+" = '"+val.toString()+"'";
+                sets += key+" = '"+val.toString().replaceAll("'","\\\\'")+"'";
             }else{
                 sets += key+" = "+val.toString();
             }
@@ -220,13 +221,10 @@ public class MySQLHelper {
 
     public static void main(String[] args)throws Exception{
 
+        describeDataBase();
+
         System.out.println("Profiles");
         for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.profile"))){
-            System.out.println(s);
-        }
-
-        System.out.println("Accounts");
-        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.account"))){
             System.out.println(s);
         }
 

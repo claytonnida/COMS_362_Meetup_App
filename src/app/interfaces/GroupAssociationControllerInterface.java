@@ -1,12 +1,16 @@
 package app.interfaces;
 
+import app.models.Group;
+import app.models.Profile;
+
 public interface GroupAssociationControllerInterface {
 
     /**
-     * Removes the {@link app.models.GroupAssociation} between an {@link app.models.Account} and a {@link app.models.Group}.
+     * Removes the {@link app.models.GroupAssociation} between a {@link Profile} and a {@link Group}.
      *
-     * @param accountId The ID of the {@link app.models.Account} to disassociate.
-     * @param groupId The ID of the {@link app.models.Group} to disassociate.
+     * @param profileId The ID of the {@link Profile} to disassociate.
+     *
+     * @param groupId The ID of the {@link Group} to disassociate.
      */
-    void leaveGroup(int accountId, int groupId);
+    void leaveGroup(int profileId, int groupId);
 }

@@ -147,6 +147,7 @@ public class ReflectMapper<T> {
             field.setAccessible(true);
             if (type.getName().contains("String")) {
                 String value = rs.getString(fieldName);
+                value.replaceAll("'","\\'");
                 field.set(obj, value);
             } else {
                 int value = rs.getInt(fieldName);

@@ -1,17 +1,16 @@
 package app;
 
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import app.Controllers.AccountController;
 import app.Controllers.GroupController;
 import app.Controllers.ProfileController;
 import app.models.Account;
 import app.models.Profile;
-import app.models.mappers.AccountMapper;
 import app.models.mappers.ProfileMapper;
-import com.sun.org.apache.bcel.internal.classfile.PMGClass;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class App
 {
@@ -34,14 +33,11 @@ public class App
 
 		String input = InputReader.readFromOptions("Welcome!", new String[]{"Login", "Sign Up", "Exit"});
 
-
-
 		switch (input) {
 			case "Sign Up":
 				while (true) {
 					System.out.println();
 					String username = InputReader.collectInput("Please enter a username for the account.");
-
 
 					String password = InputReader.collectInput("Please enter a password for the account.");
 
@@ -58,6 +54,9 @@ public class App
 							System.out.println(e.getMessage());
 						}
 
+						// TODO: Remove once server is implemented.
+						//MySQLHelper.executeUpdate("update meetup.profile set isOnline = 1 where id = " + myAccount.getProfileid());
+
 						sessionVariables.put("account", myAccount);
 						break;
 					} catch (IllegalArgumentException e) {
@@ -67,15 +66,14 @@ public class App
 				}
 				break;
 			case "Login":
-				Account account = null;
 				boolean keepTrying = true;
-				while (keepTrying && account == null){
+				while(keepTrying && myAccount == null) {
 					String username = InputReader.collectInput("Please enter your username.");
 					String password = InputReader.collectInput("Please enter your password.");
 
 					if(username.equals("dev")&&password.equalsIgnoreCase("dev")){
-						account = Account.getOfflineProfile();
-						sessionVariables.put("account",account);
+						myAccount = Account.getOfflineProfile();
+						sessionVariables.put("account", myAccount);
 					}else {
 						try {
 							Account acc = accountController.fetchAccount(username, password);
@@ -83,32 +81,49 @@ public class App
 							if (acc == null) {
 								throw new Exception();
 							}
-							account = acc;
-							sessionVariables.put("account", account);
-							System.out.println("Successfully loaded everythinng");
+							myAccount = acc;
+							sessionVariables.put("account", myAccount);
+
+							// TODO: Remove once server is implemented.
+							//MySQLHelper.executeUpdate("update meetup.profile set isOnline = 1 where id = " + myAccount.getProfileid());
+
+							System.out.println("Successfully loaded everything");
 						} catch (Exception e) {
 							System.out.println("Couldn't fetch profile");
 							keepTrying = InputReader.inputYesNo("Try Again?");
 						}
 					}
 				}
-				if(account==null)
+				if(myAccount == null)
 					startup();
 				break;
 			case "Exit":
-				System.out.println("No? Okay then. Have a good day!");
-				InputReader.closeInputReader();
-				System.exit(0);
-
-
+				exitApp();
+				break;
 		}
 	}
 
+	private static void exitApp() {
+		System.out.println("No? Okay then. Have a good day!");
+
+		// TODO: Remove once server is implemented.
+		//MySQLHelper.executeUpdate("update meetup.profile set isOnline = 0 where id = " +
+		//		((Account) sessionVariables.get("account")).getProfileid());
+
+		InputReader.closeInputReader();
+		System.exit(0);
+	}
+
+	/**
+	 * Leads user through prompts to use the app
+	 */
 	private static void runApp(){
 		boolean play = true;
+		ProfileController pc = new ProfileController();
 		while(play){
 			switch (InputReader.readFromOptions("What would you like to do?",new String[]
-					{"Edit My Profile","Edit Online Status","Manage Groups","Exit"})){
+					{"Edit My Profile","Edit Online Status",
+							"Browse Profiles","Manage Groups","Exit"})){
 				case "Edit My Profile":
 					new ProfileController().editProfileFields(((Account)sessionVariables.get("account")).getProfile());
 					break;
@@ -118,17 +133,25 @@ public class App
 					gc.manageGroups(((Account)sessionVariables.get("account")));
 					break;
 				case "Edit Online Status":
-					ProfileController pc = new ProfileController();
 					pc.editOnlineStatus(((Account)sessionVariables.get("account")).getProfile());
 					break;
+				case "Browse Profiles":
+					//TODO implement fully and elsewhere
+					try {
+						ProfileMapper pm = new ProfileMapper();
+						List<Profile> profileList = pm.createObjectList("Select * from meetup.profile where id != " +
+								((Account) sessionVariables.get("account")).getProfile().getId());
+						Profile p = pc.selectProfile(profileList,((Account)sessionVariables.get("account")));
+
+					}catch (Exception e){
+						System.out.println("Can't browse files at this time.");
+					}
 				case "Exit":
-					if(InputReader.inputYesNo("Are you sure you want to quit?"))
-						play = false;
+					if(InputReader.inputYesNo("Are you sure you want to quit?")) {
+						exitApp();
+					}
 					break;
 			}
 		}
 	}
-
-
-
 }

@@ -1,11 +1,12 @@
 package app.models;
 
 import app.interfaces.ProfileInterface;
+import app.interfaces.Selectable;
 
 import java.awt.image.BufferedImage;
 
 
-public class Profile implements ProfileInterface
+public class Profile implements ProfileInterface, Selectable
 {
 	private int id;
 	private int age = 0;
@@ -187,5 +188,10 @@ public class Profile implements ProfileInterface
 	@Override
 	public String toString(){
 		return getProfileDetails();
+	}
+
+	@Override
+	public String getSelectionPrompt() {
+		return String.format("%s\t\t(%s)",getName(),((getAppearOffline()==1)?"Offline":"Online"));
 	}
 }
