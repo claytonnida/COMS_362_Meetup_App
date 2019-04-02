@@ -54,7 +54,7 @@ public class App
 						}
 
 						// TODO: Remove once server is implemented.
-						MySQLHelper.executeUpdate("update meetup.profile set isOnline = 1 where id = " + myAccount.getProfileid());
+						//MySQLHelper.executeUpdate("update meetup.profile set isOnline = 1 where id = " + myAccount.getProfileid());
 
 						sessionVariables.put("account", myAccount);
 						break;
@@ -84,7 +84,7 @@ public class App
 							sessionVariables.put("account", myAccount);
 
 							// TODO: Remove once server is implemented.
-							MySQLHelper.executeUpdate("update meetup.profile set isOnline = 1 where id = " + myAccount.getProfileid());
+							//MySQLHelper.executeUpdate("update meetup.profile set isOnline = 1 where id = " + myAccount.getProfileid());
 
 							System.out.println("Successfully loaded everything");
 						} catch (Exception e) {
@@ -106,8 +106,8 @@ public class App
 		System.out.println("No? Okay then. Have a good day!");
 
 		// TODO: Remove once server is implemented.
-		MySQLHelper.executeUpdate("update meetup.profile set isOnline = 0 where id = " +
-				((Account) sessionVariables.get("account")).getProfileid());
+		//MySQLHelper.executeUpdate("update meetup.profile set isOnline = 0 where id = " +
+		//		((Account) sessionVariables.get("account")).getProfileid());
 
 		InputReader.closeInputReader();
 		System.exit(0);

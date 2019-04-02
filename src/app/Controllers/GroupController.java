@@ -8,6 +8,7 @@ import app.models.Account;
 import app.models.Group;
 import app.models.GroupAssociation;
 import app.models.Profile;
+import app.models.mappers.AccountMapper;
 import app.models.mappers.GroupAssociationMapper;
 import app.models.mappers.GroupMapper;
 
@@ -138,8 +139,27 @@ public class GroupController implements GroupControllerInterface {
     //TODO CLAYTON: this should take the group id and not the group name,
     //  Otherwise you will delete all groups with that name
     @Override
-    public void removeGroup(String gname) {
-
+    public void removeGroup(Group group, Account account) {
+    	if(group.getCreated_by() == account.getId())
+    	{
+                boolean confirm = InputReader.requestConfirmation(group);
+                if(confirm){
+                  
+                	try {
+                		Statement stmt = MySQLHelper.createStatement();
+                		stmt.executeUpdate("DELETE FROM meetup.group WHERE id =" + group.getId() +";");
+                		stmt.executeUpdate("DELETE FROM meetup.groupAssociation WHERE groupid =" + group.getId() +";");
+                		System.out.println("Group " + group.getName() + " was deleted.");
+                	}catch (Exception e){
+                		System.out.println("Failed to remove group.");
+                		e.printStackTrace();
+                	}
+               
+                }
+    	}else {
+    		System.out.println("I'm sorry, you are not the creator of this group. So you cannot remove it.");
+    	}
+    	
     }
 
     // TODO: Add JavaDocs
@@ -275,7 +295,7 @@ public class GroupController implements GroupControllerInterface {
 
     public void manageGroup(Account account, Group group){
         switch (InputReader.readFromOptions("Edit "+group.getName(),
-                new String[]{"Edit Group","Leave Group","Delete Group","Edit Group","Exit"})){
+                new String[]{"Edit Group","Leave Group","Delete Group","Exit"})){
             case "Edit Group":
                 try{
                     int id = ((Account)App.sessionVariables.get("account")).getProfile().getId();
@@ -291,9 +311,8 @@ public class GroupController implements GroupControllerInterface {
                 editGroupFields(group);
                 break;
             case "Delete Group":
-
-                //TODO Implement remove group
-
+                removeGroup(group, account);
+                break;
             case "Leave Group":
                 leaveGroup(account.getProfileid(),group.getId());
                 break;
