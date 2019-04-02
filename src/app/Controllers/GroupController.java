@@ -1,5 +1,13 @@
 package app.Controllers;
 
+import static app.MySQL.MySQLHelper.executeQuery;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import app.App;
 import app.InputReader;
 import app.MySQL.MySQLHelper;
@@ -10,14 +18,6 @@ import app.models.GroupAssociation;
 import app.models.Profile;
 import app.models.mappers.GroupAssociationMapper;
 import app.models.mappers.GroupMapper;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-
-import static app.MySQL.MySQLHelper.executeQuery;
 
 public class GroupController implements GroupControllerInterface {
 
@@ -140,11 +140,20 @@ public class GroupController implements GroupControllerInterface {
     }
 
     // TODO: Add JavaDocs
-    //TODO CLAYTON: this should take the group id and not the group name,
-    //  Otherwise you will delete all groups with that name
     @Override
-    public void removeGroup(String gname) {
-
+    public void removeGroup(Group group) {
+        boolean confirm = InputReader.requestConfirmation(group);
+        if(confirm){
+        	try {
+        		Statement stmt = MySQLHelper.createStatement();
+        		stmt.executeUpdate("DELETE FROM meetup.group WHERE id =" + group.getId() +";");
+        		stmt.executeUpdate("DELETE FROM meetup.groupAssociation WHERE groupid =" + group.getId() +";");
+        		System.out.println("Group " + group.getName() + " was deleted.");
+        	}catch (Exception e){
+        		System.out.println("Failed to remove group.");
+        		e.printStackTrace();
+        	}
+        }
     }
 
     // TODO: Add JavaDocs
@@ -303,29 +312,41 @@ public class GroupController implements GroupControllerInterface {
      * @param group
      */
     public void manageGroup(Account account, Group group){
-        String[] options = new String[]{"Edit Group","Leave Group","Delete Group","Edit Group","Exit"};
+        String[] options = new String[]{"Edit Group","Leave Group","Delete Group","Exit"};
         GroupMapper gm = new GroupMapper();
 
         //Ask user what they would like to do
         switch (InputReader.readFromOptions("Edit "+group.getName(), options)){
-
-
+            case "Edit Group":
+                try{
+                    int id = ((Account)App.sessionVariables.get("account")).getProfile().getId();
+                    ResultSet rs = MySQLHelper.executeQuery("Select * from meetup.group where created_by = "+id
+                            +" and id = "+group.getId());
+                    if(!rs.next()){
+                        System.out.println("You are not the owner of this group.");
+                        return;
+                    }
+                }catch (SQLException e){
+                    manageGroup(account,group);
+                }
+                editGroupFields(group);
+                break;
             case "Leave Group":
                 leaveGroup(account.getProfileid(),group.getId());
                 break;
-            case "Edit Group":
-                if(isOwnerOfGroup(account,group)) {
-                    editGroupFields(group);
-                    String query = gm.toUpdateQueryQuery(group);
-                    MySQLHelper.executeUpdate(query);
-                    break;
-                }else {
-                    System.out.println("Cannot edit this group because you are not the owner");
-                }
+          //  case "Edit Group":
+          //      if(isOwnerOfGroup(account,group)) {
+        //            editGroupFields(group);
+        //            String query = gm.toUpdateQueryQuery(group);
+         //           MySQLHelper.executeUpdate(query);
+        //            break;
+        //        }else {
+       //             System.out.println("Cannot edit this group because you are not the owner");
+       //         }
 
             case "Delete Group":
                 if(isOwnerOfGroup(account,group)) {
-                    //TODO delete group
+                    removeGroup(group);
                     break;
                 }else {
                     System.out.println("Cannot delete this group because you are not the owner");

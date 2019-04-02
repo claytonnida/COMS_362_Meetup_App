@@ -1,5 +1,6 @@
 package app.interfaces;
 
+import app.models.Account;
 import app.models.Group;
 import app.models.Profile;
 
@@ -24,7 +25,7 @@ public interface GroupControllerInterface {
     void createGroup(Profile p);
 
     // TODO: Add JavaDocs
-    void removeGroup(String gname);
+    public void removeGroup(Group group);
 
     // TODO: Add JavaDocs
     void rankGroup(int rank);
