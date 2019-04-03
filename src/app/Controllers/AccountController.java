@@ -23,9 +23,17 @@ public class AccountController implements AccountControllerInterface {
 	 */
 	@Override
 	public boolean isUsernameUnique(String username) {
-		//TODO: Check the database for the username once it is implemented in future iteration
 
-		return true;
+		ResultSet rs = MySQLHelper.executeQuery("SELECT * FROM meetup.account WHERE username = \"" + username + "\"");
+
+		try {
+			return !rs.first();
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+
+		return false;
 	}
 
 	/**
