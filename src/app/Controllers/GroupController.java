@@ -175,8 +175,8 @@ public class GroupController implements GroupControllerInterface {
         		rs.next();
         		int rankTotal = rs.getInt("rankTotal") + rank;
         		int numRanks = rs.getInt("numRanks") + 1;
-        		stmt.executeUpdate("UPDATE meetup.group SET rankTotal ="+rankTotal+", numRanks ="+numRanks+", rankAvg="+(rankTotal/numRanks) +" WHERE id="+ group.getId() +";");
-        		
+        		stmt.executeUpdate("UPDATE meetup.group SET rankTotal ="+rankTotal+", numRanks ="+numRanks+", rankAvg="+((double)rankTotal/(double)numRanks) +" WHERE id="+ group.getId() +";");
+  
         		System.out.println("You rated " + group.getName() + " with a rating of " + rank +".");
         	}catch (Exception e){
         		System.out.println("Failed to rank group.");

@@ -11,7 +11,7 @@ public class Group implements GroupInterface, Selectable {
     private int created_by;
     private int rankTotal;
     private int numRanks;
-    private int rankAvg;
+    private double rankAvg;
     
 
     public static final String[] visibilityOptions = new String[]{"Public","Private"};
@@ -55,9 +55,21 @@ public class Group implements GroupInterface, Selectable {
     public void setIsPublic(String isPublic) {
         this.isPublic = isPublic;
     }
+    
+    @Override
+    public double getRankAvg() {
+    	return rankAvg;
+    }
+    
+    @Override
+    public void setRankAvg(double rankAvg) {
+    	this.rankAvg = rankAvg;
+    }
 
     @Override
     public String getSelectionPrompt() {
-        return getName();
+        return getName() + "  Rating: " + getRankAvg() + "/5";
     }
+    
+   
 }
