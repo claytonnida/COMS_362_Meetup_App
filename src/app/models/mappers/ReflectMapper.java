@@ -39,7 +39,6 @@ public class ReflectMapper<T> {
         */
         useTableName = className;
 
-        className = className.toLowerCase();
 
     }
 

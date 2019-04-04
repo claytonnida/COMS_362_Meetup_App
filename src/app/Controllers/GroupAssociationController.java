@@ -17,7 +17,7 @@ public class GroupAssociationController implements GroupAssociationControllerInt
      */
     @Override
     public void leaveGroup(int profileId, int groupId) {
-        MySQLHelper.executeUpdate("DELETE FROM meetup.groupassociation " +
+        MySQLHelper.executeUpdate("DELETE FROM meetup.groupAssociation " +
                 "where profileid = " + profileId +
                 " and groupid = " + groupId
         );

@@ -8,6 +8,7 @@ import java.util.Map;
 import app.Controllers.AccountController;
 import app.Controllers.GroupController;
 import app.Controllers.ProfileController;
+import app.MySQL.MySQLHelper;
 import app.models.Account;
 import app.models.Profile;
 import app.models.mappers.ProfileMapper;
@@ -55,7 +56,7 @@ public class App
 						}
 
 						// TODO: Remove once server is implemented.
-						//MySQLHelper.executeUpdate("update meetup.profile set isOnline = 1 where id = " + myAccount.getProfileid());
+						MySQLHelper.executeUpdate("update meetup.profile set isOnline = 1 where id = " + myAccount.getProfileid());
 
 						sessionVariables.put("account", myAccount);
 						break;
@@ -85,7 +86,7 @@ public class App
 							sessionVariables.put("account", myAccount);
 
 							// TODO: Remove once server is implemented.
-							//MySQLHelper.executeUpdate("update meetup.profile set isOnline = 1 where id = " + myAccount.getProfileid());
+							MySQLHelper.executeUpdate("update meetup.profile set isOnline = 1 where id = " + myAccount.getProfileid());
 
 							System.out.println("Successfully loaded everything");
 						} catch (Exception e) {
@@ -107,8 +108,8 @@ public class App
 		System.out.println("No? Okay then. Have a good day!");
 
 		// TODO: Remove once server is implemented.
-		//MySQLHelper.executeUpdate("update meetup.profile set isOnline = 0 where id = " +
-		//		((Account) sessionVariables.get("account")).getProfileid());
+		MySQLHelper.executeUpdate("update meetup.profile set isOnline = 0 where id = " +
+				((Account) sessionVariables.get("account")).getProfileid());
 
 		InputReader.closeInputReader();
 		System.exit(0);
@@ -142,10 +143,10 @@ public class App
 						List<Profile> profileList = pm.createObjectList("Select * from meetup.profile where id != " +
 								((Account) sessionVariables.get("account")).getProfile().getId());
 						Profile p = pc.selectProfile(profileList,((Account)sessionVariables.get("account")));
-
 					}catch (Exception e){
 						System.out.println("Can't browse files at this time.");
 					}
+                    break;
 				case "Exit":
 					if(InputReader.inputYesNo("Are you sure you want to quit?")) {
 						exitApp();

@@ -249,6 +249,7 @@ public class GroupController implements GroupControllerInterface {
                 else {
                     manageGroup(account,group);
                 }
+                break;
             case "Search For Groups":
                 groups = gc.findGroups();
                 group = selectGroup(groups,account);
@@ -317,33 +318,20 @@ public class GroupController implements GroupControllerInterface {
 
         //Ask user what they would like to do
         switch (InputReader.readFromOptions("Edit "+group.getName(), options)){
-            case "Edit Group":
-                try{
-                    int id = ((Account)App.sessionVariables.get("account")).getProfile().getId();
-                    ResultSet rs = MySQLHelper.executeQuery("Select * from meetup.group where created_by = "+id
-                            +" and id = "+group.getId());
-                    if(!rs.next()){
-                        System.out.println("You are not the owner of this group.");
-                        return;
-                    }
-                }catch (SQLException e){
-                    manageGroup(account,group);
-                }
-                editGroupFields(group);
-                break;
+
             case "Leave Group":
                 leaveGroup(account.getProfileid(),group.getId());
                 break;
-          //  case "Edit Group":
-          //      if(isOwnerOfGroup(account,group)) {
-        //            editGroupFields(group);
-        //            String query = gm.toUpdateQueryQuery(group);
-         //           MySQLHelper.executeUpdate(query);
-        //            break;
-        //        }else {
-       //             System.out.println("Cannot edit this group because you are not the owner");
-       //         }
-
+            case "Edit Group":
+                if(isOwnerOfGroup(account,group)) {
+                    editGroupFields(group);
+                    String query = gm.toUpdateQueryQuery(group);
+                    MySQLHelper.executeUpdate(query);
+                }else {
+                    System.out.println("Cannot edit this group because you are not the owner");
+                }
+                manageGroups(account);
+                break;
             case "Delete Group":
                 if(isOwnerOfGroup(account,group)) {
                     removeGroup(group);
@@ -352,8 +340,8 @@ public class GroupController implements GroupControllerInterface {
                     System.out.println("Cannot delete this group because you are not the owner");
                 }
                 //TODO Implement remove group
-
-                //don't add a break; - That way we go back to manageGroups if editGroupFields is denied
+                manageGroups(account);
+                break;
             case "Exit":
                 manageGroups(account);
                 break;

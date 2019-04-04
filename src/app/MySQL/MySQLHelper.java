@@ -3,8 +3,10 @@ package app.MySQL;
 import app.Controllers.ProfileController;
 import app.InputReader;
 import app.models.Account;
+import app.models.GroupAssociation;
 import app.models.Profile;
 import app.models.mappers.AccountMapper;
+import app.models.mappers.GroupAssociationMapper;
 import app.models.mappers.ProfileMapper;
 
 import java.sql.*;
@@ -221,7 +223,11 @@ public class MySQLHelper {
 
     public static void main(String[] args)throws Exception{
 
-        describeDataBase();
+        //describeDataBase();
+        //executeUpdate("Update meetup.group set isPublic = 'Public' where id != ");
+
+        GroupAssociationMapper gam = new GroupAssociationMapper();
+        System.out.println(gam.toUpdateQueryQuery(new GroupAssociation()));
 
         System.out.println("Profiles");
         for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.profile"))){
@@ -268,6 +274,8 @@ public class MySQLHelper {
                     "major VARCHAR(50), " +
                     "spiritAnimal VARCHAR(50), " +
                     "appearOffline INT(1), " +
+                    "isOnline INT(1), " +
+                    "pictureURL varchar(255), " +
                     "PRIMARY KEY ( id )" +
                     ");");
 

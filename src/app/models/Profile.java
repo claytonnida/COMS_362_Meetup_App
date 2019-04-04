@@ -18,6 +18,7 @@ public class Profile implements ProfileInterface, Selectable
 	private String major;
 	private String spiritAnimal;
 	private String zodiac;
+    private int isOnline;
 	private String name = "Anonymous";
 	private BufferedImage picture;
 
@@ -27,8 +28,15 @@ public class Profile implements ProfileInterface, Selectable
 	public static final String[] OPTIONS = {"Name", "About Me", "Age", "Gender Identity",
             "Sexual Preference", "Major", "Spirit Animal", "Zodiac Sign", "Picture", "done"};
 
+    public int getIsOnline() {
+        return isOnline;
+    }
 
-	// TODO: Javadoc
+    public void setIsOnline(int isOnline) {
+        this.isOnline = isOnline;
+    }
+
+    // TODO: Javadoc
 	@Override
 	public int getId() {
 		return id;

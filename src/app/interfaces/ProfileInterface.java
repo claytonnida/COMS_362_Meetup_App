@@ -2,6 +2,11 @@ package app.interfaces;
 
 public interface ProfileInterface
 {
+
+	public int getIsOnline();
+
+	public void setIsOnline(int isOnline);
+
 	// TODO: Javadoc
 	int getId() ;
 

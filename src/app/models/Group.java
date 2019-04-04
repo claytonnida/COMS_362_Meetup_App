@@ -6,8 +6,8 @@ import app.interfaces.Selectable;
 public class Group implements GroupInterface, Selectable {
 
     private int id;
-    private String name;
-    private String isPublic;
+    private String name = "New Group";
+    private String isPublic = "Public";
     private int created_by;
 
     public static final String[] visibilityOptions = new String[]{"Public","Private"};
@@ -55,5 +55,11 @@ public class Group implements GroupInterface, Selectable {
     @Override
     public String getSelectionPrompt() {
         return getName();
+    }
+
+    public String toString(){
+        String str = "Name:\t"+getName()+
+                "\nVisibility:\t"+getIsPublic();
+        return str;
     }
 }
