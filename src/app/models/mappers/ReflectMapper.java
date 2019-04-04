@@ -148,7 +148,11 @@ public class ReflectMapper<T> {
                 String value = rs.getString(fieldName);
                 value.replaceAll("'","\\'");
                 field.set(obj, value);
-            } else {
+            } else if (type.getName().contains("double"))
+            {  
+            	double value = rs.getDouble(fieldName);
+            	field.set(obj, value);
+            }else {
                 int value = rs.getInt(fieldName);
                 field.set(obj, value);
             }

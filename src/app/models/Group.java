@@ -9,6 +9,10 @@ public class Group implements GroupInterface, Selectable {
     private String name = "New Group";
     private String isPublic = "Public";
     private int created_by;
+    private int rankTotal;
+    private int numRanks;
+    private double rankAvg;
+
 
     public static final String[] visibilityOptions = new String[]{"Public","Private"};
 
@@ -53,8 +57,18 @@ public class Group implements GroupInterface, Selectable {
     }
 
     @Override
+    public double getRankAvg() {
+    	return rankAvg;
+    }
+
+    @Override
+    public void setRankAvg(double rankAvg) {
+    	this.rankAvg = rankAvg;
+    }
+
+    @Override
     public String getSelectionPrompt() {
-        return getName();
+        return getName() + "  Rating: " + getRankAvg() + "/5";
     }
 
     public String toString(){

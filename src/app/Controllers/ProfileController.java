@@ -4,7 +4,6 @@ import app.InputReader;
 import app.MySQL.MySQLHelper;
 import app.interfaces.ProfileControllerInterface;
 import app.models.Account;
-import app.models.Group;
 import app.models.Profile;
 import app.models.mappers.ProfileMapper;
 
@@ -179,13 +178,14 @@ public class ProfileController implements ProfileControllerInterface {
         //}
     }
 
-        /**
-         * A series of prompts to guide user through editing their online status.
-         *
-         * @param p {@link Profile} to edit the online status of.
-         */
-        @Override
-        public void editOnlineStatus(Profile p) {
+    /**
+     * A series of prompts to guide user through editing their online status.
+     *
+     * @param p
+     * 		{@link Profile} to edit the online status of.
+     */
+    @Override
+    public void editOnlineStatus(Profile p) {
             System.out.print("Your are currently appearing:\t");
             System.out.println((p.getAppearOffline() == 1 ? "Offline" : "Online"));
 

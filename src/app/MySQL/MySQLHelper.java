@@ -223,26 +223,24 @@ public class MySQLHelper {
 
     public static void main(String[] args)throws Exception{
 
-        //describeDataBase();
+        describeDataBase();
         //executeUpdate("Update meetup.group set isPublic = 'Public' where id != ");
 
-        GroupAssociationMapper gam = new GroupAssociationMapper();
-        System.out.println(gam.toUpdateQueryQuery(new GroupAssociation()));
 
         System.out.println("Profiles");
         for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.profile"))){
             System.out.println(s);
         }
-
-        System.out.println("Groups");
-        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.group"))){
-            System.out.println(s);
-        }
-
-        System.out.println("GroupAssociations");
-        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.groupAssociation"))){
-            System.out.println(s);
-        }
+//
+//        System.out.println("Groups");
+//        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.group"))){
+//            System.out.println(s);
+//        }
+//
+//        System.out.println("GroupAssociations");
+//        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.groupAssociation"))){
+//            System.out.println(s);
+//        }
     }
 
     private static void resetDatabase()throws SQLException{

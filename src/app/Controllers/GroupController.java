@@ -94,7 +94,7 @@ public class GroupController implements GroupControllerInterface {
         while(editGroup){
             editGroupFields(group);
 
-            boolean confirm = InputReader.requestConfirmation(group);
+            boolean confirm = InputReader.requestConfirmation(group.getName());
             if(confirm){
                 //TODO push changes to database
                 System.out.println("Group confirmed.");
@@ -142,7 +142,7 @@ public class GroupController implements GroupControllerInterface {
     // TODO: Add JavaDocs
     @Override
     public void removeGroup(Group group) {
-        boolean confirm = InputReader.requestConfirmation(group);
+        boolean confirm = InputReader.requestConfirmation(group.getName());
         if(confirm){
         	try {
         		Statement stmt = MySQLHelper.createStatement();
@@ -158,8 +158,31 @@ public class GroupController implements GroupControllerInterface {
 
     // TODO: Add JavaDocs
     @Override
-    public void rankGroup(int rank) {
+    public void rankGroup(Group group) {
+    	String prompt = "Please enter a ranking of 1-5. (5 being the highest)";
+    	int rank = InputReader.readInputInt(prompt);
+    	System.out.println("Rank entered was " +rank);
+    	if(rank != 1 && rank != 2 && rank != 3 && rank != 4 && rank != 5)
+    	{
+    		System.out.println("I'm sorry, that wasn't a correct input.");
+        	rankGroup(group);
+    	}
+    	boolean confirm = InputReader.requestConfirmation(rank);
+        if(confirm){
+        	try {
+        		Statement stmt = MySQLHelper.createStatement();
+        		ResultSet rs = stmt.executeQuery("SELECT * FROM meetup.group WHERE id=" + group.getId() + ";");
+        		rs.next();
+        		int rankTotal = rs.getInt("rankTotal") + rank;
+        		int numRanks = rs.getInt("numRanks") + 1;
+        		stmt.executeUpdate("UPDATE meetup.group SET rankTotal ="+rankTotal+", numRanks ="+numRanks+", rankAvg="+((double)rankTotal/(double)numRanks) +" WHERE id="+ group.getId() +";");
 
+        		System.out.println("You rated " + group.getName() + " with a rating of " + rank +".");
+        	}catch (Exception e){
+        		System.out.println("Failed to rank group.");
+        		e.printStackTrace();
+        	}
+        }
     }
 
     /**
@@ -313,7 +336,7 @@ public class GroupController implements GroupControllerInterface {
      * @param group
      */
     public void manageGroup(Account account, Group group){
-        String[] options = new String[]{"Edit Group","Leave Group","Delete Group","Exit"};
+        String[] options = new String[]{"Edit Group","Leave Group","Rank Group","Delete Group","Exit"};
         GroupMapper gm = new GroupMapper();
 
         //Ask user what they would like to do
@@ -322,6 +345,7 @@ public class GroupController implements GroupControllerInterface {
             case "Leave Group":
                 leaveGroup(account.getProfileid(),group.getId());
                 break;
+
             case "Edit Group":
                 if(isOwnerOfGroup(account,group)) {
                     editGroupFields(group);
@@ -332,6 +356,11 @@ public class GroupController implements GroupControllerInterface {
                 }
                 manageGroups(account);
                 break;
+
+            case "Rank Group":
+            	rankGroup(group);
+                manageGroups(account);
+            	break;
             case "Delete Group":
                 if(isOwnerOfGroup(account,group)) {
                     removeGroup(group);

@@ -28,7 +28,7 @@ public interface GroupControllerInterface {
     public void removeGroup(Group group);
 
     // TODO: Add JavaDocs
-    void rankGroup(int rank);
+    void rankGroup(Group group);
 
     /**
      * A series of prompts to guide user through editing their profile
