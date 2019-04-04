@@ -1,10 +1,6 @@
 package app;
 
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import app.Controllers.AccountController;
 import app.Controllers.GroupController;
 import app.Controllers.ProfileController;
@@ -12,6 +8,10 @@ import app.MySQL.MySQLHelper;
 import app.models.Account;
 import app.models.Profile;
 import app.models.mappers.ProfileMapper;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class App
 {
