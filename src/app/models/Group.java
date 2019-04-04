@@ -68,7 +68,8 @@ public class Group implements GroupInterface, Selectable {
 
     @Override
     public String getSelectionPrompt() {
-        return getName() + "  Rating: " + getRankAvg() + "/5";
+        String rank = String.format("%.1f",getRankAvg());
+        return getName() + "  Rating: " + rank + "/5";
     }
 
     public String toString(){
