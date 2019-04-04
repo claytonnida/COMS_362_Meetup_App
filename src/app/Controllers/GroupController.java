@@ -94,7 +94,7 @@ public class GroupController implements GroupControllerInterface {
         while(editGroup){
             editGroupFields(group);
 
-            boolean confirm = InputReader.requestConfirmation(group);
+            boolean confirm = InputReader.requestConfirmation(group.getName());
             if(confirm){
                 //TODO push changes to database
                 System.out.println("Group confirmed.");
@@ -142,7 +142,7 @@ public class GroupController implements GroupControllerInterface {
     // TODO: Add JavaDocs
     @Override
     public void removeGroup(Group group) {
-        boolean confirm = InputReader.requestConfirmation(group);
+        boolean confirm = InputReader.requestConfirmation(group.getName());
         if(confirm){
         	try {
         		Statement stmt = MySQLHelper.createStatement();
@@ -158,8 +158,31 @@ public class GroupController implements GroupControllerInterface {
 
     // TODO: Add JavaDocs
     @Override
-    public void rankGroup(int rank) {
-
+    public void rankGroup(Group group) {
+    	String prompt = "Please enter a ranking of 1-5. (5 being the highest)";
+    	int rank = InputReader.readInputInt(prompt);
+    	System.out.println("Rank entered was " +rank);
+    	if(rank != 1 && rank != 2 && rank != 3 && rank != 4 && rank != 5)
+    	{
+    		System.out.println("I'm sorry, that wasn't a correct input.");
+        	rankGroup(group);
+    	}
+    	boolean confirm = InputReader.requestConfirmation(rank);
+        if(confirm){
+        	try {
+        		Statement stmt = MySQLHelper.createStatement();
+        		ResultSet rs = stmt.executeQuery("SELECT * FROM meetup.group WHERE id=" + group.getId() + ";");
+        		rs.next();
+        		int rankTotal = rs.getInt("rankTotal") + rank;
+        		int numRanks = rs.getInt("numRanks") + 1;
+        		stmt.executeUpdate("UPDATE meetup.group SET rankTotal ="+rankTotal+", numRanks ="+numRanks+", rankAvg="+(rankTotal/numRanks) +" WHERE id="+ group.getId() +";");
+        		
+        		System.out.println("You rated " + group.getName() + " with a rating of " + rank +".");
+        	}catch (Exception e){
+        		System.out.println("Failed to rank group.");
+        		e.printStackTrace();
+        	}
+        }
     }
 
     /**
@@ -236,7 +259,7 @@ public class GroupController implements GroupControllerInterface {
         Group group;
 
         switch (InputReader.readFromOptions("What do you want to do?",
-                new String[]{"Groups I'm In","My Groups","Create a Group","All Groups","Search For Groups","Exit"})){
+                new String[]{"My Groups","Create a Group","All Groups","Search For Groups","Exit"})){
             case "Create a Group":
                 gc.createGroup(account.getProfile());
                 break;
@@ -249,6 +272,7 @@ public class GroupController implements GroupControllerInterface {
                 else {
                     manageGroup(account,group);
                 }
+                break;
             case "Search For Groups":
                 groups = gc.findGroups();
                 group = selectGroup(groups,account);
@@ -260,16 +284,6 @@ public class GroupController implements GroupControllerInterface {
                 }
                 // TODO Dan, after searching groups, you should open up GroupController.showGroups(...)
                 //   - Supply your list of groups as arg
-                break;
-            case "Groups I'm In":
-                groups = gc.getGroupsForUser(account.getProfile());
-                group = selectGroup(groups,account);
-                if(group==null) {
-                    manageGroups(account);
-                }
-                else {
-                    manageGroup(account,group);
-                }
                 break;
             case "All Groups":
                 groups = gc.searchGroup("");
@@ -312,42 +326,43 @@ public class GroupController implements GroupControllerInterface {
      * @param group
      */
     public void manageGroup(Account account, Group group){
-        String[] options = new String[]{"Edit Group","Leave Group","Delete Group","Exit"};
+        String[] options = new String[]{"Edit Group","Leave Group","Rank Group","Delete Group","Exit"};
         GroupMapper gm = new GroupMapper();
 
         //Ask user what they would like to do
         switch (InputReader.readFromOptions("Edit "+group.getName(), options)){
-            case "Edit Group":
-                try{
-                    int id = ((Account)App.sessionVariables.get("account")).getProfile().getId();
-                    ResultSet rs = MySQLHelper.executeQuery("Select * from meetup.group where created_by = "+id
-                            +" and id = "+group.getId());
-                    if(!rs.next()){
-                        System.out.println("You are not the owner of this group.");
-                        return;
-                    }
-                }catch (SQLException e){
-                    manageGroup(account,group);
-                }
-                editGroupFields(group);
-                break;
+            //case "Edit Group":
+              //  try{
+                //    int id = ((Account)App.sessionVariables.get("account")).getProfile().getId();
+                 //   ResultSet rs = MySQLHelper.executeQuery("Select * from meetup.group where created_by = "+id
+                  //          +" and id = "+group.getId());
+                   // if(!rs.next()){
+                    //    System.out.println("You are not the owner of this group.");
+                     //   return;
+                  //  }
+               // }catch (SQLException e){
+                //    manageGroup(account,group);
+               // }
+               // editGroupFields(group);
+               // break;
             case "Leave Group":
                 leaveGroup(account.getProfileid(),group.getId());
                 break;
-          //  case "Edit Group":
-          //      if(isOwnerOfGroup(account,group)) {
-        //            editGroupFields(group);
-        //            String query = gm.toUpdateQueryQuery(group);
-         //           MySQLHelper.executeUpdate(query);
-        //            break;
-        //        }else {
-       //             System.out.println("Cannot edit this group because you are not the owner");
-       //         }
-
+            case "Edit Group":
+                if(isOwnerOfGroup(account,group)) {
+                    editGroupFields(group);
+                    String query = gm.toUpdateQueryQuery(group);
+                    MySQLHelper.executeUpdate(query);
+                    break;
+                }else {
+                    System.out.println("Cannot edit this group because you are not the owner");
+                }
+            case "Rank Group":
+            	rankGroup(group);
+            	break;
             case "Delete Group":
                 if(isOwnerOfGroup(account,group)) {
                     removeGroup(group);
-                    break;
                 }else {
                     System.out.println("Cannot delete this group because you are not the owner");
                 }

@@ -9,6 +9,10 @@ public class Group implements GroupInterface, Selectable {
     private String name;
     private String isPublic;
     private int created_by;
+    private int rankTotal;
+    private int numRanks;
+    private int rankAvg;
+    
 
     public static final String[] visibilityOptions = new String[]{"Public","Private"};
 
