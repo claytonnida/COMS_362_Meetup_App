@@ -15,6 +15,7 @@ import java.util.Map;
 
 public class App
 {
+	public static final boolean DEV_MODE = true;
 	//TODO create account here or in Account.java
 	public static Map<String,Object> sessionVariables = new HashMap<>();
 
@@ -108,6 +109,7 @@ public class App
 		System.out.println("No? Okay then. Have a good day!");
 
 		// TODO: Remove once server is implemented.
+		if(sessionVariables.containsKey("account"))
 		MySQLHelper.executeUpdate("update meetup.profile set isOnline = 0 where id = " +
 				((Account) sessionVariables.get("account")).getProfileid());
 

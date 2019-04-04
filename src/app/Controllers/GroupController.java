@@ -38,6 +38,8 @@ public class GroupController implements GroupControllerInterface {
             return groups;
         }catch (SQLException e){
             System.out.println("Failed to fetch groups");
+            if(App.DEV_MODE)
+                e.printStackTrace();
             return new ArrayList<>();
         }
     }
@@ -66,6 +68,8 @@ public class GroupController implements GroupControllerInterface {
             return list;
         } catch (SQLException e) {
             System.out.println("Sorry we cannot contact the database right now.");
+            if(App.DEV_MODE)
+                e.printStackTrace();
         }
         return new ArrayList<Group>();
     }
@@ -134,7 +138,8 @@ public class GroupController implements GroupControllerInterface {
             return true;
         }catch (Exception e){
             System.out.println("Failed to send the group to the server.");
-            e.printStackTrace();
+            if(App.DEV_MODE)
+                e.printStackTrace();
             return false;
         }
     }
@@ -151,7 +156,8 @@ public class GroupController implements GroupControllerInterface {
         		System.out.println("Group " + group.getName() + " was deleted.");
         	}catch (Exception e){
         		System.out.println("Failed to remove group.");
-        		e.printStackTrace();
+                if(App.DEV_MODE)
+                    e.printStackTrace();
         	}
         }
     }
@@ -180,7 +186,8 @@ public class GroupController implements GroupControllerInterface {
         		System.out.println("You rated " + group.getName() + " with a rating of " + rank +".");
         	}catch (Exception e){
         		System.out.println("Failed to rank group.");
-        		e.printStackTrace();
+        		if(App.DEV_MODE)
+        		    e.printStackTrace();
         	}
         }
     }
@@ -314,6 +321,8 @@ public class GroupController implements GroupControllerInterface {
             return gm.createObjectList("Select * from meetup.group where created_by = "+account.getProfile().getId());
         }catch (SQLException e){
             System.out.println("Sorry, couldn't get your groups");
+            if(App.DEV_MODE)
+                e.printStackTrace();
             return new ArrayList<>();
         }
     }
@@ -388,6 +397,8 @@ public class GroupController implements GroupControllerInterface {
             //rs.next() = false when no rows are returned. ie user is not owner
             return rs.next();
         }catch (SQLException e){
+            if(App.DEV_MODE)
+                e.printStackTrace();
             return false;
         }
     }

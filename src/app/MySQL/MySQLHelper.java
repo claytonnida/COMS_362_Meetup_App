@@ -1,5 +1,6 @@
 package app.MySQL;
 
+import app.App;
 import app.Controllers.ProfileController;
 import app.InputReader;
 import app.models.Account;
@@ -96,6 +97,8 @@ public class MySQLHelper {
             return con;
         }catch (Exception e){
             System.out.println("Failed to Connect");
+            if(App.DEV_MODE)
+                e.printStackTrace();
             return false;
         }
     }
@@ -200,7 +203,8 @@ public class MySQLHelper {
             return true;
         }catch (SQLException sql){
             System.out.println("Oops! Server error! Sorry, whatever was supposed to happen didn't.");
-            sql.printStackTrace();
+            if(App.DEV_MODE)
+                sql.printStackTrace();
             return false;
         }
     }
@@ -216,7 +220,8 @@ public class MySQLHelper {
 
         }catch (SQLException sql){
             System.out.println("Oops! Server error! Sorry, whatever was supposed to happen didn't.");
-            sql.printStackTrace();
+            if(App.DEV_MODE)
+                sql.printStackTrace();
             return null;
         }
     }

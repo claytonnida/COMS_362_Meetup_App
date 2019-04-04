@@ -1,5 +1,6 @@
 package app.Controllers;
 
+import app.App;
 import app.InputReader;
 import app.MySQL.MySQLHelper;
 import app.interfaces.ProfileControllerInterface;
@@ -107,8 +108,9 @@ public class ProfileController implements ProfileControllerInterface {
             else
                 System.out.println("Profile changes discarded.");
         }catch (SQLException e){
-            e.printStackTrace();
             System.out.println("Couldn't save profile to server at this time.");
+            if(App.DEV_MODE)
+                e.printStackTrace();
         }
     }
 
@@ -471,7 +473,8 @@ public class ProfileController implements ProfileControllerInterface {
                 System.out.println();
             }
         }catch (Exception e){
-            e.printStackTrace();
+            if(App.DEV_MODE)
+                e.printStackTrace();
         }
     }
 
@@ -581,7 +584,8 @@ public class ProfileController implements ProfileControllerInterface {
             return rs.getInt(1) == 1;
         }
         catch(SQLException e) {
-            e.printStackTrace();
+            if(App.DEV_MODE)
+                e.printStackTrace();
             return false;
         }
         catch(NullPointerException e) {
@@ -609,10 +613,13 @@ public class ProfileController implements ProfileControllerInterface {
             return rs.getInt(1) == 1;
         }
         catch(SQLException e) {
-            e.printStackTrace();
+            if(App.DEV_MODE)
+                e.printStackTrace();
             return false;
         }
         catch(NullPointerException e) {
+            if(App.DEV_MODE)
+                e.printStackTrace();
             System.out.println("ERROR! The given Profile ID does not exist or the \"apearOffline\" column has a value of null!");
             return false;
         }

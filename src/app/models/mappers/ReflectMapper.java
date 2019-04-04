@@ -1,5 +1,6 @@
 package app.models.mappers;
 
+import app.App;
 import app.Controllers.AccountController;
 import app.MySQL.MySQLHelper;
 import app.models.Account;
@@ -53,7 +54,8 @@ public class ReflectMapper<T> {
             ResultSet rs = statement.executeQuery(query);
             return toObjectList(rs);
         }catch (Exception e){
-            e.printStackTrace();
+            if(App.DEV_MODE)
+                e.printStackTrace();
             return null;
         }
     }
@@ -200,7 +202,8 @@ public class ReflectMapper<T> {
             }
             return MySQLHelper.buildInsertStatement(className,fields);
         }catch (Exception e){
-            e.printStackTrace();
+            if(App.DEV_MODE)
+                e.printStackTrace();
             return null;
         }
     }
@@ -243,7 +246,8 @@ public class ReflectMapper<T> {
             }
             return MySQLHelper.buildUpdateStatement(className,fields);
         }catch (Exception e){
-            e.printStackTrace();
+            if(App.DEV_MODE)
+                e.printStackTrace();
             return null;
         }
     }
