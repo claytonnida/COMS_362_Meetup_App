@@ -22,10 +22,5 @@ public interface GroupAssociationControllerInterface {
     * @param groupId
     *     The ID of the {@link Group} to associate.
     */
-<<<<<<< HEAD
     void joinGroup(int profileId, int groupId);
-=======
-    public void joinGroup(int profileId, int groupId);
-    
->>>>>>> 179a1e69ad845c6dc896a33a6b8a77cb310cf735
 }

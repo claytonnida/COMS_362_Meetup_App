@@ -162,7 +162,6 @@ public class GroupController implements GroupControllerInterface {
     public void removeGroup(Group group) {
         boolean confirm = InputReader.requestConfirmation(group.getName());
         if(confirm){
-<<<<<<< HEAD
             try {
                 Statement stmt = MySQLHelper.createStatement();
                 stmt.executeUpdate("DELETE FROM meetup.group WHERE id =" + group.getId() +";");
@@ -172,18 +171,6 @@ public class GroupController implements GroupControllerInterface {
                 System.out.println("Failed to remove group.");
                 e.printStackTrace();
             }
-=======
-        	try {
-        		Statement stmt = MySQLHelper.createStatement();
-        		stmt.executeUpdate("DELETE FROM meetup.group WHERE id =" + group.getId() +";");
-        		stmt.executeUpdate("DELETE FROM meetup.groupAssociation WHERE groupid =" + group.getId() +";");
-        		System.out.println("Group " + group.getName() + " was deleted.");
-        	}catch (Exception e){
-        		System.out.println("Failed to remove group.");
-                if(App.DEV_MODE)
-                    e.printStackTrace();
-        	}
->>>>>>> deb53ba62a39c958ff7821581dd2c444ae18f64b
         }
     }
 
@@ -264,7 +251,11 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
-    // TODO: Add JavaDocs
+    /**
+    * Changes the group visibility to public.
+    *
+    * @param g The {@link Group} whose fields will be modified.
+    */
     @Override
     public void editGroupVisibility(Group g){
         System.out.print("Your current group visibility is:\t");
@@ -296,7 +287,6 @@ public class GroupController implements GroupControllerInterface {
             gc.createGroup(account.getProfile());
             break;
             case "My Groups":
-<<<<<<< HEAD
             groups = getGroupsByUser(account);
             group = selectGroup(groups,account);
             if(group==null) {
@@ -305,17 +295,6 @@ public class GroupController implements GroupControllerInterface {
             else {
                 manageGroup(account,group);
             }
-=======
-                groups = getGroupsByUser(account);
-                group = selectGroup(groups,account);
-                if(group==null) {
-                    manageGroups(account);
-                }
-                else {
-                    manageGroup(account,group);
-                }
-                break;
->>>>>>> deb53ba62a39c958ff7821581dd2c444ae18f64b
             case "Search For Groups":
             groups = gc.findGroups();
             group = selectGroup(groups,account);
@@ -386,7 +365,6 @@ public class GroupController implements GroupControllerInterface {
 
         //Ask user what they would like to do
         switch (InputReader.readFromOptions("Edit "+group.getName(), options)){
-<<<<<<< HEAD
             case "Edit Group":
             try{
                 int id = ((Account)App.sessionVariables.get("account")).getProfile().getId();
@@ -413,12 +391,6 @@ public class GroupController implements GroupControllerInterface {
             //        }else {
             //             System.out.println("Cannot edit this group because you are not the owner");
             //         }
-=======
-
-            case "Leave Group":
-                leaveGroup(account.getProfileid(),group.getId());
-                break;
->>>>>>> deb53ba62a39c958ff7821581dd2c444ae18f64b
 
             case "Edit Group":
                 if(isOwnerOfGroup(account,group)) {
@@ -436,7 +408,6 @@ public class GroupController implements GroupControllerInterface {
                 manageGroups(account);
             	break;
             case "Delete Group":
-<<<<<<< HEAD
             if(isOwnerOfGroup(account,group)) {
                 removeGroup(group);
                 break;
@@ -446,17 +417,6 @@ public class GroupController implements GroupControllerInterface {
             //TODO Implement remove group
 
             //don't add a break; - That way we go back to manageGroups if editGroupFields is denied
-=======
-                if(isOwnerOfGroup(account,group)) {
-                    removeGroup(group);
-                    break;
-                }else {
-                    System.out.println("Cannot delete this group because you are not the owner");
-                }
-                //TODO Implement remove group
-                manageGroups(account);
-                break;
->>>>>>> deb53ba62a39c958ff7821581dd2c444ae18f64b
             case "Exit":
             manageGroups(account);
             break;
