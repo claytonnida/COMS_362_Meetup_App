@@ -38,7 +38,7 @@ public interface GroupControllerInterface {
     void joinGroup(int profileId, int groupId);
 
     // TODO: Add JavaDocs
-    void rankGroup(int rank);
+    void rankGroup(Group group);
 
     /**
     * A series of prompts to guide user through editing their profile

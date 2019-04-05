@@ -19,8 +19,7 @@ public class GroupAssociationController implements GroupAssociationControllerInt
     public void leaveGroup(int profileId, int groupId) {
         MySQLHelper.executeUpdate("DELETE FROM meetup.groupassociation " +
         "where profileid = " + profileId +
-        " and groupid = " + groupId
-        );
+        " and groupid = " + gro        );
 
         System.out.println("Successfully removed GroupAssociation between profile ID: " + profileId + " and group ID: " + groupId + "!");
     }

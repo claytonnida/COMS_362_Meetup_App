@@ -1,5 +1,6 @@
 package app.models.mappers;
 
+import app.App;
 import app.Controllers.AccountController;
 import app.MySQL.MySQLHelper;
 import app.models.Account;
@@ -39,7 +40,6 @@ public class ReflectMapper<T> {
         */
         useTableName = className;
 
-        className = className.toLowerCase();
 
     }
 
@@ -54,7 +54,8 @@ public class ReflectMapper<T> {
             ResultSet rs = statement.executeQuery(query);
             return toObjectList(rs);
         }catch (Exception e){
-            e.printStackTrace();
+            if(App.DEV_MODE)
+                e.printStackTrace();
             return null;
         }
     }
@@ -149,7 +150,11 @@ public class ReflectMapper<T> {
                 String value = rs.getString(fieldName);
                 value.replaceAll("'","\\'");
                 field.set(obj, value);
-            } else {
+            } else if (type.getName().contains("double"))
+            {  
+            	double value = rs.getDouble(fieldName);
+            	field.set(obj, value);
+            }else {
                 int value = rs.getInt(fieldName);
                 field.set(obj, value);
             }
@@ -197,7 +202,8 @@ public class ReflectMapper<T> {
             }
             return MySQLHelper.buildInsertStatement(className,fields);
         }catch (Exception e){
-            e.printStackTrace();
+            if(App.DEV_MODE)
+                e.printStackTrace();
             return null;
         }
     }
@@ -240,7 +246,8 @@ public class ReflectMapper<T> {
             }
             return MySQLHelper.buildUpdateStatement(className,fields);
         }catch (Exception e){
-            e.printStackTrace();
+            if(App.DEV_MODE)
+                e.printStackTrace();
             return null;
         }
     }

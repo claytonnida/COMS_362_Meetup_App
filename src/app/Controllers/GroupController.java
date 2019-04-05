@@ -38,6 +38,8 @@ public class GroupController implements GroupControllerInterface {
             return groups;
         }catch (SQLException e){
             System.out.println("Failed to fetch groups");
+            if(App.DEV_MODE)
+                e.printStackTrace();
             return new ArrayList<>();
         }
     }
@@ -66,6 +68,8 @@ public class GroupController implements GroupControllerInterface {
             return list;
         } catch (SQLException e) {
             System.out.println("Sorry we cannot contact the database right now.");
+            if(App.DEV_MODE)
+                e.printStackTrace();
         }
         return new ArrayList<Group>();
     }
@@ -107,7 +111,7 @@ public class GroupController implements GroupControllerInterface {
         while(editGroup){
             editGroupFields(group);
 
-            boolean confirm = InputReader.requestConfirmation(group);
+            boolean confirm = InputReader.requestConfirmation(group.getName());
             if(confirm){
                 //TODO push changes to database
                 System.out.println("Group confirmed.");
@@ -147,7 +151,8 @@ public class GroupController implements GroupControllerInterface {
             return true;
         }catch (Exception e){
             System.out.println("Failed to send the group to the server.");
-            e.printStackTrace();
+            if(App.DEV_MODE)
+                e.printStackTrace();
             return false;
         }
     }
@@ -155,8 +160,9 @@ public class GroupController implements GroupControllerInterface {
     // TODO: Add JavaDocs
     @Override
     public void removeGroup(Group group) {
-        boolean confirm = InputReader.requestConfirmation(group);
+        boolean confirm = InputReader.requestConfirmation(group.getName());
         if(confirm){
+<<<<<<< HEAD
             try {
                 Statement stmt = MySQLHelper.createStatement();
                 stmt.executeUpdate("DELETE FROM meetup.group WHERE id =" + group.getId() +";");
@@ -166,13 +172,49 @@ public class GroupController implements GroupControllerInterface {
                 System.out.println("Failed to remove group.");
                 e.printStackTrace();
             }
+=======
+        	try {
+        		Statement stmt = MySQLHelper.createStatement();
+        		stmt.executeUpdate("DELETE FROM meetup.group WHERE id =" + group.getId() +";");
+        		stmt.executeUpdate("DELETE FROM meetup.groupAssociation WHERE groupid =" + group.getId() +";");
+        		System.out.println("Group " + group.getName() + " was deleted.");
+        	}catch (Exception e){
+        		System.out.println("Failed to remove group.");
+                if(App.DEV_MODE)
+                    e.printStackTrace();
+        	}
+>>>>>>> deb53ba62a39c958ff7821581dd2c444ae18f64b
         }
     }
 
     // TODO: Add JavaDocs
     @Override
-    public void rankGroup(int rank) {
+    public void rankGroup(Group group) {
+    	String prompt = "Please enter a ranking of 1-5. (5 being the highest)";
+    	int rank = InputReader.readInputInt(prompt);
+    	System.out.println("Rank entered was " +rank);
+    	if(rank != 1 && rank != 2 && rank != 3 && rank != 4 && rank != 5)
+    	{
+    		System.out.println("I'm sorry, that wasn't a correct input.");
+        	rankGroup(group);
+    	}
+    	boolean confirm = InputReader.requestConfirmation(rank);
+        if(confirm){
+        	try {
+        		Statement stmt = MySQLHelper.createStatement();
+        		ResultSet rs = stmt.executeQuery("SELECT * FROM meetup.group WHERE id=" + group.getId() + ";");
+        		rs.next();
+        		int rankTotal = rs.getInt("rankTotal") + rank;
+        		int numRanks = rs.getInt("numRanks") + 1;
+        		stmt.executeUpdate("UPDATE meetup.group SET rankTotal ="+rankTotal+", numRanks ="+numRanks+", rankAvg="+((double)rankTotal/(double)numRanks) +" WHERE id="+ group.getId() +";");
 
+        		System.out.println("You rated " + group.getName() + " with a rating of " + rank +".");
+        	}catch (Exception e){
+        		System.out.println("Failed to rank group.");
+        		if(App.DEV_MODE)
+        		    e.printStackTrace();
+        	}
+        }
     }
 
     /**
@@ -254,6 +296,7 @@ public class GroupController implements GroupControllerInterface {
             gc.createGroup(account.getProfile());
             break;
             case "My Groups":
+<<<<<<< HEAD
             groups = getGroupsByUser(account);
             group = selectGroup(groups,account);
             if(group==null) {
@@ -262,6 +305,17 @@ public class GroupController implements GroupControllerInterface {
             else {
                 manageGroup(account,group);
             }
+=======
+                groups = getGroupsByUser(account);
+                group = selectGroup(groups,account);
+                if(group==null) {
+                    manageGroups(account);
+                }
+                else {
+                    manageGroup(account,group);
+                }
+                break;
+>>>>>>> deb53ba62a39c958ff7821581dd2c444ae18f64b
             case "Search For Groups":
             groups = gc.findGroups();
             group = selectGroup(groups,account);
@@ -303,6 +357,8 @@ public class GroupController implements GroupControllerInterface {
             return gm.createObjectList("Select * from meetup.group where created_by = "+account.getProfile().getId());
         }catch (SQLException e){
             System.out.println("Sorry, couldn't get your groups");
+            if(App.DEV_MODE)
+                e.printStackTrace();
             return new ArrayList<>();
         }
     }
@@ -325,11 +381,12 @@ public class GroupController implements GroupControllerInterface {
     * @param group
     */
     public void manageGroup(Account account, Group group){
-        String[] options = new String[]{"Edit Group","Leave Group","Delete Group","Exit"};
+        String[] options = new String[]{"Edit Group","Leave Group","Rank Group","Delete Group","Exit"};
         GroupMapper gm = new GroupMapper();
 
         //Ask user what they would like to do
         switch (InputReader.readFromOptions("Edit "+group.getName(), options)){
+<<<<<<< HEAD
             case "Edit Group":
             try{
                 int id = ((Account)App.sessionVariables.get("account")).getProfile().getId();
@@ -356,8 +413,30 @@ public class GroupController implements GroupControllerInterface {
             //        }else {
             //             System.out.println("Cannot edit this group because you are not the owner");
             //         }
+=======
 
+            case "Leave Group":
+                leaveGroup(account.getProfileid(),group.getId());
+                break;
+>>>>>>> deb53ba62a39c958ff7821581dd2c444ae18f64b
+
+            case "Edit Group":
+                if(isOwnerOfGroup(account,group)) {
+                    editGroupFields(group);
+                    String query = gm.toUpdateQueryQuery(group);
+                    MySQLHelper.executeUpdate(query);
+                }else {
+                    System.out.println("Cannot edit this group because you are not the owner");
+                }
+                manageGroups(account);
+                break;
+
+            case "Rank Group":
+            	rankGroup(group);
+                manageGroups(account);
+            	break;
             case "Delete Group":
+<<<<<<< HEAD
             if(isOwnerOfGroup(account,group)) {
                 removeGroup(group);
                 break;
@@ -367,6 +446,17 @@ public class GroupController implements GroupControllerInterface {
             //TODO Implement remove group
 
             //don't add a break; - That way we go back to manageGroups if editGroupFields is denied
+=======
+                if(isOwnerOfGroup(account,group)) {
+                    removeGroup(group);
+                    break;
+                }else {
+                    System.out.println("Cannot delete this group because you are not the owner");
+                }
+                //TODO Implement remove group
+                manageGroups(account);
+                break;
+>>>>>>> deb53ba62a39c958ff7821581dd2c444ae18f64b
             case "Exit":
             manageGroups(account);
             break;
@@ -384,6 +474,8 @@ public class GroupController implements GroupControllerInterface {
             //rs.next() = false when no rows are returned. ie user is not owner
             return rs.next();
         }catch (SQLException e){
+            if(App.DEV_MODE)
+                e.printStackTrace();
             return false;
         }
     }

@@ -1,10 +1,13 @@
 package app.MySQL;
 
+import app.App;
 import app.Controllers.ProfileController;
 import app.InputReader;
 import app.models.Account;
+import app.models.GroupAssociation;
 import app.models.Profile;
 import app.models.mappers.AccountMapper;
+import app.models.mappers.GroupAssociationMapper;
 import app.models.mappers.ProfileMapper;
 
 import java.sql.*;
@@ -94,6 +97,8 @@ public class MySQLHelper {
             return con;
         }catch (Exception e){
             System.out.println("Failed to Connect");
+            if(App.DEV_MODE)
+                e.printStackTrace();
             return false;
         }
     }
@@ -198,7 +203,8 @@ public class MySQLHelper {
             return true;
         }catch (SQLException sql){
             System.out.println("Oops! Server error! Sorry, whatever was supposed to happen didn't.");
-            sql.printStackTrace();
+            if(App.DEV_MODE)
+                sql.printStackTrace();
             return false;
         }
     }
@@ -214,7 +220,8 @@ public class MySQLHelper {
 
         }catch (SQLException sql){
             System.out.println("Oops! Server error! Sorry, whatever was supposed to happen didn't.");
-            sql.printStackTrace();
+            if(App.DEV_MODE)
+                sql.printStackTrace();
             return null;
         }
     }
@@ -222,21 +229,23 @@ public class MySQLHelper {
     public static void main(String[] args)throws Exception{
 
         describeDataBase();
+        //executeUpdate("Update meetup.group set isPublic = 'Public' where id != ");
+
 
         System.out.println("Profiles");
         for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.profile"))){
             System.out.println(s);
         }
-
-        System.out.println("Groups");
-        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.group"))){
-            System.out.println(s);
-        }
-
-        System.out.println("GroupAssociations");
-        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.groupAssociation"))){
-            System.out.println(s);
-        }
+//
+//        System.out.println("Groups");
+//        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.group"))){
+//            System.out.println(s);
+//        }
+//
+//        System.out.println("GroupAssociations");
+//        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.groupAssociation"))){
+//            System.out.println(s);
+//        }
     }
 
     private static void resetDatabase()throws SQLException{
@@ -268,6 +277,8 @@ public class MySQLHelper {
                     "major VARCHAR(50), " +
                     "spiritAnimal VARCHAR(50), " +
                     "appearOffline INT(1), " +
+                    "isOnline INT(1), " +
+                    "pictureURL varchar(255), " +
                     "PRIMARY KEY ( id )" +
                     ");");
 

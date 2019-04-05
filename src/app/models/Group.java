@@ -6,9 +6,13 @@ import app.interfaces.Selectable;
 public class Group implements GroupInterface, Selectable {
 
     private int id;
-    private String name;
-    private String isPublic;
+    private String name = "New Group";
+    private String isPublic = "Public";
     private int created_by;
+    private int rankTotal;
+    private int numRanks;
+    private double rankAvg;
+
 
     public static final String[] visibilityOptions = new String[]{"Public","Private"};
 
@@ -53,7 +57,24 @@ public class Group implements GroupInterface, Selectable {
     }
 
     @Override
+    public double getRankAvg() {
+    	return rankAvg;
+    }
+
+    @Override
+    public void setRankAvg(double rankAvg) {
+    	this.rankAvg = rankAvg;
+    }
+
+    @Override
     public String getSelectionPrompt() {
-        return getName();
+        String rank = String.format("%.1f",getRankAvg());
+        return getName() + "  Rating: " + rank + "/5";
+    }
+
+    public String toString(){
+        String str = "Name:\t"+getName()+
+                "\nVisibility:\t"+getIsPublic();
+        return str;
     }
 }
