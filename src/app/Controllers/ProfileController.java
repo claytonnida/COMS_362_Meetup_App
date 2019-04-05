@@ -135,7 +135,7 @@ public class ProfileController implements ProfileControllerInterface {
                 boolean confirm = InputReader.requestConfirmation(input);
                 if (confirm) {
                     p.setPicture(input_picture);
-                    p.setPictureURL(file_name);
+                    p.setPictureURL(file_name.replaceAll("\\","/");
                     System.out.println("Your profile picture was added successfully! The following picture will be displayed.");
                     displayPicture(p.getPicture());
                 } else {
