@@ -342,6 +342,11 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
+    public void joinGroup(int profileId, int groupId){
+        GroupAssociationController gac = new GroupAssociationController();
+        gac.joinGroup(profileId, groupId);
+    }
+
     public List<Group> findGroups(){
         String input = InputReader.collectInput("Please enter a sub string to search all Groups containing the search value");
         GroupController gc = new GroupController();
