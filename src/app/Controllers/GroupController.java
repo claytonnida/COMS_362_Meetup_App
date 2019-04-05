@@ -27,7 +27,7 @@ public class GroupController implements GroupControllerInterface {
             //TODO make this a join statement
             GroupMapper gm = new GroupMapper();
             ResultSet rs = MySQLHelper.createStatement().executeQuery(
-                    "Select groupid from meetup.groupAssociation where profileid = "+p.getId());
+            "Select groupid from meetup.groupAssociation where profileid = "+p.getId());
 
             List<Group> groups = new ArrayList<>();
             while(rs.next()){
@@ -43,11 +43,11 @@ public class GroupController implements GroupControllerInterface {
     }
 
     /**
-     * This method searches and lists every group that contains any form of the user's input. If the user's input
-     * is blank, the method will simply list every group
-     *
-     * @param sub_string The search criteria provided by the user for their search
-     */
+    * This method searches and lists every group that contains any form of the user's input. If the user's input
+    * is blank, the method will simply list every group
+    *
+    * @param sub_string The search criteria provided by the user for their search
+    */
     @Override
     public List<Group> searchGroup(String sub_string) {
         try {
@@ -71,16 +71,29 @@ public class GroupController implements GroupControllerInterface {
     }
 
     /**
-     * Removes the {@link app.models.GroupAssociation} between a {@link Profile} and a {@link Group}.
-     *
-     * @param profileId
-     * 		The ID of the {@link Profile} to disassociate.
-     * @param groupId
-     * 		The ID of the {@link Group} to disassociate.
-     */
+    * Removes the {@link app.models.GroupAssociation} between a {@link Profile} and a {@link Group}.
+    *
+    * @param profileId
+    * 		The ID of the {@link Profile} to disassociate.
+    * @param groupId
+    * 		The ID of the {@link Group} to disassociate.
+    */
     @Override
     public void leaveGroup(int profileId, int groupId) {
         new GroupAssociationController().leaveGroup(profileId, groupId);
+    }
+
+    /**
+    *Joins the {@link app.models.GroupAssociation} between a {@link Profile} and a {@link Group}.
+    *
+    * @param profileId
+    *     The ID of the {@link Profile} to associate with a Group.
+    * @param groupId
+    *     The ID of the {@link Group} to associate.
+    */
+    @Override
+    public void joinGroup(int profileId, int groupId) {
+        new GroupAssociationController().joinGroup(profileId, groupId);
     }
 
     // TODO: Add JavaDocs
@@ -102,7 +115,7 @@ public class GroupController implements GroupControllerInterface {
 
                 boolean success = createGroupInDB(group);
                 if(success)
-                    editGroup = false;
+                editGroup = false;
             }else {
                 if(!InputReader.inputYesNo("Continue Editing?")){
                     editGroup = false;
@@ -144,15 +157,15 @@ public class GroupController implements GroupControllerInterface {
     public void removeGroup(Group group) {
         boolean confirm = InputReader.requestConfirmation(group);
         if(confirm){
-        	try {
-        		Statement stmt = MySQLHelper.createStatement();
-        		stmt.executeUpdate("DELETE FROM meetup.group WHERE id =" + group.getId() +";");
-        		stmt.executeUpdate("DELETE FROM meetup.groupAssociation WHERE groupid =" + group.getId() +";");
-        		System.out.println("Group " + group.getName() + " was deleted.");
-        	}catch (Exception e){
-        		System.out.println("Failed to remove group.");
-        		e.printStackTrace();
-        	}
+            try {
+                Statement stmt = MySQLHelper.createStatement();
+                stmt.executeUpdate("DELETE FROM meetup.group WHERE id =" + group.getId() +";");
+                stmt.executeUpdate("DELETE FROM meetup.groupAssociation WHERE groupid =" + group.getId() +";");
+                System.out.println("Group " + group.getName() + " was deleted.");
+            }catch (Exception e){
+                System.out.println("Failed to remove group.");
+                e.printStackTrace();
+            }
         }
     }
 
@@ -163,10 +176,10 @@ public class GroupController implements GroupControllerInterface {
     }
 
     /**
-     * A series of prompts to guide user through editing their profile
-     *
-     * @param g The {@link Group} whose fields will be modified.
-     */
+    * A series of prompts to guide user through editing their profile
+    *
+    * @param g The {@link Group} whose fields will be modified.
+    */
     @Override
     public void editGroupFields(Group g){
 
@@ -177,13 +190,13 @@ public class GroupController implements GroupControllerInterface {
 
             switch(option) {
                 case "done":
-                    edit = false;
-                    break;
+                edit = false;
+                break;
                 case "name":
-                    editGroupName(g);
-                    break;
+                editGroupName(g);
+                break;
                 case "visibility":
-                    editGroupVisibility(g);
+                editGroupVisibility(g);
             }
         }
     }
@@ -236,51 +249,51 @@ public class GroupController implements GroupControllerInterface {
         Group group;
 
         switch (InputReader.readFromOptions("What do you want to do?",
-                new String[]{"Groups I'm In","My Groups","Create a Group","All Groups","Search For Groups","Exit"})){
+        new String[]{"Groups I'm In","My Groups","Create a Group","All Groups","Search For Groups","Exit"})){
             case "Create a Group":
-                gc.createGroup(account.getProfile());
-                break;
+            gc.createGroup(account.getProfile());
+            break;
             case "My Groups":
-                groups = getGroupsByUser(account);
-                group = selectGroup(groups,account);
-                if(group==null) {
-                    manageGroups(account);
-                }
-                else {
-                    manageGroup(account,group);
-                }
+            groups = getGroupsByUser(account);
+            group = selectGroup(groups,account);
+            if(group==null) {
+                manageGroups(account);
+            }
+            else {
+                manageGroup(account,group);
+            }
             case "Search For Groups":
-                groups = gc.findGroups();
-                group = selectGroup(groups,account);
-                if(group==null) {
-                    manageGroups(account);
-                }
-                else {
-                    manageGroup(account,group);
-                }
-                // TODO Dan, after searching groups, you should open up GroupController.showGroups(...)
-                //   - Supply your list of groups as arg
-                break;
+            groups = gc.findGroups();
+            group = selectGroup(groups,account);
+            if(group==null) {
+                manageGroups(account);
+            }
+            else {
+                manageGroup(account,group);
+            }
+            // TODO Dan, after searching groups, you should open up GroupController.showGroups(...)
+            //   - Supply your list of groups as arg
+            break;
             case "Groups I'm In":
-                groups = gc.getGroupsForUser(account.getProfile());
-                group = selectGroup(groups,account);
-                if(group==null) {
-                    manageGroups(account);
-                }
-                else {
-                    manageGroup(account,group);
-                }
-                break;
+            groups = gc.getGroupsForUser(account.getProfile());
+            group = selectGroup(groups,account);
+            if(group==null) {
+                manageGroups(account);
+            }
+            else {
+                manageGroup(account,group);
+            }
+            break;
             case "All Groups":
-                groups = gc.searchGroup("");
-                group = selectGroup(groups,account);
-                if(group==null) {
-                    manageGroups(account);
-                }
-                else {
-                    manageGroup(account,group);
-                }
-                break;
+            groups = gc.searchGroup("");
+            group = selectGroup(groups,account);
+            if(group==null) {
+                manageGroups(account);
+            }
+            else {
+                manageGroup(account,group);
+            }
+            break;
         }
     }
 
@@ -307,10 +320,10 @@ public class GroupController implements GroupControllerInterface {
     }
 
     /**
-     * Guide user through prompts to manage a particular group
-     * @param account
-     * @param group
-     */
+    * Guide user through prompts to manage a particular group
+    * @param account
+    * @param group
+    */
     public void manageGroup(Account account, Group group){
         String[] options = new String[]{"Edit Group","Leave Group","Delete Group","Exit"};
         GroupMapper gm = new GroupMapper();
@@ -318,45 +331,45 @@ public class GroupController implements GroupControllerInterface {
         //Ask user what they would like to do
         switch (InputReader.readFromOptions("Edit "+group.getName(), options)){
             case "Edit Group":
-                try{
-                    int id = ((Account)App.sessionVariables.get("account")).getProfile().getId();
-                    ResultSet rs = MySQLHelper.executeQuery("Select * from meetup.group where created_by = "+id
-                            +" and id = "+group.getId());
-                    if(!rs.next()){
-                        System.out.println("You are not the owner of this group.");
-                        return;
-                    }
-                }catch (SQLException e){
-                    manageGroup(account,group);
+            try{
+                int id = ((Account)App.sessionVariables.get("account")).getProfile().getId();
+                ResultSet rs = MySQLHelper.executeQuery("Select * from meetup.group where created_by = "+id
+                +" and id = "+group.getId());
+                if(!rs.next()){
+                    System.out.println("You are not the owner of this group.");
+                    return;
                 }
-                editGroupFields(group);
-                break;
+            }catch (SQLException e){
+                manageGroup(account,group);
+            }
+            editGroupFields(group);
+            break;
             case "Leave Group":
-                leaveGroup(account.getProfileid(),group.getId());
-                break;
-          //  case "Edit Group":
-          //      if(isOwnerOfGroup(account,group)) {
-        //            editGroupFields(group);
-        //            String query = gm.toUpdateQueryQuery(group);
-         //           MySQLHelper.executeUpdate(query);
-        //            break;
-        //        }else {
-       //             System.out.println("Cannot edit this group because you are not the owner");
-       //         }
+            leaveGroup(account.getProfileid(),group.getId());
+            break;
+            //  case "Edit Group":
+            //      if(isOwnerOfGroup(account,group)) {
+            //            editGroupFields(group);
+            //            String query = gm.toUpdateQueryQuery(group);
+            //           MySQLHelper.executeUpdate(query);
+            //            break;
+            //        }else {
+            //             System.out.println("Cannot edit this group because you are not the owner");
+            //         }
 
             case "Delete Group":
-                if(isOwnerOfGroup(account,group)) {
-                    removeGroup(group);
-                    break;
-                }else {
-                    System.out.println("Cannot delete this group because you are not the owner");
-                }
-                //TODO Implement remove group
-
-                //don't add a break; - That way we go back to manageGroups if editGroupFields is denied
-            case "Exit":
-                manageGroups(account);
+            if(isOwnerOfGroup(account,group)) {
+                removeGroup(group);
                 break;
+            }else {
+                System.out.println("Cannot delete this group because you are not the owner");
+            }
+            //TODO Implement remove group
+
+            //don't add a break; - That way we go back to manageGroups if editGroupFields is denied
+            case "Exit":
+            manageGroups(account);
+            break;
         }
     }
 
@@ -366,7 +379,7 @@ public class GroupController implements GroupControllerInterface {
             //Check if user is owner of the group, if not, they cannot edit
             int id = a.getProfile().getId();
             ResultSet rs = MySQLHelper.executeQuery("Select * from meetup.group where created_by = "+id
-                    +" and id = "+g.getId());
+            +" and id = "+g.getId());
 
             //rs.next() = false when no rows are returned. ie user is not owner
             return rs.next();
