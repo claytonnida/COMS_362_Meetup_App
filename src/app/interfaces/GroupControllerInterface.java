@@ -21,6 +21,16 @@ public interface GroupControllerInterface {
 	 */
 	void leaveGroup(int profileId, int groupId);
 
+    /**
+    *Joins the {@link app.models.GroupAssociation} between a {@link Profile} and a {@link Group}.
+    *
+    * @param profileId
+    *     The ID of the {@link Profile} to associate with a Group.
+    * @param groupId
+    *     The ID of the {@link Group} to associate.
+    */
+    void joinGroup(int profileId, int groupId);
+
     // TODO: Add JavaDocs
     void createGroup(Profile p);
 
