@@ -155,6 +155,7 @@ public class Profile implements ProfileInterface, Selectable
 		return appearOffline;
 	}
 
+
 	// TODO: Javadoc
 	@Override
 	public void setAppearOffline(int appearOffline) {
@@ -192,6 +193,13 @@ public class Profile implements ProfileInterface, Selectable
 		return profileDetails;
 	}
 
+	public String showOnlineStatus(){
+		if(getAppearOffline() == 1 || isOnline == 0){
+			return "Offline";
+		}else{
+			return "Online";
+		}
+	}
 	// TODO: Javadoc
 	@Override
 	public String toString(){
@@ -200,6 +208,6 @@ public class Profile implements ProfileInterface, Selectable
 
 	@Override
 	public String getSelectionPrompt() {
-		return String.format("%s\t\t(%s)",getName(),((getAppearOffline()==1)?"Offline":"Online"));
+		return String.format("%s\t\t(%s)",getName(),showOnlineStatus());
 	}
 }

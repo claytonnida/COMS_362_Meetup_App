@@ -350,14 +350,18 @@ public class GroupController implements GroupControllerInterface {
      * @param group
      */
     public void manageGroup(Account account, Group group){
-        String[] options = new String[]{"Edit Group","Leave Group","Rank Group","Delete Group","Exit"};
+        String[] options = new String[]{"Edit Group","Leave Group","Join Group","Rank Group","Delete Group","Exit"};
         GroupMapper gm = new GroupMapper();
 
         //Ask user what they would like to do
         switch (InputReader.readFromOptions("Edit "+group.getName(), options)){
-
+            case "Join Group":
+                joinGroup(account.getProfile().getId(),group.getId());
+                manageGroups(account);
+                break;
             case "Leave Group":
                 leaveGroup(account.getProfileid(),group.getId());
+                manageGroups(account);
                 break;
 
             case "Edit Group":

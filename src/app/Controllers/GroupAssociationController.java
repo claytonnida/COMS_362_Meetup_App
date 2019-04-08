@@ -3,7 +3,9 @@ package app.Controllers;
 import app.MySQL.MySQLHelper;
 import app.interfaces.GroupAssociationControllerInterface;
 import app.models.Group;
+import app.models.GroupAssociation;
 import app.models.Profile;
+import app.models.mappers.GroupAssociationMapper;
 
 public class GroupAssociationController implements GroupAssociationControllerInterface {
 
@@ -35,9 +37,11 @@ public class GroupAssociationController implements GroupAssociationControllerInt
     */
     @Override
     public void joinGroup(int profileId, int groupId) {
-        MySQLHelper.executeUpdate("INSERT INTO meetup.groupAssociation " +
-                "where profileid = " + profileId +
-                " and groupid = " + groupId
+        GroupAssociationMapper gam = new GroupAssociationMapper();
+        GroupAssociation ga = new GroupAssociation();
+        ga.setGroupid(groupId);
+        ga.setProfileid(profileId);
+        MySQLHelper.executeUpdate(gam.toInsertQueryQuery(ga)
         );
 
         System.out.println("Successfully removed GroupAssociation between profile ID: " + profileId + " and group ID: " + groupId + "!");
