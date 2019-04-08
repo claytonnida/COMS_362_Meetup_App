@@ -100,7 +100,7 @@ public class GroupController implements GroupControllerInterface {
 
             boolean confirm = InputReader.requestConfirmation(group.getName());
             if(confirm){
-                //TODO push changes to database
+                
                 System.out.println("Group confirmed.");
 
 
@@ -144,7 +144,10 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
-    // TODO: Add JavaDocs
+    
+    /** 
+     * @see app.interfaces.GroupControllerInterface#removeGroup(app.models.Group)
+     */
     @Override
     public void removeGroup(Group group) {
         boolean confirm = InputReader.requestConfirmation(group.getName());
@@ -162,7 +165,10 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
-    // TODO: Add JavaDocs
+    
+    /**
+     * @see app.interfaces.GroupControllerInterface#rankGroup(app.models.Group)
+     */
     @Override
     public void rankGroup(Group group) {
     	String prompt = "Please enter a ranking of 1-5. (5 being the highest)";

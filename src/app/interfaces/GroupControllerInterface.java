@@ -34,10 +34,23 @@ public interface GroupControllerInterface {
     // TODO: Add JavaDocs
     void createGroup(Profile p);
 
-    // TODO: Add JavaDocs
+    
+    /**
+     * Removes the group from the system. This will also remove any associations 
+     * from anyone that was a member of the group.
+     * 
+     * @param group
+     * 		The group to be removed.
+     */
     public void removeGroup(Group group);
 
-    // TODO: Add JavaDocs
+    
+    /**
+     * Gives the group a rating of 1-5.
+     * 
+     * @param group
+     * 		The group to rank.
+     */
     void rankGroup(Group group);
 
     /**
