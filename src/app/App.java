@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class App
 {
-	public static final boolean DEV_MODE = true;
+	public static final boolean DEV_MODE = false;
 	//TODO create account here or in Account.java
 	public static Map<String,Object> sessionVariables = new HashMap<>();
 
@@ -91,6 +91,8 @@ public class App
 
 							System.out.println("Successfully loaded everything");
 						} catch (Exception e) {
+							if(App.DEV_MODE)
+								e.printStackTrace();
 							System.out.println("Couldn't fetch profile");
 							keepTrying = InputReader.inputYesNo("Try Again?");
 						}

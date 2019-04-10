@@ -42,7 +42,7 @@ public class MySQLHelper {
     //Establishes a connection to the database
     public static Connection getConnection() throws SQLException{
         return DriverManager.getConnection(
-                    "jdbc:mysql://cs362meetupdb.redirectme.net", "cs362admin", "q1w2e3r4t5000");
+                "jdbc:mysql://cs362meetupdb.redirectme.net", "cs362admin", "q1w2e3r4t5000");
 
     }
 
