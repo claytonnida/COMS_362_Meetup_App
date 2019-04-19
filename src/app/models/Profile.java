@@ -7,6 +7,8 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 
 public class Profile implements ProfileInterface, Selectable
@@ -39,6 +41,16 @@ public class Profile implements ProfileInterface, Selectable
     public void setIsOnline(int isOnline) {
         this.isOnline = isOnline;
     }
+
+    public Profile(){
+    	Path path = Paths.get("./mystery.jpg").normalize().toAbsolutePath();
+    	try {
+			BufferedImage image = ImageIO.read(path.toFile());
+			setProfile_pic(image);
+		}catch (Exception e){
+    		e.printStackTrace();
+		}
+	}
 
     // TODO: Javadoc
 	@Override

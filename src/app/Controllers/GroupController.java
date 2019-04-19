@@ -18,7 +18,7 @@ import app.models.GroupAssociation;
 import app.models.Profile;
 import app.models.mappers.GroupAssociationMapper;
 import app.models.mappers.GroupMapper;
-import app.serverclient.TextGui;
+import app.serverclient.ChatGUI;
 
 public class GroupController implements GroupControllerInterface {
 
@@ -364,7 +364,7 @@ public class GroupController implements GroupControllerInterface {
         switch (InputReader.readFromOptions("Edit "+group.getName(), options)){
             case "Open Chat":
                 try {
-                    TextGui tg = new TextGui(group);
+                    ChatGUI tg = new ChatGUI(group,((Account)App.sessionVariables.get("account")).getProfile());
                     tg.loadMessages();
                     tg.open();
                 }catch (Exception e){
@@ -386,7 +386,7 @@ public class GroupController implements GroupControllerInterface {
                 if(isOwnerOfGroup(account,group)) {
                     editGroupFields(group);
                     String query = gm.toUpdateQueryQuery(group);
-                    MySQLHelper.executeUpdate(query);
+                    MySQLHelper.executeUpdate(query+" where id = "+group.getId());
                 }else {
                     System.out.println("Cannot edit this group because you are not the owner");
                 }

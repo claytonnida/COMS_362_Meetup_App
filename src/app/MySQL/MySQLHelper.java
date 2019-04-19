@@ -27,60 +27,20 @@ public class MySQLHelper {
 
     public static void main(String[] args)throws Exception{
 
-        Profile p = new Profile();
-        BufferedImage myPicture = ImageIO.read(
-                new File("C:\\Users\\nkallen\\IdeaProjects\\COMS_362_Meetup_App\\sobble_is_best.png"));
-        p.setProfile_pic(myPicture);
-        p.setId(1);
-        p.setName("Clayton, Probably");
-        p.setAboutMe("I'm not sure who I am. I've never been sure.");
-        p.setMajor("Gender Studies");
 
-
-        ProfileController pc = new ProfileController();
-        pc.updateProfile(p);
-        //describeDataBase();
-        //executeUpdate("Update meetup.group set isPublic = 'Public' where id != ");
-
-        /*
-        message
-	message_id:int(11)
-	from_id:int(11)
-	to_id:int(11)
-	body:varchar(1000)
-	image:blob
-	time:datetime
-	from_pic:blob
-
-        */
-//
-//        BufferedImage myPicture = ImageIO.read(
-//                new File("C:\\Users\\nkallen\\IdeaProjects\\COMS_362_Meetup_App\\grooky_is_okay.jpg"));
-//        Image scaledImage = myPicture.getScaledInstance(100,100,Image.SCALE_SMOOTH);
-//
-//        BufferedImage bimage = new BufferedImage(scaledImage.getWidth(null), scaledImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-//
-//        // Draw the image on to the buffered image
-//        Graphics2D bGr = bimage.createGraphics();
-//        bGr.drawImage(scaledImage, 0, 0, null);
-//        bGr.dispose();
-//
-//        ByteArrayOutputStream out = new ByteArrayOutputStream();
-//        ImageIO.write(bimage,"jpeg",out);
-//        byte[] buf = out.toByteArray();
-//        // setup stream for blob
-//        ByteArrayInputStream inStream = new ByteArrayInputStream(buf);
-//
-//        String query = "update meetup.profile set profile_pic = ? where id = 1";
-//        PreparedStatement ps = getConnection().prepareStatement(query);
-//        ps.setBinaryStream(1,inStream,inStream.available());
-//        System.out.println(ps.toString());
-//        int n = ps.executeUpdate();
-//
+        //executeUpdate("delete from meetup.accoutnt where id >= 7");
+        describeDataBase();
         System.out.println("Groups");
-        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.profile where id = 1"))){
+        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.profile "))){
             System.out.println(s);
         }
+
+        System.out.println("Accounts");
+        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.group "))){
+            System.out.println(s);
+        }
+
+        executeUpdate("delete from meetup.group where id < 20");
 
 //        System.out.println("GroupAssociations");
 //        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.groupAssociation"))){
@@ -187,8 +147,10 @@ public class MySQLHelper {
         return str;
     }
 
-
     public static String buildInsertStatement(String table, Map<String,Object> map){
+        return buildInsertStatement(table,map,false);
+    }
+    public static String buildInsertStatement(String table, Map<String,Object> map,boolean allowBlob){
         int i = 0;
         Iterator<String> iter = map.keySet().iterator();
 
@@ -206,7 +168,8 @@ public class MySQLHelper {
             if(val.getClass().getName().contains("String")) {
                 vals += String.format("'%s'", val.toString().replaceAll("'", "\\\\'"));
             }else if(val.getClass().getName().contains("BufferedImage")){
-                //vals += "?";
+                if(allowBlob && val!=null)
+                vals += "?";
             }else{
                 vals += val.toString();
             }

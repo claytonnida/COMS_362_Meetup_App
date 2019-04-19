@@ -552,7 +552,7 @@ public class ProfileController implements ProfileControllerInterface {
                 ByteArrayInputStream inStream = new ByteArrayInputStream(buf);
 
                 pm = new ProfileMapper();
-                String query = pm.toUpdateQueryQuery(p);
+                String query = pm.toInsertQueryQuery(p);
                 PreparedStatement ps = MySQLHelper.getConnection().prepareStatement(query);
                 ps.setBinaryStream(1, inStream, inStream.available());
                 ps.executeUpdate();

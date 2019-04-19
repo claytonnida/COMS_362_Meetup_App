@@ -176,7 +176,8 @@ public class ReflectMapper<T> {
      * @param obj
      * @return
      */
-    public String toInsertStatement(T obj){
+    public String toInsertStatement(T obj){return toInsertStatement(obj,false);}
+    public String toInsertStatement(T obj,boolean allowBlob){
         try{
 
             String primaryKey = MySQLHelper.getPrimaryKeyForTable(useTableName);
@@ -212,7 +213,7 @@ public class ReflectMapper<T> {
                 fields.put(fieldName,val);
                 field.setAccessible(isAccessible);
             }
-            return MySQLHelper.buildInsertStatement(className,fields);
+            return MySQLHelper.buildInsertStatement(className,fields,allowBlob);
         }catch (Exception e){
             if(App.DEV_MODE)
                 e.printStackTrace();
