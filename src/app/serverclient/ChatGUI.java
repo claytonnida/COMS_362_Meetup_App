@@ -37,7 +37,7 @@ public class ChatGUI {
 
     public static void main(String[] args)throws Exception{
         ProfileMapper pm = new ProfileMapper();
-        Profile me = pm.createObjectList("Select * from meetup.profile where id = 1").get(0);
+        Profile me = pm.createObjectList("Select * from meetup.profile where id = 2").get(0);
         Group g = new Group();
         g.setId(20);
         g.setName("Maverick");
@@ -155,7 +155,7 @@ public class ChatGUI {
     /**
      * Adds messages posted after most recent update to the gui
      */
-    public void getNewMessages(){
+    public synchronized void getNewMessages(){
         //get current time
         String newUpdate = getTime();
 
