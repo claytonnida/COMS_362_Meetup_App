@@ -572,6 +572,22 @@ public class ProfileController implements ProfileControllerInterface {
         return profileIdList;
     }
 
+    public static void main(String[] args)throws Exception{
+        ProfileMapper pm = new ProfileMapper();
+
+        List<Profile> profiles = pm.createObjectList("select id from meetup.profile");
+        List<Integer> ints = new ArrayList<>();
+        for(Profile p: profiles){
+            System.out.println("origins - "+p.getId());
+            ints.add(p.getId());
+        }
+        ProfileController pc = new ProfileController();
+        List<Integer> filetered = pc.filterOnlineConnections(ints);
+        for(Integer i: filetered){
+            System.out.println("Filtered online "+i);
+        }
+    }
+
     /**
      * Queries the database for the "appearsOffline" column for the given Profile ID.
      *

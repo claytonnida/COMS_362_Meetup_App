@@ -10,6 +10,12 @@ import app.models.mappers.AccountMapper;
 import app.models.mappers.GroupAssociationMapper;
 import app.models.mappers.ProfileMapper;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,6 +25,57 @@ import java.util.Map;
 public class MySQLHelper {
 
 
+    public static void main(String[] args)throws Exception{
+
+        describeDataBase();
+        //executeUpdate("Update meetup.group set isPublic = 'Public' where id != ");
+
+        /*
+        message
+	message_id:int(11)
+	from_id:int(11)
+	to_id:int(11)
+	body:varchar(1000)
+	image:blob
+	time:datetime
+	from_pic:blob
+
+        */
+
+        BufferedImage myPicture = ImageIO.read(
+                new File("C:\\Users\\nkallen\\IdeaProjects\\COMS_362_Meetup_App\\grooky_is_okay.jpg"));
+        Image scaledImage = myPicture.getScaledInstance(100,100,Image.SCALE_SMOOTH);
+
+        BufferedImage bimage = new BufferedImage(scaledImage.getWidth(null), scaledImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+        // Draw the image on to the buffered image
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(scaledImage, 0, 0, null);
+        bGr.dispose();
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ImageIO.write(bimage,"jpeg",out);
+        byte[] buf = out.toByteArray();
+        // setup stream for blob
+        ByteArrayInputStream inStream = new ByteArrayInputStream(buf);
+
+        String query = "update meetup.profile set profile_pic = ? where id = 3";
+        PreparedStatement ps = getConnection().prepareStatement(query);
+        ps.setBinaryStream(1,inStream,inStream.available());
+        String s = ps.toString();
+        System.out.println("");
+//        int n = ps.executeUpdate();
+//
+//        System.out.println("Groups");
+//        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.profile"))){
+//            System.out.println(s);
+//        }
+
+//        System.out.println("GroupAssociations");
+//        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.groupAssociation"))){
+//            System.out.println(s);
+//        }
+    }
     //TODO: Note for later https://www.tutorialspoint.com/springjdbc/springjdbc_rowmapper.htm
 
 
@@ -135,8 +192,10 @@ public class MySQLHelper {
             }
             keys += key;
 
-            if(val.getClass().getName().contains("String")){
-                vals += String.format("'%s'",val.toString().replaceAll("'","\\\\'"));
+            if(val.getClass().getName().contains("String")) {
+                vals += String.format("'%s'", val.toString().replaceAll("'", "\\\\'"));
+            }else if(val.getClass().getName().contains("BufferedImage")){
+                vals += "?";
             }else{
                 vals += val.toString();
             }
@@ -158,8 +217,10 @@ public class MySQLHelper {
                 sets += ", ";
             }
 
-            if(val.getClass().getName().contains("String")){
-                sets += key+" = '"+val.toString().replaceAll("'","\\\\'")+"'";
+            if(val.getClass().getName().contains("String")) {
+                sets += key + " = '" + val.toString().replaceAll("'", "\\\\'") + "'";
+            }else if(val.getClass().getName().contains("BufferedImage")){
+                sets += key + " = ? ";
             }else{
                 sets += key+" = "+val.toString();
             }
@@ -226,27 +287,7 @@ public class MySQLHelper {
         }
     }
 
-    public static void main(String[] args)throws Exception{
 
-        describeDataBase();
-        //executeUpdate("Update meetup.group set isPublic = 'Public' where id != ");
-
-
-        System.out.println("Profiles");
-        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.profile"))){
-            System.out.println(s);
-        }
-//
-//        System.out.println("Groups");
-//        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.group"))){
-//            System.out.println(s);
-//        }
-//
-//        System.out.println("GroupAssociations");
-//        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.groupAssociation"))){
-//            System.out.println(s);
-//        }
-    }
 
     private static void resetDatabase()throws SQLException{
         if(InputReader.inputYesNo("Are your really sure?")
@@ -279,6 +320,7 @@ public class MySQLHelper {
                     "appearOffline INT(1), " +
                     "isOnline INT(1), " +
                     "pictureURL varchar(255), " +
+                    "profile_pic Blob, "+
                     "PRIMARY KEY ( id )" +
                     ");");
 
@@ -295,6 +337,16 @@ public class MySQLHelper {
                     "groupid INT(11) " +
                     ");");
 
+
+            executeUpdate("create table meetup.message (" +
+                    "message_id INT NOT NULL AUTO_INCREMENT, " +
+                    "from_id INT(11), "+
+                    "to_id INT(11), "+
+                    "body VARCHAR(1000), " +
+                    "image Blob, "+
+                    "time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, "+
+                    "PRIMARY KEY ( message_id )" +
+                    ");");
 
         }
     }

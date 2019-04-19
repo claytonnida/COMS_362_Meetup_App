@@ -6,6 +6,9 @@ import app.MySQL.MySQLHelper;
 import app.models.Account;
 import app.models.Profile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -150,10 +153,13 @@ public class ReflectMapper<T> {
                 String value = rs.getString(fieldName);
                 value.replaceAll("'","\\'");
                 field.set(obj, value);
-            } else if (type.getName().contains("double"))
-            {  
-            	double value = rs.getDouble(fieldName);
-            	field.set(obj, value);
+            } else if (type.getName().contains("double")) {
+                double value = rs.getDouble(fieldName);
+                field.set(obj, value);
+            }else if(type.getName().contains("BufferedImage")){
+                InputStream is = rs.getBinaryStream(fieldName);
+                BufferedImage bi = ImageIO.read(is);
+                field.set(obj,bi);
             }else {
                 int value = rs.getInt(fieldName);
                 field.set(obj, value);
