@@ -8,6 +8,7 @@ import app.models.Profile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
@@ -191,7 +192,12 @@ public class ReflectMapper<T> {
                     continue;
 
                 //get field and make it accessible
-                Field field = clazz.getDeclaredField(fieldName);
+                Field field=null;
+                try {
+                    field = clazz.getDeclaredField(fieldName);
+                }catch (Exception e){
+                    continue;
+                }
                 boolean isAccessible = field.isAccessible();
                 field.setAccessible(true);
 
@@ -219,7 +225,8 @@ public class ReflectMapper<T> {
      * @param obj
      * @return
      */
-    public String toUpdateStatement(T obj){
+    public String toUpdateStatement(T obj){return toUpdateStatement(obj,false);}
+    public String toUpdateStatement(T obj,boolean allowBlob){
         try{
 
             String primaryKey = MySQLHelper.getPrimaryKeyForTable(useTableName);
@@ -235,7 +242,12 @@ public class ReflectMapper<T> {
                     continue;
 
                 //get field and make it accessible
-                Field field = clazz.getDeclaredField(fieldName);
+                Field field=null;
+                try {
+                    field = clazz.getDeclaredField(fieldName);
+                }catch (Exception e){
+                    continue;
+                }
                 boolean isAccessible = field.isAccessible();
                 field.setAccessible(true);
 
@@ -250,7 +262,7 @@ public class ReflectMapper<T> {
                 fields.put(fieldName,val);
                 field.setAccessible(isAccessible);
             }
-            return MySQLHelper.buildUpdateStatement(className,fields);
+            return MySQLHelper.buildUpdateStatement(className,fields,allowBlob);
         }catch (Exception e){
             if(App.DEV_MODE)
                 e.printStackTrace();

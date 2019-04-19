@@ -18,6 +18,7 @@ import app.models.GroupAssociation;
 import app.models.Profile;
 import app.models.mappers.GroupAssociationMapper;
 import app.models.mappers.GroupMapper;
+import app.serverclient.TextGui;
 
 public class GroupController implements GroupControllerInterface {
 
@@ -356,11 +357,22 @@ public class GroupController implements GroupControllerInterface {
      * @param group
      */
     public void manageGroup(Account account, Group group){
-        String[] options = new String[]{"Edit Group","Leave Group","Join Group","Rank Group","Delete Group","Exit"};
+        String[] options = new String[]{"Open Chat","Edit Group","Leave Group","Join Group","Rank Group","Delete Group","Exit"};
         GroupMapper gm = new GroupMapper();
 
         //Ask user what they would like to do
         switch (InputReader.readFromOptions("Edit "+group.getName(), options)){
+            case "Open Chat":
+                try {
+                    TextGui tg = new TextGui(group);
+                    tg.loadMessages();
+                    tg.open();
+                }catch (Exception e){
+                    System.out.println("Oops, couldn't open chat at this time!");
+                    if(App.DEV_MODE)
+                    e.printStackTrace();
+                }
+                break;
             case "Join Group":
                 joinGroup(account.getProfile().getId(),group.getId());
                 manageGroups(account);

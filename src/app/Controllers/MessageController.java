@@ -12,12 +12,16 @@ import java.util.Iterator;
 import java.util.List;
 
 public class MessageController {
-    public List<Message> getMessagesByGroupID(int groupid)throws SQLException {
+    public List<Message> getMessagesByGroupID(int groupid)throws SQLException{
+        return getMessagesByGroupID(groupid,"00000000 00:00:00.000");
+    }
+    public List<Message> getMessagesByGroupID(int groupid,String date)throws SQLException {
         MessageMapper mm = new MessageMapper();
         ProfileMapper pm = new ProfileMapper();
         HashMap<Integer, List<Message>> map = new HashMap<>();
 
-        List<Message> messages = mm.createObjectList("select * from meetup.message where to_id = "+groupid);
+        List<Message> messages = mm.createObjectList("select * from meetup.message where to_id = "+groupid+
+                " and time >= '"+date+"'");
         for(Message m: messages){
             if(map.containsKey(m.getFrom_id())){
                 map.get(m.getFrom_id()).add(m);

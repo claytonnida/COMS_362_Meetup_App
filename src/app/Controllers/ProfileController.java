@@ -12,15 +12,10 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -441,10 +436,28 @@ public class ProfileController implements ProfileControllerInterface {
     @Override
     public void updateProfile(Profile p) throws SQLException{
 
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ImageIO.write(p.getProfile_pic(), "png", out);
+            byte[] buf = out.toByteArray();
+            // setup stream for blob
+            ByteArrayInputStream inStream = new ByteArrayInputStream(buf);
+
             ProfileMapper pm = new ProfileMapper();
-            Statement stmt = MySQLHelper.createStatement();
             String query = pm.toUpdateQueryQuery(p);
-            stmt.executeUpdate(query);
+            PreparedStatement ps = MySQLHelper.getConnection().prepareStatement(query);
+            ps.setBinaryStream(1,inStream,inStream.available());
+            ps.executeUpdate();
+
+        }catch (Exception e){
+
+            ProfileMapper pm = new ProfileMapper();
+            String query = pm.toUpdateQueryQuery(p);
+            query.replaceAll("profile_pic = \\?,","");
+            PreparedStatement ps = MySQLHelper.getConnection().prepareStatement(query);
+            ps.executeUpdate();
+        }
+
     }
 
     /**
@@ -530,19 +543,33 @@ public class ProfileController implements ProfileControllerInterface {
     public int saveProfile(Profile p)throws SQLException{
         ProfileMapper pm = new ProfileMapper();
 
-        if(p.getId() == 0) {
-            String query = pm.toInsertQueryQuery(p);
-            Statement stmt = MySQLHelper.createStatement();
-            stmt.executeUpdate(query);
+        try {
+            if (p.getId() == 0) {
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                ImageIO.write(p.getProfile_pic(), "png", out);
+                byte[] buf = out.toByteArray();
+                // setup stream for blob
+                ByteArrayInputStream inStream = new ByteArrayInputStream(buf);
 
-            ResultSet rs = stmt.executeQuery("Select @@identity");
-            rs.next();
-            return rs.getInt(1);
-        }else {
-            String query = pm.toUpdateQueryQuery(p) + " where id="+p.getId();
-            MySQLHelper.createStatement().executeUpdate(query);
-            return p.getId();
+                pm = new ProfileMapper();
+                String query = pm.toUpdateQueryQuery(p);
+                PreparedStatement ps = MySQLHelper.getConnection().prepareStatement(query);
+                ps.setBinaryStream(1, inStream, inStream.available());
+                ps.executeUpdate();
+
+                ResultSet rs = ps.executeQuery("Select @@identity");
+                rs.next();
+                return rs.getInt(1);
+            } else {
+                updateProfile(p);
+                return p.getId();
+            }
+        }catch (Exception e){
+            if(App.DEV_MODE)
+                e.printStackTrace();
         }
+
+        return p.getId();
     }
 
     /**
@@ -646,6 +673,7 @@ public class ProfileController implements ProfileControllerInterface {
             return false;
         }
     }
+
 
     public Profile selectProfile(List<Profile> profiles, Account account){
 

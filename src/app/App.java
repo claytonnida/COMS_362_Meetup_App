@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class App
 {
-	public static final boolean DEV_MODE = false;
+	public static final boolean DEV_MODE = true;
 	//TODO create account here or in Account.java
 	public static Map<String,Object> sessionVariables = new HashMap<>();
 
