@@ -9,6 +9,10 @@ import java.net.URL;
 import java.util.*;
 
 public class Server {
+
+    public static String HOST = "76.10.6.33";
+    public static int PORT = 8000;
+
     ServerSocket socket;
     public static void main(String[] args){
         Server s = new Server();
@@ -17,7 +21,7 @@ public class Server {
     static Map<Integer, List<ClientSender>> groupMaps = new HashMap<>() ;
     public Server(){
         try{
-            socket = new ServerSocket(8000);
+            socket = new ServerSocket(PORT);
 
             String publicIpAddress = "unknown";
 

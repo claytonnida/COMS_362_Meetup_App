@@ -31,7 +31,7 @@ public class MySQLHelper {
         //executeUpdate("delete from meetup.accoutnt where id >= 7");
         describeDataBase();
         System.out.println("Groups");
-        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.profile "))){
+        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.account "))){
             System.out.println(s);
         }
 
