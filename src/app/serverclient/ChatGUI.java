@@ -52,14 +52,14 @@ public class ChatGUI {
 
     public static void main(String[] args)throws Exception{
         ProfileMapper pm = new ProfileMapper();
-        //Profile me = pm.createObjectList("Select * from meetup.profile where id = 2").get(0);
-        Profile me = new Profile();
+        Profile me = pm.createObjectList("Select * from meetup.profile where id = 3").get(0);
+        //Profile me = new Profile();
         Group g = new Group();
-        g.setId(20);
-        g.setName("Maverick");
+        g.setId(21);
+        g.setName("Test Chat");
 
         ChatGUI tg = new ChatGUI(g,me);
-        //tg.getNewMessages();
+        tg.loadMessages();
         tg.open();
     }
 
@@ -105,7 +105,7 @@ public class ChatGUI {
         addLimitToTextField(text,1000);
         buttonPanel.add(text);
         JButton send = new JButton("Send");
-        //establishServerCommunications(send);
+        establishServerCommunications(send);
         buttonPanel.add(send);
         buttonPanel.setBorder(null);
         //TODO change text box color
@@ -258,7 +258,7 @@ public class ChatGUI {
      * @throws SQLException
      */
     public void loadMessages()throws SQLException{
-        List<Message> mList = new MessageController().getMessagesByGroupID(20);
+        List<Message> mList = new MessageController().getMessagesByGroupID(groupid);
 
         for(Message m: mList){
             addMessage(m);
