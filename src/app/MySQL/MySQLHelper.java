@@ -40,7 +40,8 @@ public class MySQLHelper {
             System.out.println(s);
         }
 
-        executeUpdate("delete from meetup.group where id < 20");
+        //executeUpdate("delete from meetup.group where id < 20");
+        executeUpdate("delete from meetup.message where to_id = 21");
 
 //        System.out.println("GroupAssociations");
 //        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.groupAssociation"))){

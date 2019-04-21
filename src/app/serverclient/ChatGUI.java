@@ -13,10 +13,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -37,6 +34,7 @@ public class ChatGUI {
     private int groupid;
     private Profile profile;
     private String lastUpdate = "00000000 00:00:00.000";
+    private PrintWriter out;
 
 
     //TODO edit color for box containing username and message
@@ -56,11 +54,12 @@ public class ChatGUI {
         //Profile me = new Profile();
         Group g = new Group();
         g.setId(21);
-        g.setName("Test Chat");
+        g.setName("Maverick");
 
         ChatGUI tg = new ChatGUI(g,me);
         tg.loadMessages();
         tg.open();
+        tg.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     /**
@@ -80,9 +79,9 @@ public class ChatGUI {
         //setup scroll pane for messages
         scroll = new JScrollPane();
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         Container contentPane = frame.getContentPane();
         scroll.setBorder(null);
-
         //Display name of the group
         //TODO change name and owner text color
         JPanel propertyPanel = new JPanel(new BorderLayout());
@@ -106,6 +105,7 @@ public class ChatGUI {
         buttonPanel.add(text);
         JButton send = new JButton("Send");
         establishServerCommunications(send);
+        text.addKeyListener(new EnterListener(this));
         buttonPanel.add(send);
         buttonPanel.setBorder(null);
         //TODO change text box color
@@ -165,7 +165,7 @@ public class ChatGUI {
         try{
             //connect and open streams
             Socket client = new Socket(Server.HOST,Server.PORT);
-            PrintWriter out = new PrintWriter(client.getOutputStream());
+            out = new PrintWriter(client.getOutputStream());
             Scanner in = new Scanner(client.getInputStream());
             ServerListener sl = new ServerListener(in,this);
             Thread th = new Thread(sl);
@@ -180,21 +180,7 @@ public class ChatGUI {
             {
                 public void actionPerformed(ActionEvent e)
                 {
-                    // Build message
-                    Message m = new Message();
-                    MessageMapper mm = new MessageMapper();
-                    m.setTo_id(groupid);
-                    m.setFrom_id(profile.getId());
-                    m.setBody(text.getText());
-                    m.setImage(null);
-
-                    //post message on server
-                    MySQLHelper.executeUpdate(mm.toInsertQueryQuery(m));
-                    text.setText("");
-
-                    //ping other members
-                    out.println("rec:"+groupid);
-                    out.flush();
+                    sendAndNotify();
                 }
             });
 
@@ -224,6 +210,7 @@ public class ChatGUI {
      * Adds messages posted after most recent update to the gui
      */
     public synchronized void getNewMessages(){
+
         //get current time
         String newUpdate = getTime();
 
@@ -241,8 +228,12 @@ public class ChatGUI {
 
         //update state
         lastUpdate = newUpdate;
+        scroll.setViewportView(messagePanel);
         JScrollBar vertical = scroll.getVerticalScrollBar();
         vertical.setValue( vertical.getMaximum() );
+        scroll.revalidate();
+
+        synch = 0;
     }
 
     /**
@@ -263,9 +254,13 @@ public class ChatGUI {
         for(Message m: mList){
             addMessage(m);
         }
+
+
+        scroll.setViewportView(messagePanel);
         lastUpdate = getTime();
         JScrollBar vertical = scroll.getVerticalScrollBar();
         vertical.setValue( vertical.getMaximum() );
+        scroll.revalidate();
     }
 
     /**
@@ -292,7 +287,6 @@ public class ChatGUI {
         gbc.anchor = GridBagConstraints.WEST;
         messagePanel.add(row,gbc);
 
-        messagePanel.revalidate();
 
     }
 
@@ -395,6 +389,60 @@ public class ChatGUI {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    /**
+     * Tell stuff to the server
+     */
+    private int synch = 0;
+    private void sendAndNotify(){
+        if(synch==0){
+            synch = 1;
+        }else return;
+        // Build message
+        if(text.getText().trim().equals("")){
+            text.setText("");
+            return;
+        }
+        Message m = new Message();
+        MessageMapper mm = new MessageMapper();
+        m.setTo_id(groupid);
+        m.setFrom_id(profile.getId());
+        m.setBody(text.getText().trim());
+        m.setImage(null);
+
+        //post message on server
+        MySQLHelper.executeUpdate(mm.toInsertQueryQuery(m));
+        text.setText("");
+
+        //ping other members
+        out.println("rec:"+groupid);
+        out.flush();
+
+    }
+
+    class EnterListener implements KeyListener{
+
+        ChatGUI cg;
+        public EnterListener(ChatGUI b){
+            cg = b;
+        }
+        @Override
+        public void keyTyped(KeyEvent e) {
+
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            if(e.getKeyCode()==10 && cg.synch==0){
+                cg.sendAndNotify();
+            }
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+
         }
     }
 }
