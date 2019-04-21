@@ -37,15 +37,16 @@ public class ChatGUI {
     private PrintWriter out;
 
 
-    //TODO edit color for box containing username and message
-    //TODO edit color for box surrounding username and their message
-    //TODO edit location of message?
-    //TODO edit location of username?
-    //TODO edit location of image?
-    //TODO change username and body text color
-    //TODO set Background color for message container
-    //TODO change text box color
     //TODO change name and owner text color
+    //TODO change text box color
+    //TODO set Background color for message container
+    //TODO change username and body text color
+    //TODO change box containing username and message
+    //TODO edit location of image?
+    //TODO edit location of username?
+    //TODO edit location of message?
+    //TODO edit color for box surrounding username and their message
+
 
 
     public static void main(String[] args)throws Exception{
@@ -308,17 +309,24 @@ public class ChatGUI {
         GridBagConstraints gbc = new GridBagConstraints();
 
         //build username and their message
+        JPanel text = new JPanel(new BorderLayout());
         JLabel username = new JLabel(from);
         username.setFont(new Font(panel.getFont().getName(), Font.BOLD, 15));
         JTextArea body = new JTextArea(message);
         //TODO change username and body text color
         username.setForeground(new Color(255,255,255));
         body.setForeground(new Color(255,255,255));
+        text.setBackground(null);
         body.setLineWrap(true);
         body.setWrapStyleWord(true);
         body.setEditable(false);
         body.setBorder(null);
         body.setBackground(null);
+        text.add(username,BorderLayout.NORTH);
+        text.add(body,BorderLayout.SOUTH);
+        //TODO change box containing username and message
+        text.setBackground(null);
+        text.setBorder(new EmptyBorder(5,5,5,5));
 
         //TODO edit location of image?
         //add pic to row
@@ -333,24 +341,22 @@ public class ChatGUI {
         //Add username and their message
         gbc.gridx = 1;
         gbc.gridy = 0;
-        panel.add(username,gbc);
+        //panel.add(username,gbc);
 
         //TODO edit location of message?
         gbc.gridx = 1;
-        gbc.gridy = 1;
+        gbc.gridy = 0;
         gbc.weightx = 4.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel.add(body,gbc);
+        panel.add(text,gbc);
 
         //tidy up
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
         row.setBorder(new EmptyBorder(5,10,5,10));
 
         //beautify
+        row.setBackground(null);
         //TODO edit color for box surrounding username and their message
-        //row.setBackground(new Color(20,50,100));
-        row.setBackground(new Color(0,0,0));
-        //TODO edit color for box containing username and message
         panel.setBackground(new Color(0,10,30));
         row.add(panel,BorderLayout.CENTER);
         row.setSize(row.getWidth(),panel.getHeight());
