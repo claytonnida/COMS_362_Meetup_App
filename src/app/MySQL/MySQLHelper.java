@@ -31,12 +31,12 @@ public class MySQLHelper {
         //executeUpdate("delete from meetup.accoutnt where id >= 7");
         describeDataBase();
         System.out.println("Groups");
-        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.account "))){
+        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.group "))){
             System.out.println(s);
         }
 
         System.out.println("Accounts");
-        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.group "))){
+        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.message "))){
             System.out.println(s);
         }
 
