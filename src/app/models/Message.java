@@ -10,6 +10,7 @@ public class Message {
     private BufferedImage image;
     private BufferedImage from_pic;
     private String sender_name;
+    private String time;
 
     public String getSender_name() {
         return sender_name;
@@ -65,5 +66,13 @@ public class Message {
 
     public void setFrom_pic(BufferedImage from_pic) {
         this.from_pic = from_pic;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 }

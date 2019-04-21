@@ -40,6 +40,8 @@ public class ChatGUI {
     //TODO change name and owner text color
     //TODO change text box color
     //TODO set Background color for message container
+    //TODO Edit timestampt color
+    //TODO Edit include Date in timestamp
     //TODO change username and body text color
     //TODO change box containing username and message
     //TODO edit location of image?
@@ -54,7 +56,7 @@ public class ChatGUI {
         Profile me = pm.createObjectList("Select * from meetup.profile where id = 3").get(0);
         //Profile me = new Profile();
         Group g = new Group();
-        g.setId(21);
+        g.setId(20);
         g.setName("Maverick");
 
         ChatGUI tg = new ChatGUI(g,me);
@@ -269,7 +271,7 @@ public class ChatGUI {
      * @param m
      */
     private void addMessage(Message m){
-        JPanel message = generateRow(m.getFrom_pic(),m.getSender_name(),m.getBody());
+        JPanel message = generateRow(m.getFrom_pic(),m.getSender_name(),m.getBody(),m.getTime());
         addMessage(message);
     }
 
@@ -298,7 +300,7 @@ public class ChatGUI {
      * @param message
      * @return
      */
-    public JPanel generateRow(BufferedImage image,String from, String message){
+    public JPanel generateRow(BufferedImage image,String from, String message,String time){
         //Create Containers
         JPanel row = new JPanel(new BorderLayout());
         JPanel panel = new JPanel(new GridBagLayout());
@@ -309,20 +311,34 @@ public class ChatGUI {
         GridBagConstraints gbc = new GridBagConstraints();
 
         //build username and their message
+        //TODO Edit timestampt color
+        //TODO Edit include Date in timestamp
+        time = convertTime(time,true);
+
+        JLabel timeLabel = new JLabel(time);
+        timeLabel.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,10));
+        timeLabel.setForeground(new Color(255,255,255));
+
+        //build username and their message
+        JPanel header = new JPanel(new BorderLayout());
         JPanel text = new JPanel(new BorderLayout());
         JLabel username = new JLabel(from);
+        header.add(username,BorderLayout.WEST);
+        header.add(timeLabel,BorderLayout.EAST);
+        header.setBackground(null);
         username.setFont(new Font(panel.getFont().getName(), Font.BOLD, 15));
         JTextArea body = new JTextArea(message);
         //TODO change username and body text color
         username.setForeground(new Color(255,255,255));
         body.setForeground(new Color(255,255,255));
         text.setBackground(null);
+        body.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,12));
         body.setLineWrap(true);
         body.setWrapStyleWord(true);
         body.setEditable(false);
         body.setBorder(null);
         body.setBackground(null);
-        text.add(username,BorderLayout.NORTH);
+        text.add(header,BorderLayout.NORTH);
         text.add(body,BorderLayout.SOUTH);
         //TODO change box containing username and message
         text.setBackground(null);
@@ -358,10 +374,42 @@ public class ChatGUI {
         row.setBackground(null);
         //TODO edit color for box surrounding username and their message
         panel.setBackground(new Color(0,10,30));
+        LineBorder lb = new LineBorder(null,2,true);
+        panel.setBorder(lb);
         row.add(panel,BorderLayout.CENTER);
         row.setSize(row.getWidth(),panel.getHeight());
         return row;
     }
+    private String convertTime(String dt){
+        return convertTime(dt,true);
+    }
+    private String convertTime(String dt,boolean includeDate){
+        String date = dt.replaceAll("\\d+:\\d+:\\d+.\\d+","").trim();
+        String time = dt.replaceAll("\\d+-\\d+-\\d+","").trim();
+        String[] split = time.split(":");
+        if(split[0].startsWith("0"))
+            split[0] = split[0].substring(1);
+
+
+        int hour = (Integer.parseInt(split[0]))-5;//UTC is 5 hours ahead of us
+        String half;
+        if(hour < 12 || hour == 24){
+            half = "am";
+            if(hour < 0){
+                hour += 12;
+                half = "pm";
+            }
+            if(hour == 0)
+                hour = 12;
+        }else {
+            half = "pm";
+            hour-=5;
+        }
+
+        String dd = includeDate?date.replaceAll("-","/"):"";
+        return hour+":"+split[1]+" "+half+"  "+dd;
+    }
+
 
     public Profile getOwner(Group g){
         ProfileMapper pm = new ProfileMapper();
