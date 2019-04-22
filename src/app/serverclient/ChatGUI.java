@@ -283,13 +283,12 @@ public class ChatGUI {
 
         GridBagConstraints gbc = new GridBagConstraints();
 
-        gbc.gridx = 0;
-        gbc.gridy = messagePanel.getComponentCount() + 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
-        gbc.anchor = GridBagConstraints.WEST;
-        messagePanel.add(row,gbc);
-
+            gbc.gridx = 0;
+            gbc.gridy = messagePanel.getComponentCount() + 1;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.weightx = 1.0;
+            gbc.anchor = GridBagConstraints.WEST;
+            messagePanel.add(row, gbc);
 
     }
 

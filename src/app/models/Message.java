@@ -8,16 +8,16 @@ public class Message {
     private int to_id;
     private String body;
     private BufferedImage image;
-    private BufferedImage from_pic;
-    private String sender_name;
+    private BufferedImage profile_pic;
+    private String name;
     private String time;
 
     public String getSender_name() {
-        return sender_name;
+        return name;
     }
 
     public void setSender_name(String sender_name) {
-        this.sender_name = sender_name;
+        this.name = sender_name;
     }
 
     public int getMessage_id() {
@@ -61,11 +61,11 @@ public class Message {
     }
 
     public BufferedImage getFrom_pic() {
-        return from_pic;
+        return profile_pic;
     }
 
     public void setFrom_pic(BufferedImage from_pic) {
-        this.from_pic = from_pic;
+        this.profile_pic = from_pic;
     }
 
     public String getTime() {

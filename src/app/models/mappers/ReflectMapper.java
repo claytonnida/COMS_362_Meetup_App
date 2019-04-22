@@ -88,6 +88,7 @@ public class ReflectMapper<T> {
     public T toObject(ResultSet rs) throws SQLException {
         try {
             T obj = clazz.newInstance();
+            String s = MySQLHelper.resultSetToString(rs);
 
             ResultSetMetaData rsmd = rs.getMetaData();
             for (int i = 1; i <= rsmd.getColumnCount(); i++) {
