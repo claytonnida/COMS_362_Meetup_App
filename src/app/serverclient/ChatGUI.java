@@ -40,8 +40,8 @@ public class ChatGUI {
     //TODO change name and owner text color
     //TODO change text box color
     //TODO set Background color for message container
-    //TODO Edit timestampt color
     //TODO Edit include Date in timestamp
+    //TODO change timeLabel color
     //TODO change username and body text color
     //TODO change box containing username and message
     //TODO edit location of image?
@@ -214,8 +214,6 @@ public class ChatGUI {
      */
     public synchronized void getNewMessages(){
 
-        //get current time
-        String newUpdate = getTime();
 
         //get messages we haven't seen yet
         MessageController mc = new MessageController();
@@ -223,6 +221,7 @@ public class ChatGUI {
             List<Message> ml = mc.getMessagesByGroupID(groupid, lastUpdate);
             for (Message m : ml) {
                 addMessage(m);
+                lastUpdate = m.getTime();
             }
         }catch (Exception e){
             if(App.DEV_MODE)
@@ -230,7 +229,6 @@ public class ChatGUI {
         }
 
         //update state
-        lastUpdate = newUpdate;
         scroll.setViewportView(messagePanel);
         JScrollBar vertical = scroll.getVerticalScrollBar();
         vertical.setValue( vertical.getMaximum() );
@@ -316,7 +314,8 @@ public class ChatGUI {
 
         JLabel timeLabel = new JLabel(time);
         timeLabel.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,10));
-        timeLabel.setForeground(new Color(255,255,255));
+        //TODO change timeLabel color
+        timeLabel.setForeground(new Color(90,170,255));
 
         //build username and their message
         JPanel header = new JPanel(new BorderLayout());
@@ -466,8 +465,8 @@ public class ChatGUI {
         m.setImage(null);
 
         //post message on server
-        MySQLHelper.executeUpdate(mm.toInsertQueryQuery(m));
         text.setText("");
+        MySQLHelper.executeUpdate(mm.toInsertQueryQuery(m));
 
         //ping other members
         out.println("rec:"+groupid);

@@ -26,7 +26,7 @@ public class MessageController {
                         "select * from meetup.message as a inner join meetup.profile as b " +
                         "on a.from_id = b.id ) as c "
                +"where to_id = "+groupid
-               +" and time >= '"+date+"'"
+               +" and time > '"+date+"'"
         );
 //        for(Message m: messages){
 //            if(map.containsKey(m.getFrom_id())){
