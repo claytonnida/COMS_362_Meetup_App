@@ -255,19 +255,17 @@ public class MySQLHelper {
      * @param query
      * @return
      */
-    public static ResultSet executeQuery(String query){
-        try{
+    public static ResultSet executeQuery(String query) {
+        try {
             return createStatement().executeQuery(query);
 
-        }catch (SQLException sql){
+        } catch (SQLException sql) {
             System.out.println("Oops! Server error! Sorry, whatever was supposed to happen didn't.");
-            if(App.DEV_MODE)
+            if (App.DEV_MODE)
                 sql.printStackTrace();
             return null;
         }
     }
-
-
 
     private static void resetDatabase()throws SQLException{
         if(InputReader.inputYesNo("Are your really sure?")

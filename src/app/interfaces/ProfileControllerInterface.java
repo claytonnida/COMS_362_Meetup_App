@@ -104,9 +104,9 @@ public interface ProfileControllerInterface {
     void insertProfile(Profile p)throws SQLException;
 
     /**
-     * Lists {@link Profile}s
+     * Lists {@link Profile}s and returns a {@link List} containing the IDs of the profiles.
      */
-    void listProfiles();
+    List<Integer> listProfiles();
 
     /**
      * Sends the profile to database.
