@@ -10,7 +10,7 @@ import java.util.*;
 
 public class Server {
 
-    public static String HOST = "192.168.1.118";
+    public static String HOST = "cs362meetupdb.redirectme.net";
     public static int PORT = 8000;
 
     ServerSocket socket;

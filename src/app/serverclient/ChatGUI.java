@@ -56,7 +56,7 @@ public class ChatGUI {
         Profile me = pm.createObjectList("Select * from meetup.profile where id = 3").get(0);
         //Profile me = new Profile();
         Group g = new Group();
-        g.setId(20);
+        g.setId(23);
         g.setName("Maverick");
 
         ChatGUI tg = new ChatGUI(g,me);
