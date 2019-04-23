@@ -22,6 +22,11 @@ import app.serverclient.ChatGUI;
 
 public class GroupController implements GroupControllerInterface {
 
+    //TODO: Javadoc
+    public void inviteToGroup(int groupId) {
+        new GroupAssociationController().inviteToGroup(groupId);
+    }
+
     public List<Group> getGroupsForUser(Profile p){
         try {
 
@@ -333,6 +338,8 @@ public class GroupController implements GroupControllerInterface {
             return new ArrayList<>();
         }
     }
+
+    
 
     public void joinGroup(int profileId, int groupId){
         GroupAssociationController gac = new GroupAssociationController();

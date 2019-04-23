@@ -9,6 +9,10 @@ import app.models.mappers.GroupAssociationMapper;
 
 public class GroupAssociationController implements GroupAssociationControllerInterface {
 
+    //TODO: Javadoc
+    public void inviteToGroup(int groupId) {
+        // TODO: Implement
+    }
 
     /**
      * Removes the {@link app.models.GroupAssociation} between a {@link Profile} and a {@link Group}.
