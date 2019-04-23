@@ -477,23 +477,65 @@ public class ProfileController implements ProfileControllerInterface {
     }
 
     /**
-     * Lists {@link Profile}s
+     * Lists {@link Profile}s.
+     *
+     * @return A {@link List} containing the IDs of the profiles.
      */
     @Override
-    public void listProfiles(){
-        try{
+    public List<Integer> listProfiles() {
+        List<Integer> profileIdList = new ArrayList<>();
+
+        try {
             Statement stmt = MySQLHelper.createStatement();
             ResultSet rs = stmt.executeQuery("Select * from meetup.profile");
-            while(rs.next()){
+
+            while (rs.next()) {
                 ResultSetMetaData rsmd = rs.getMetaData();
-                for(int i = 1; i < rsmd.getColumnCount(); i++){
-                    System.out.print(rs.getString(i)+",\t");
+
+                for (int i = 1; i < rsmd.getColumnCount(); i++) {
+                    if (rsmd.getColumnName(i).equals("id")) {
+                        profileIdList.add(rs.getInt(i));
+                    }
+
+                    System.out.print(rs.getString(i) + ",\t");
                 }
                 System.out.println();
             }
-        }catch (Exception e){
-            if(App.DEV_MODE)
+        } catch (Exception e) {
+            if (App.DEV_MODE)
                 e.printStackTrace();
+        }
+
+        return profileIdList;
+    }
+
+    /**
+     * Prints out the columns of rows in database with profile IDs matching those in given {@link List}
+     * @param profileIdList The {@link List<Integer>} of {@link Profile} IDs to print database rows of.
+     *
+     * @throws SQLException If an error occurs when executing the MySQL query.
+     */
+    public void printProfileIdList(List<Integer> profileIdList) throws SQLException {
+        if(profileIdList == null) {
+            throw new IllegalArgumentException("ERROR! Profile ID List cannot be null!");
+        }
+        StringBuilder queryStringBuilder = new StringBuilder("SELECT * FROM meetup.profile WHERE id IN (");
+        for(int id : profileIdList) {
+            queryStringBuilder.append(String.format("\'%s\', ", id));
+        }
+        queryStringBuilder.deleteCharAt(queryStringBuilder.length() - 2);
+        queryStringBuilder.append(")");
+
+        Statement statement = MySQLHelper.createStatement();
+        ResultSet resultSet = statement.executeQuery(queryStringBuilder.toString());
+
+        while(resultSet.next()) {
+            ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+
+            for(int i = 1; i < resultSetMetaData.getColumnCount(); i++) {
+                System.out.print(resultSet.getString(i) + ",\t");
+            }
+            System.out.println();
         }
     }
 
@@ -572,6 +614,7 @@ public class ProfileController implements ProfileControllerInterface {
         return p.getId();
     }
 
+    //TODO: Add this to the UI!
     /**
      * Returns a version of the given {@link List<Integer>} with "offline" connections removed.
      *
@@ -600,19 +643,33 @@ public class ProfileController implements ProfileControllerInterface {
     }
 
     public static void main(String[] args)throws Exception{
-        ProfileMapper pm = new ProfileMapper();
+        ProfileController profileController = new ProfileController();
 
-        List<Profile> profiles = pm.createObjectList("select id from meetup.profile");
-        List<Integer> ints = new ArrayList<>();
-        for(Profile p: profiles){
-            System.out.println("origins - "+p.getId());
-            ints.add(p.getId());
+        List<Integer> profileIdList = profileController.listProfiles();
+
+        System.out.println();
+
+        for(int id : profileIdList) {
+            System.out.println(id + ", ");
         }
-        ProfileController pc = new ProfileController();
-        List<Integer> filetered = pc.filterOnlineConnections(ints);
-        for(Integer i: filetered){
-            System.out.println("Filtered online "+i);
-        }
+
+        System.out.println();
+
+        profileController.printProfileIdList(profileIdList);
+
+        //        ProfileMapper pm = new ProfileMapper();
+//
+//        List<Profile> profiles = pm.createObjectList("select id from meetup.profile");
+//        List<Integer> ints = new ArrayList<>();
+//        for(Profile p: profiles){
+//            System.out.println("origins - "+p.getId());
+//            ints.add(p.getId());
+//        }
+//        ProfileController pc = new ProfileController();
+//        List<Integer> filetered = pc.filterOnlineConnections(ints);
+//        for(Integer i: filetered){
+//            System.out.println("Filtered online "+i);
+//        }
     }
 
     /**
