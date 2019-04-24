@@ -8,9 +8,11 @@ import app.models.Group;
 import app.models.GroupAssociation;
 import app.models.Profile;
 import app.models.mappers.GroupAssociationMapper;
+import app.models.mappers.ProfileMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GroupAssociationController implements GroupAssociationControllerInterface {
@@ -19,25 +21,30 @@ public class GroupAssociationController implements GroupAssociationControllerInt
     public void inviteToGroup(int groupId) {
         ProfileController profileController = new ProfileController();
 
-        int chosenId;
-        while (true) {
-            List<Integer> profileIdList = profileController.listProfiles();
+        ProfileMapper profileMapper = new ProfileMapper();
 
-            chosenId = InputReader.readInputInt("Please select a profile ID from the list.");
+        Profile chosenProfile;
+        try {
+            List<Profile> profileList = profileMapper.createObjectList("SELECT * FROM meetup.profile");
 
-            if(chosenId < 0 || !profileIdList.contains(chosenId)) {
-                System.out.println("You must enter a number from the list.");
-            } else {
-                break;
+            chosenProfile = (Profile) InputReader.readFromOptions("Please select a profile ID from the list.", new ArrayList<>(profileList));
+
+        }
+        catch(SQLException e) {
+            System.out.println("ERROR! Unable to create invite to group.");
+
+            if(App.DEV_MODE) {
+                e.printStackTrace();
             }
+            return;
         }
 
-        if(InputReader.inputYesNo("Send group invite to id " + chosenId + "?")) {
+        if(InputReader.inputYesNo("Send group invite to " + chosenProfile.getName() + "?")) {
             try {
-                if(doesInviteExist(chosenId, groupId)) {
+                if(doesInviteExist(chosenProfile.getId(), groupId)) {
                     System.out.println("That invite has already been sent!");
                 } else {
-                    createInvite(groupId, chosenId);
+                    createInvite(chosenProfile.getId(), groupId);
                 }
             } catch (SQLException e) {
                 if(App.DEV_MODE) e.printStackTrace();
@@ -52,8 +59,8 @@ public class GroupAssociationController implements GroupAssociationControllerInt
         ResultSet resultSet = MySQLHelper.executeQuery(
                 String.format("SELECT * " +
                         "FROM meetup.groupInvitation " +
-                        "WHERE groupID = %s" +
-                        "AND profileId = %s", groupId, profileId)
+                        "WHERE groupid = %s " +
+                        "AND profileid = %s", groupId, profileId)
         );
 
         return resultSet.first();
@@ -70,11 +77,16 @@ public class GroupAssociationController implements GroupAssociationControllerInt
     public void removeInvite(int profileId, int groupId) {
         MySQLHelper.executeUpdate(
                 String.format("DELETE FROM meetup.groupAssociation " +
-                                "WHERE profileid = %s" +
+                        "WHERE profileid = %s " +
                                 "AND groupid = %s", profileId, groupId)
         );
 
         System.out.println("Successfully removed invitation for profile ID: " + profileId + " to group ID: " + groupId + "!");
+    }
+
+    // For debugging purposes
+    public static void main(String[] args) {
+
     }
 
     /**

@@ -5,7 +5,6 @@ import app.InputReader;
 import app.MySQL.MySQLHelper;
 import app.interfaces.ProfileControllerInterface;
 import app.models.Account;
-import app.models.Group;
 import app.models.Profile;
 import app.models.mappers.ProfileMapper;
 
@@ -13,14 +12,14 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class ProfileController implements ProfileControllerInterface {
 
@@ -470,11 +469,9 @@ public class ProfileController implements ProfileControllerInterface {
 
     /**
      * Lists {@link Profile}s.
-     *
-     * @return A {@link List} containing the IDs of the profiles.
      */
     @Override
-    public List<Integer> listProfiles() {
+    public void listProfiles() {
         List<Integer> profileIdList = new ArrayList<>();
 
         try {
@@ -497,10 +494,9 @@ public class ProfileController implements ProfileControllerInterface {
             if (App.DEV_MODE)
                 e.printStackTrace();
         }
-
-        return profileIdList;
     }
 
+    //TODO: Remove? Redundant? NATE?!
     /**
      * Prints out the columns of rows in database with profile IDs matching those in given {@link List}
      * @param profileIdList The {@link List<Integer>} of {@link Profile} IDs to print database rows of.
@@ -634,20 +630,8 @@ public class ProfileController implements ProfileControllerInterface {
         return profileIdList;
     }
 
-    public static void main(String[] args)throws Exception{
+    public static void main(String[] args) throws Exception {
         ProfileController profileController = new ProfileController();
-
-        List<Integer> profileIdList = profileController.listProfiles();
-
-        System.out.println();
-
-        for(int id : profileIdList) {
-            System.out.println(id + ", ");
-        }
-
-        System.out.println();
-
-        profileController.printProfileIdList(profileIdList);
 
         //        ProfileMapper pm = new ProfileMapper();
 //
