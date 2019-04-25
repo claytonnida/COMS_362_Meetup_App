@@ -6,9 +6,9 @@ import app.interfaces.Selectable;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 
 public class Profile implements ProfileInterface, Selectable
@@ -26,12 +26,13 @@ public class Profile implements ProfileInterface, Selectable
     private int isOnline;
 	private String name = "Anonymous";
 	private BufferedImage picture;
+	private ArrayList<String> interests;
 
 	private String pictureURL;
 	private BufferedImage profile_pic;
 
 	//If you change these values, you will also need to change ProfileController.editProfileFields(...)
-	public static final String[] OPTIONS = {"Name", "About Me", "Age", "Gender Identity",
+	public static final String[] OPTIONS = {"Name", "About Me","Interests", "Age", "Gender Identity",
             "Sexual Preference", "Major", "Spirit Animal", "Zodiac Sign", "Picture", "done"};
 
     public int getIsOnline() {
@@ -70,6 +71,17 @@ public class Profile implements ProfileInterface, Selectable
 	@Override
 	public void setAboutMe(String aboutMe) {
 		this.aboutMe = aboutMe;
+	}
+	
+	@Override
+	public ArrayList<String> getInterests() {
+		
+		return interests;
+	}
+	
+	@Override
+	public void setInterests(ArrayList<String> interests) {
+		this.interests  = interests;
 	}
 
 	@Override
@@ -182,7 +194,8 @@ public class Profile implements ProfileInterface, Selectable
 				"\nSexual Preference: " + getSexualPref() +
 				"\nMajor: " + getMajor() +
 				"\nSpirit Animal: " + getSpiritAnimal() +
-				"\nZodiac Sign: " + getZodiac();
+				"\nZodiac Sign: " + getZodiac()+
+				"\nInterests: "+getInterests();
 
 		return profileDetails;
 	}
@@ -213,6 +226,7 @@ public class Profile implements ProfileInterface, Selectable
 	 * @param profile_pic
 	 */
 	public void setProfile_pic(BufferedImage profile_pic) {
+		if(profile_pic==null)return;
         Image scaledImage = profile_pic.getScaledInstance(40,40,Image.SCALE_SMOOTH);
 
         BufferedImage bimage = new BufferedImage(scaledImage.getWidth(null), scaledImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);

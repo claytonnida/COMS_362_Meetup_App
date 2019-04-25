@@ -12,7 +12,7 @@ public class InputReader {
 	//utility methods
 	private static Scanner scanner = new Scanner(System.in);
 
-
+	// TODO: Javadocs
 	public static Selectable readFromOptions(String prompt,List<Selectable> list){
 		System.out.print(String.format("%s\n", prompt));
 		String options[] = new String[list.size()+1];
@@ -169,10 +169,8 @@ public class InputReader {
 		return InputReader.inputYesNo("Would you like to cancel?");
 	}
 
-
-
+	// TODO: Javadocs
 	public static void closeInputReader() {
 		 scanner.close();
 	 }
-
 }

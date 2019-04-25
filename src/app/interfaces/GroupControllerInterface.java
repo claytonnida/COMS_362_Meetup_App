@@ -1,6 +1,5 @@
 package app.interfaces;
 
-import app.models.Account;
 import app.models.Group;
 import app.models.Profile;
 

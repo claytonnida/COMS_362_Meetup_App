@@ -7,10 +7,8 @@ import app.Controllers.ProfileController;
 import app.MySQL.MySQLHelper;
 import app.models.Account;
 import app.models.Profile;
-import app.models.mappers.ProfileMapper;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class App
@@ -145,14 +143,7 @@ public class App
 					break;
 				case "Browse Profiles":
 					//TODO implement fully and elsewhere
-					try {
-						ProfileMapper pm = new ProfileMapper();
-						List<Profile> profileList = pm.createObjectList("Select * from meetup.profile where id != " +
-								((Account) sessionVariables.get("account")).getProfile().getId());
-						Profile p = pc.selectProfile(profileList,((Account)sessionVariables.get("account")));
-					}catch (Exception e){
-						System.out.println("Can't browse files at this time.");
-					}
+					pc.browseProfiles(((Account)sessionVariables.get("account")));
                     break;
 				case "Exit":
 					if(InputReader.inputYesNo("Are you sure you want to quit?")) {

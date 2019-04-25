@@ -5,13 +5,11 @@ import app.InputReader;
 import app.MySQL.MySQLHelper;
 import app.interfaces.ProfileControllerInterface;
 import app.models.Account;
-import app.models.GroupAssociation;
 import app.models.GroupInvitation;
 import app.models.Profile;
-import app.models.mappers.GroupAssociationMapper;
 import app.models.mappers.GroupInvitationMapper;
-import app.models.mappers.GroupMapper;
 import app.models.mappers.ProfileMapper;
+import javafx.util.Pair;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -22,9 +20,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.*;
 
 public class ProfileController implements ProfileControllerInterface {
 
@@ -76,6 +73,9 @@ public class ProfileController implements ProfileControllerInterface {
                 case "About Me":
                     editAboutMe(p);
                     break;
+                case "Interests":
+                    editInterests(p);
+                    break;
                 case "Age":
                     editAge(p);
                     break;
@@ -126,6 +126,8 @@ public class ProfileController implements ProfileControllerInterface {
 
                 File image_file = new File(input);
                 String file_name = input;
+
+                //TODO: Make sure to remove this before submitting
                 //URL url = new URL(input);
                 //URLConnection connection = url.openConnection();
                 //connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36");
@@ -370,6 +372,74 @@ public class ProfileController implements ProfileControllerInterface {
         }
     }
 
+    // TODO: Javadocs
+    public void sortByInterestCommonality(Profile target, List<Profile> otherProfies){
+        //Build a sortable list
+        List<Pair<Integer,Profile>> profilePairs = new ArrayList<>();
+        for(Profile p: otherProfies){
+            int similarities = 0;
+            for(int i = 0; i < target.getInterests().size(); i++){
+                String myInterest = target.getInterests().get(i);
+                for(int j = 0; j < p.getInterests().size(); j++){
+                    if(myInterest.equalsIgnoreCase(p.getInterests().get(j))){
+                        similarities++;
+                    }
+                }
+            }
+            Pair<Integer,Profile> pair = new Pair<>(similarities,p);
+            profilePairs.add(pair);
+        }
+
+        otherProfies.clear();
+        Collections.sort(profilePairs, new Comparator<Pair<Integer, Profile>>() {
+            @Override
+            public int compare(Pair<Integer, Profile> o1, Pair<Integer, Profile> o2) {
+                return o2.getKey() - o1.getKey();
+            }
+        });
+
+        //Put profiles in proper order
+        for(Pair<Integer,Profile> pair: profilePairs){
+            if(pair.getKey()==0)continue;
+            otherProfies.add(pair.getValue());
+        }
+    }
+
+    //TODO: Javadocs
+    @Override
+    public void editInterests(Profile p) {
+        System.out.println("Your current 'Interests' are:");
+        ArrayList<String> interets = p.getInterests();
+
+        if(interets==null){
+            interets = new ArrayList<>();
+        }
+        if(!interets.isEmpty())
+        {
+        	for (String string : interets)
+    		{
+    			System.out.println(string+", ");
+    		}
+        }
+
+        String input = (InputReader.collectInput("Add an intrest"));
+
+        boolean confirm = InputReader.requestConfirmation(input);
+        if(confirm) {
+        	interets.add(input);
+            p.setInterests(interets);
+        }
+        else {
+            boolean cancel = InputReader.requestCancel();
+            if(cancel) {
+                return;
+            }
+            else {
+            	editInterests(p);
+            }
+        }
+    }
+
     /**
      * A series of prompts to guide user through editing their gender identity.
      *
@@ -505,8 +575,7 @@ public class ProfileController implements ProfileControllerInterface {
      * This is a helper class for the setPicture method
      * It creates a useable/displayable Panel to display the Profile picture
      */
-    static class ImagePanel extends JPanel
-    {
+    static class ImagePanel extends JPanel {
         private final BufferedImage image;
 
         ImagePanel(BufferedImage image)
@@ -515,18 +584,15 @@ public class ProfileController implements ProfileControllerInterface {
         }
 
         @Override
-        public Dimension getPreferredSize()
-        {
-            if (super.isPreferredSizeSet())
-            {
+        public Dimension getPreferredSize() {
+            if (super.isPreferredSizeSet()) {
                 return super.getPreferredSize();
             }
             return new Dimension(image.getWidth(), image.getHeight());
         }
 
         @Override
-        protected void paintComponent(Graphics g)
-        {
+        protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             g.drawImage(image, 0, 0, null);
         }
@@ -544,7 +610,7 @@ public class ProfileController implements ProfileControllerInterface {
      * @throws SQLException
      */
     @Override
-    public int saveProfile(Profile p)throws SQLException{
+    public int saveProfile(Profile p)throws SQLException {
         ProfileMapper pm = new ProfileMapper();
 
         try {
@@ -604,9 +670,48 @@ public class ProfileController implements ProfileControllerInterface {
         return profileIdList;
     }
 
-    public static void main(String[] args) throws Exception {
+    // For debugging porpoises. Squee!
+    public static void main(String[] args)throws Exception {
+        ProfileController profileController = new ProfileController();
+        Profile p1 = new Profile();
+        p1.setName("Most Similar");
 
-        new GroupAssociationController().joinGroup(5, 20);
+        Profile p2 = new Profile();
+        p2.setName("Medium Similar");
+
+        Profile p3 = new Profile();
+        p3.setName("Least");
+
+        Profile me = new Profile();
+        me.setName("Me");
+
+        ArrayList<String> l1 = new ArrayList<String>();
+        l1.add("Cats");l1.add("Dogs");l1.add("birds");
+
+        ArrayList<String> l2 = new ArrayList<String>();
+        l2.add("Cats");l2.add("Burgers");l2.add("birds");
+
+        ArrayList<String> l3 = new ArrayList<String>();
+        l3.add("Plants");l3.add("Burgers");l3.add("Hats");
+
+        ArrayList<String> l4 = new ArrayList<String>();
+        l4.add("Birds");l4.add("Dogs");l4.add("Cats");
+
+        ArrayList<Profile> list = new ArrayList<>();
+        p1.setInterests(l1);list.add(p2);
+        p2.setInterests(l2);list.add(p3);
+        p3.setInterests(l3);list.add(p1);
+        me.setInterests(l4);
+
+        profileController.sortByInterestCommonality(me,list);
+        for(Profile p: list){
+            System.out.println(p.getName());
+        }
+
+        Profile selected = (Profile)InputReader.readFromOptions("Select a profile to view",
+                new ArrayList<>(list));
+
+        System.out.println(selected);
     }
 
     /**
@@ -668,6 +773,7 @@ public class ProfileController implements ProfileControllerInterface {
         }
     }
 
+    // TODO: Javadocs
     public Profile selectProfile(List<Profile> profiles, Account account){
 
         Profile p = (Profile)InputReader.readFromOptions("Choose a profile",new ArrayList<>(profiles));
@@ -697,8 +803,6 @@ public class ProfileController implements ProfileControllerInterface {
 
             if(App.DEV_MODE) e.printStackTrace();
         }
-
-
     }
 
     /**
@@ -710,5 +814,47 @@ public class ProfileController implements ProfileControllerInterface {
         if(acceptGroupInvite) new GroupAssociationController().joinGroup(profileId, groupId);
 
         new GroupInvitationController().removeInvite(profileId, groupId);
+    }
+
+    // TODO: Javadocs
+    public void viewSuggestedProfiles(Account acc) {
+        Profile myProfile = acc.getProfile();
+        ProfileMapper pm = new ProfileMapper();
+        try {
+            List<Profile> profiles = pm.createObjectList("Select * from meetup.profile where id != " + myProfile.getId());
+            sortByInterestCommonality(myProfile,profiles);
+            if(profiles.size() == 0){
+                System.out.println("Sorry, no one has the same interests as you. You're one of a kind!");
+                return;
+            }
+            Profile selected = (Profile)InputReader.readFromOptions("Select a profile to view",
+                    new ArrayList<>(profiles));
+
+            System.out.println(selected);
+        }catch (Exception e){
+            if(App.DEV_MODE)
+                e.printStackTrace();
+            System.out.println("Sorry, we're having trouble doing that right now.");
+        }
+    }
+
+    // TODO: Javadocs
+    public void browseProfiles(Account acc) {
+        switch (InputReader.readFromOptions("Please choose one.",
+                new String[]{"All Profiles","Suggested Profiles","Random Match"})){
+            case "Suggested Profiles":
+                viewSuggestedProfiles(acc);
+                break;
+            case "All Profiles":
+                try {
+                    ProfileMapper pm = new ProfileMapper();
+                    List<Profile> profileList = pm.createObjectList("Select * from meetup.profile where id != " +
+                            acc.getProfile().getId());
+                    Profile p = selectProfile(profileList,acc);
+                    System.out.println(p);
+                }catch (Exception e){
+                    System.out.println("Can't browse files at this time.");
+                }
+        }
     }
 }

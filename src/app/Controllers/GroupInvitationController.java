@@ -5,7 +5,6 @@ import app.InputReader;
 import app.MySQL.MySQLHelper;
 import app.interfaces.GroupInvitationControllerInterface;
 import app.models.Group;
-import app.models.GroupAssociation;
 import app.models.GroupInvitation;
 import app.models.Profile;
 import app.models.mappers.GroupInvitationMapper;

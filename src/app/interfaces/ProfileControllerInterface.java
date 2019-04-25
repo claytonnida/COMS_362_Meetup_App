@@ -151,6 +151,8 @@ public interface ProfileControllerInterface {
      */
     boolean checkOnlineStatus(int pid);
 
+	void editInterests(Profile p);
+
     /**
      * Lists the invites sent to a {@link Profile} and allows a user to respond to them.
      *

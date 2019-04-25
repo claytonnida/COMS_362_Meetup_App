@@ -5,8 +5,6 @@ import app.interfaces.GroupInvitationInterface;
 import app.interfaces.Selectable;
 import app.models.mappers.GroupMapper;
 
-import java.sql.SQLException;
-
 public class GroupInvitation implements GroupInvitationInterface, Selectable {
     private int profileid;
     private int groupid;

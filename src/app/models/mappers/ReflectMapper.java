@@ -4,11 +4,9 @@ import app.App;
 import app.Controllers.AccountController;
 import app.MySQL.MySQLHelper;
 import app.models.Account;
-import app.models.Profile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
@@ -88,6 +86,7 @@ public class ReflectMapper<T> {
     public T toObject(ResultSet rs) throws SQLException {
         try {
             T obj = clazz.newInstance();
+            String s = MySQLHelper.resultSetToString(rs);
 
             ResultSetMetaData rsmd = rs.getMetaData();
             for (int i = 1; i <= rsmd.getColumnCount(); i++) {

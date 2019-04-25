@@ -1,7 +1,6 @@
 package app.interfaces;
 
 import app.models.Group;
-import app.models.Profile;
 
 public interface GroupInvitationControllerInterface {
 
