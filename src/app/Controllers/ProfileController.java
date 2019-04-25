@@ -5,6 +5,7 @@ import app.InputReader;
 import app.MySQL.MySQLHelper;
 import app.interfaces.ProfileControllerInterface;
 import app.models.Account;
+import app.models.Group;
 import app.models.Profile;
 import app.models.mappers.ProfileMapper;
 
@@ -30,9 +31,7 @@ public class ProfileController implements ProfileControllerInterface {
      *      Instance of {@link Profile}.
      */
     @Override
-    public Profile createProfile()
-    {
-
+    public Profile createProfile() {
         System.out.println("Time to create your profile!");
 
         Profile newProfile = new Profile();
@@ -172,13 +171,6 @@ public class ProfileController implements ProfileControllerInterface {
                 setPicture(p);
             }
         }
-        //} else {
-        //    System.out.println("No worries! Just follow these simple steps to upload your picture to the file structure:");
-        //    System.out.println("1- Open up your File Explorer to the location of your picture");
-        //    System.out.println("2- Make sure you have this project open in your IDE");
-        //    System.out.println("3- Simply drag your image over the 'COMS_362_Meetup_App' and drop it");
-        //    System.out.println("4- Confirm the addition of the file to the project and then rerun the application. You should now be able to access your picture!");
-        //}
     }
 
     /**
@@ -731,10 +723,22 @@ public class ProfileController implements ProfileControllerInterface {
         }
     }
 
-
     public Profile selectProfile(List<Profile> profiles, Account account){
 
-        Profile p = (Profile)InputReader.readFromOptions("Choose a group",new ArrayList<>(profiles));
+        Profile p = (Profile)InputReader.readFromOptions("Choose a profile",new ArrayList<>(profiles));
         return p;
+    }
+
+    //TODO: Javadoc
+    //TODO: Add to UI! (and interface?)
+    public void respondToGroupInvite(int profileId, int groupId) {
+        boolean acceptGroupInvite = InputReader.inputYesNo("Would you like to join the group " + groupId + "?");
+
+        GroupAssociationController groupAssociationController = new GroupAssociationController();
+
+
+        if(acceptGroupInvite) groupAssociationController.joinGroup(profileId, groupId);
+
+        groupAssociationController.removeInvite(profileId, groupId);
     }
 }

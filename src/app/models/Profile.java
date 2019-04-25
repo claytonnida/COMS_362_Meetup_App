@@ -236,6 +236,7 @@ public class Profile implements ProfileInterface, Selectable
 	 * @param profile_pic
 	 */
 	public void setProfile_pic(BufferedImage profile_pic) {
+		if(profile_pic==null)return;
         Image scaledImage = profile_pic.getScaledInstance(40,40,Image.SCALE_SMOOTH);
 
         BufferedImage bimage = new BufferedImage(scaledImage.getWidth(null), scaledImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);

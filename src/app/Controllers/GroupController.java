@@ -22,6 +22,10 @@ import app.serverclient.ChatGUI;
 
 public class GroupController implements GroupControllerInterface {
 
+    public static void main(String[] args){
+        GroupController gc = new GroupController();
+        gc.inviteToGroup(21);
+    }
     //TODO: Javadoc
     public void inviteToGroup(int groupId) {
         new GroupAssociationController().inviteToGroup(groupId);
