@@ -8,7 +8,6 @@ import app.models.Message;
 import app.models.Profile;
 import app.models.mappers.MessageMapper;
 import app.models.mappers.ProfileMapper;
-import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

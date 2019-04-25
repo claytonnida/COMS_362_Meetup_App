@@ -133,10 +133,14 @@ public class AccountController implements AccountControllerInterface {
 
 
 	/**
-	 * Selects the Account from database and attempts to fill the Profile field
-	 * @param id
-	 * @return
+	 * Selects the {@link Account} from database and attempts to fill the {@link Profile} field
+	 *
+	 * @param id The ID number of the {@link Account} to fetch.
+	 *
+	 * @return The fetched {@link Account}
+	 *
 	 * @throws SQLException
+	 * 		Thrown if there was an issue loading the associated {@link Profile} from the database.
 	 */
 	@Override
 	public Account fetchAccount(int id)throws SQLException {

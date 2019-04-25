@@ -1,21 +1,8 @@
 package app.MySQL;
 
 import app.App;
-import app.Controllers.ProfileController;
 import app.InputReader;
-import app.models.Account;
-import app.models.GroupAssociation;
-import app.models.Profile;
-import app.models.mappers.AccountMapper;
-import app.models.mappers.GroupAssociationMapper;
-import app.models.mappers.ProfileMapper;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;

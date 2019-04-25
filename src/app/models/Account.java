@@ -35,83 +35,69 @@ public class Account implements AccountInterface
 	//Required for The ReflectMapper
 	public Account(){}
 
-
-	// TODO: Javadocs
 	public int getId() {
 		return id;
 	}
 
-	// TODO: Javadocs
 	public void setId(int id) {
 		this.id = id;
 	}
 
-	// TODO: Javadocs
 	@Override
 	public void setUsername(String input) {
 		username = input;
 	}
 
-	// TODO: Javadocs
 	@Override
 	public String getUsername() {
 		return username;
 	}
 
-	// TODO: Javadocs
 	@Override
 	public void setPassword(String input) {
 		password = input;
 	}
 
-	// TODO: Javadocs
 	@Override
 	public String getPassword() {
 		return password;
 	}
 
-	// TODO: Javadocs
 	@Override
 	public void setEmail(String input) {
 		email = input;
 	}
 
-	// TODO: Javadocs
 	@Override
 	public String getEmail() {
 		return email;
 	}
 
-	// TODO: Javadocs
 	@Override
 	public Profile getProfile() {
 		return myProfile;
 	}
 
-	// TODO: Javadocs
 	@Override
 	public void setProfileid(int id) {
 		profileid = id;
 	}
 
-	// TODO: Javadocs
 	@Override
 	public void setProfile(Profile newProfile) {
 		myProfile = newProfile;
 	}
 
-	// TODO: Javadocs
 	@Override
 	public int getProfileid(){
 		return profileid;
 	}
 
-	// TODO: Javadocs
 	@Override
 	public void removeProfile() {
 		setProfile(null);}
 
-	// TODO: Javadocs
+	@Override
 	public String toString(){
 		String str = String.format("Username: %s\nProfile: \n\t%s",getUsername(),
 				((getProfile()==null)?

@@ -1,23 +1,21 @@
 package app.Controllers;
 
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.List;
-
-import app.App;
-import app.InputReader;
-import app.MySQL.MySQLHelper;
-import app.models.Group;
 import app.models.Message;
 import app.models.mappers.MessageMapper;
 import app.models.mappers.ProfileMapper;
 
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+
 public class MessageController {
+    // TODO: Javadocs
     public List<Message> getMessagesByGroupID(int groupid)throws SQLException{
         return getMessagesByGroupID(groupid,"0000-00-00 00:00:00.0");
     }
-    public List<Message> getMessagesByGroupID(int groupid,String date)throws SQLException {
+
+    // TODO: Javadocs
+    public List<Message> getMessagesByGroupID(int groupid, String date)throws SQLException {
         MessageMapper mm = new MessageMapper();
         ProfileMapper pm = new ProfileMapper();
         HashMap<Integer, List<Message>> map = new HashMap<>();
