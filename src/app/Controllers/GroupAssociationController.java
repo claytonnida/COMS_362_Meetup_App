@@ -34,20 +34,11 @@ public class GroupAssociationController implements GroupAssociationControllerInt
     */
     @Override
     public void joinGroup(int profileId, int groupId) {
-<<<<<<< HEAD
         //TODO: Complete
         MySQLHelper.executeUpdate("INSERT INTO meetup.groupassociation " +
         "where profileid = " + profileId +
         " and groupid = " + gro        );
 
         System.out.println("Successfully added GroupAssociation between profile ID: " + profileId + " and group ID: " + groupId + "!");
-=======
-        MySQLHelper.executeUpdate("INSERT INTO meetup.groupAssociation " +
-                "where profileid = " + profileId +
-                " and groupid = " + groupId
-        );
-
-        System.out.println("Successfully removed GroupAssociation between profile ID: " + profileId + " and group ID: " + groupId + "!");
->>>>>>> 179a1e69ad845c6dc896a33a6b8a77cb310cf735
     }
 }
