@@ -2,12 +2,10 @@ package app.interfaces;
 
 public interface ProfileInterface
 {
+	int getIsOnline();
 
-	public int getIsOnline();
+	void setIsOnline(int isOnline);
 
-	public void setIsOnline(int isOnline);
-
-	// TODO: Javadoc
 	int getId() ;
 
 	void setId(int id) ;

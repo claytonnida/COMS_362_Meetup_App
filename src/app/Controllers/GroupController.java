@@ -22,11 +22,14 @@ import app.serverclient.ChatGUI;
 
 public class GroupController implements GroupControllerInterface {
 
-    //TODO: Javadoc
+    /**
+     * @see app.Controllers.GroupInvitationController#inviteToGroup(int)
+     */
     public void inviteToGroup(int groupId) {
-        new GroupAssociationController().inviteToGroup(groupId);
+        new GroupInvitationController().inviteToGroup(groupId);
     }
 
+    // TODO: Add Javadoc
     public List<Group> getGroupsForUser(Profile p){
         try {
 
@@ -51,10 +54,7 @@ public class GroupController implements GroupControllerInterface {
     }
 
     /**
-     * This method searches and lists every group that contains any form of the user's input. If the user's input
-     * is blank, the method will simply list every group
-     *
-     * @param sub_string The search criteria provided by the user for their search
+     * @see app.interfaces.GroupControllerInterface#searchGroup(java.lang.String)
      */
     @Override
     public List<Group> searchGroup(String sub_string) {
@@ -81,19 +81,16 @@ public class GroupController implements GroupControllerInterface {
     }
 
     /**
-     * Removes the {@link app.models.GroupAssociation} between a {@link Profile} and a {@link Group}.
-     *
-     * @param profileId
-     * 		The ID of the {@link Profile} to disassociate.
-     * @param groupId
-     * 		The ID of the {@link Group} to disassociate.
+     * @see app.interfaces.GroupControllerInterface#leaveGroup(int, int)
      */
     @Override
     public void leaveGroup(int profileId, int groupId) {
         new GroupAssociationController().leaveGroup(profileId, groupId);
     }
 
-    // TODO: Add JavaDocs
+    /**
+     * @see GroupControllerInterface#createGroup(app.models.Profile)
+     */
     @Override
     public void createGroup(Profile p) {
         Group group = new Group();
@@ -123,6 +120,7 @@ public class GroupController implements GroupControllerInterface {
         System.out.println("Group creation complete.");
     }
 
+    // TODO: Add Javadoc
     public static boolean createGroupInDB(Group group){
         try{
             GroupMapper gm = new GroupMapper();
@@ -150,7 +148,6 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
-    
     /** 
      * @see app.interfaces.GroupControllerInterface#removeGroup(app.models.Group)
      */
@@ -171,7 +168,6 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
-    
     /**
      * @see app.interfaces.GroupControllerInterface#rankGroup(app.models.Group)
      */
@@ -205,9 +201,7 @@ public class GroupController implements GroupControllerInterface {
     }
 
     /**
-     * A series of prompts to guide user through editing their profile
-     *
-     * @param g The {@link Group} whose fields will be modified.
+     * @see GroupControllerInterface#editGroupFields(app.models.Group)
      */
     @Override
     public void editGroupFields(Group g){
@@ -251,7 +245,9 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
-    // TODO: Add JavaDocs
+    /**
+     * @see GroupControllerInterface#editGroupName(app.models.Group)
+     */
     @Override
     public void editGroupVisibility(Group g){
         System.out.print("Your current group visibility is:\t");
@@ -272,6 +268,9 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
+    /**
+     * @see GroupControllerInterface#editGroupVisibility(app.models.Group)
+     */
     public void manageGroups(Account account){
         GroupController gc = new GroupController();
         List<Group> groups = null;
@@ -327,6 +326,7 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
+    // TODO: Javadoc
     public List<Group> getGroupsByUser(Account account){
         GroupMapper gm = new GroupMapper();
         try {
@@ -339,19 +339,20 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
-    
-
+    // TODO: Javadoc
     public void joinGroup(int profileId, int groupId){
         GroupAssociationController gac = new GroupAssociationController();
         gac.joinGroup(profileId, groupId);
     }
 
+    // TODO: Javadoc
     public List<Group> findGroups(){
         String input = InputReader.collectInput("Please enter a sub string to search all Groups containing the search value");
         GroupController gc = new GroupController();
         return gc.searchGroup(input);
     }
 
+    // TODO: Javadoc
     public Group selectGroup(List<Group> groups, Account account){
 
         Group g = (Group)InputReader.readFromOptions("Choose a group",new ArrayList<>(groups));
@@ -364,7 +365,7 @@ public class GroupController implements GroupControllerInterface {
      * @param group
      */
     public void manageGroup(Account account, Group group){
-        String[] options = new String[]{"Open Chat","Edit Group","Leave Group","Join Group","Rank Group","Delete Group","Exit"};
+        String[] options = new String[]{"Open Chat","Edit Group","Leave Group","Join Group", "Invite User", "Rank Group","Delete Group","Exit"};
         GroupMapper gm = new GroupMapper();
 
         //Ask user what they would like to do
@@ -379,6 +380,10 @@ public class GroupController implements GroupControllerInterface {
                     if(App.DEV_MODE)
                     e.printStackTrace();
                 }
+                break;
+            case "Invite User":
+                //TODO: Implement
+                inviteToGroup(group.getId());
                 break;
             case "Join Group":
                 joinGroup(account.getProfile().getId(),group.getId());
@@ -420,6 +425,7 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
+    // TODO: Javadoc
     public boolean isOwnerOfGroup(Account a, Group g){
         try{
 

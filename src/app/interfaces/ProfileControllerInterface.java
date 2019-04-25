@@ -150,4 +150,20 @@ public interface ProfileControllerInterface {
      *      {@code true} if the given {@link Profile} is online. {@code false}, otherwise.
      */
     boolean checkOnlineStatus(int pid);
+
+    /**
+     * Lists the invites sent to a {@link Profile} and allows a user to respond to them.
+     *
+     * @param profileId The ID associated with a {@link Profile} to get the invites of.
+     */
+    void viewInvitations(int profileId);
+
+    /**
+     * Prompts user to accept or reject an invitation to a {@link app.models.Group}.
+     *
+     * @param profileId The ID of the {@code Profile} attached to the user that is responding to the invite.
+     * @param groupId The ID of the {@link app.models.Group} that the user is being invited to.
+     */
+    void respondToGroupInvite(int profileId, int groupId);
+
 }

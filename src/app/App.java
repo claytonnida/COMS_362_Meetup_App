@@ -108,7 +108,7 @@ public class App
 	}
 
 	private static void exitApp() {
-		System.out.println("No? Okay then. Have a good day!");
+		System.out.println("Okay then. Have a good day!");
 
 		// TODO: Remove once server is implemented.
 		if(sessionVariables.containsKey("account"))
@@ -127,7 +127,7 @@ public class App
 		ProfileController pc = new ProfileController();
 		while(play){
 			switch (InputReader.readFromOptions("What would you like to do?",new String[]
-					{"Edit My Profile","Edit Online Status",
+					{"Edit My Profile","Edit Online Status", "View Invites",
 							"Browse Profiles","Manage Groups","Exit"})){
 				case "Edit My Profile":
 					new ProfileController().editProfileFields(((Account)sessionVariables.get("account")).getProfile());
@@ -139,6 +139,9 @@ public class App
 					break;
 				case "Edit Online Status":
 					pc.editOnlineStatus(((Account)sessionVariables.get("account")).getProfile());
+					break;
+				case "View Invites":
+					new ProfileController().viewInvitations(((Account)sessionVariables.get("account")).getProfile().getId());
 					break;
 				case "Browse Profiles":
 					//TODO implement fully and elsewhere

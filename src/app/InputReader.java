@@ -156,7 +156,7 @@ public class InputReader {
 	 * @return
 	 */
 	public static boolean requestConfirmation(Object input){
-		return InputReader.inputYesNo(String.format("You enterd: \n\t%s\nConfirm?",
+		return InputReader.inputYesNo(String.format("You entered: \n\t%s\nConfirm?",
                 input.toString().replaceAll("\n","\n\t")));
 	}
 

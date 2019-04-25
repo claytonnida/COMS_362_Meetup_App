@@ -5,7 +5,12 @@ import app.InputReader;
 import app.MySQL.MySQLHelper;
 import app.interfaces.ProfileControllerInterface;
 import app.models.Account;
+import app.models.GroupAssociation;
+import app.models.GroupInvitation;
 import app.models.Profile;
+import app.models.mappers.GroupAssociationMapper;
+import app.models.mappers.GroupInvitationMapper;
+import app.models.mappers.GroupMapper;
 import app.models.mappers.ProfileMapper;
 
 import javax.imageio.ImageIO;
@@ -496,37 +501,6 @@ public class ProfileController implements ProfileControllerInterface {
         }
     }
 
-    //TODO: Remove? Redundant? NATE?!
-    /**
-     * Prints out the columns of rows in database with profile IDs matching those in given {@link List}
-     * @param profileIdList The {@link List<Integer>} of {@link Profile} IDs to print database rows of.
-     *
-     * @throws SQLException If an error occurs when executing the MySQL query.
-     */
-    public void printProfileIdList(List<Integer> profileIdList) throws SQLException {
-        if(profileIdList == null) {
-            throw new IllegalArgumentException("ERROR! Profile ID List cannot be null!");
-        }
-        StringBuilder queryStringBuilder = new StringBuilder("SELECT * FROM meetup.profile WHERE id IN (");
-        for(int id : profileIdList) {
-            queryStringBuilder.append(String.format("\'%s\', ", id));
-        }
-        queryStringBuilder.deleteCharAt(queryStringBuilder.length() - 2);
-        queryStringBuilder.append(")");
-
-        Statement statement = MySQLHelper.createStatement();
-        ResultSet resultSet = statement.executeQuery(queryStringBuilder.toString());
-
-        while(resultSet.next()) {
-            ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-
-            for(int i = 1; i < resultSetMetaData.getColumnCount(); i++) {
-                System.out.print(resultSet.getString(i) + ",\t");
-            }
-            System.out.println();
-        }
-    }
-
     /**
      * This is a helper class for the setPicture method
      * It creates a useable/displayable Panel to display the Profile picture
@@ -602,7 +576,7 @@ public class ProfileController implements ProfileControllerInterface {
         return p.getId();
     }
 
-    //TODO: Add this to the UI!
+    //TODO: Add this to the UI! Dan!
     /**
      * Returns a version of the given {@link List<Integer>} with "offline" connections removed.
      *
@@ -631,21 +605,8 @@ public class ProfileController implements ProfileControllerInterface {
     }
 
     public static void main(String[] args) throws Exception {
-        ProfileController profileController = new ProfileController();
 
-        //        ProfileMapper pm = new ProfileMapper();
-//
-//        List<Profile> profiles = pm.createObjectList("select id from meetup.profile");
-//        List<Integer> ints = new ArrayList<>();
-//        for(Profile p: profiles){
-//            System.out.println("origins - "+p.getId());
-//            ints.add(p.getId());
-//        }
-//        ProfileController pc = new ProfileController();
-//        List<Integer> filetered = pc.filterOnlineConnections(ints);
-//        for(Integer i: filetered){
-//            System.out.println("Filtered online "+i);
-//        }
+        new GroupAssociationController().joinGroup(5, 20);
     }
 
     /**
@@ -713,16 +674,41 @@ public class ProfileController implements ProfileControllerInterface {
         return p;
     }
 
-    //TODO: Javadoc
-    //TODO: Add to UI! (and interface?)
+    /**
+     * @see ProfileControllerInterface#viewInvitations(int)
+     */
+    public void viewInvitations(int profileId) {
+
+        try {
+            List<GroupInvitation> invitationList = new GroupInvitationMapper().createObjectList("SELECT * FROM meetup.groupInvitation WHERE profileid = " + profileId);
+
+            GroupInvitation groupInvitation = (GroupInvitation) InputReader.readFromOptions("Select an invitation from the list to respond.",
+                    new ArrayList<>(invitationList));
+
+            if(groupInvitation != null) { // True, when the user has selected an invitation. False, if they select "Cancel"
+                respondToGroupInvite(groupInvitation.getProfileid(), groupInvitation.getGroupid());
+            }
+
+            System.out.println(groupInvitation == null ? null : groupInvitation.getSelectionPrompt());
+
+        }
+        catch(SQLException e) {
+            System.out.println("Error! Unable to get invitation list!");
+
+            if(App.DEV_MODE) e.printStackTrace();
+        }
+
+
+    }
+
+    /**
+     * @see ProfileControllerInterface#respondToGroupInvite(int, int)
+     */
     public void respondToGroupInvite(int profileId, int groupId) {
         boolean acceptGroupInvite = InputReader.inputYesNo("Would you like to join the group " + groupId + "?");
 
-        GroupAssociationController groupAssociationController = new GroupAssociationController();
+        if(acceptGroupInvite) new GroupAssociationController().joinGroup(profileId, groupId);
 
-
-        if(acceptGroupInvite) groupAssociationController.joinGroup(profileId, groupId);
-
-        groupAssociationController.removeInvite(profileId, groupId);
+        new GroupInvitationController().removeInvite(profileId, groupId);
     }
 }
