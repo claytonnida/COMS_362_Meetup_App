@@ -19,6 +19,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -486,14 +487,25 @@ public class ChatGUI {
             File file = new File(text.getText());
             BufferedImage img = ImageIO.read(file);
             m.setImage(img);
+            m.setBody("");
+            System.out.println("Image success");
         }
         catch(Exception e) {
             m.setBody(text.getText().trim());
+            System.out.println("Image failure");
         }
-        m.setBody(text.getText().trim());
         //post message on server
         text.setText("");
-        MySQLHelper.executeUpdate(mm.toInsertQueryQuery(m));
+        String query = mm.toInsertQueryQuery(m);
+        try {
+            PreparedStatement ps = MySQLHelper.getConnection().prepareStatement(query);
+            ps.executeUpdate(mm.toInsertQueryQuery(m));
+        }
+        catch(SQLException e){
+            //System.out.println("sendAndNotify() SQLException found");
+            e.printStackTrace();
+        }
+        //MySQLHelper.executeUpdate(mm.toInsertQueryQuery(m));
 
         //ping other members
         out.println("rec:"+groupid);
