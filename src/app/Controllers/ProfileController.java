@@ -4,10 +4,12 @@ import app.App;
 import app.InputReader;
 import app.MySQL.MySQLHelper;
 import app.interfaces.ProfileControllerInterface;
+import app.interfaces.Selectable;
 import app.models.Account;
 import app.models.Group;
 import app.models.Profile;
 import app.models.mappers.ProfileMapper;
+import javafx.util.Pair;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -17,8 +19,7 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -368,11 +369,47 @@ public class ProfileController implements ProfileControllerInterface {
             }
         }
     }
+
+    public void sortByInterestCommonality(Profile target, List<Profile> otherProfies){
+        //Build a sortable list
+        List<Pair<Integer,Profile>> profilePairs = new ArrayList<>();
+        for(Profile p: otherProfies){
+            int similarities = 0;
+            for(int i = 0; i < target.getInterests().size(); i++){
+                String myInterest = target.getInterests().get(i);
+                for(int j = 0; j < p.getInterests().size(); j++){
+                    if(myInterest.equalsIgnoreCase(p.getInterests().get(j))){
+                        similarities++;
+                    }
+                }
+            }
+            Pair<Integer,Profile> pair = new Pair<>(similarities,p);
+            profilePairs.add(pair);
+        }
+
+        otherProfies.clear();
+        Collections.sort(profilePairs, new Comparator<Pair<Integer, Profile>>() {
+            @Override
+            public int compare(Pair<Integer, Profile> o1, Pair<Integer, Profile> o2) {
+                return o2.getKey() - o1.getKey();
+            }
+        });
+
+        //Put profiles in proper order
+        for(Pair<Integer,Profile> pair: profilePairs){
+            if(pair.getKey()==0)continue;
+            otherProfies.add(pair.getValue());
+        }
+    }
     
     @Override
     public void editInterests(Profile p) {
         System.out.println("Your current 'Interests' are:");
         ArrayList<String> interets = p.getInterests();
+
+        if(interets==null){
+            interets = new ArrayList<>();
+        }
         if(!interets.isEmpty())
         {
         	for (String string : interets)
@@ -669,32 +706,49 @@ public class ProfileController implements ProfileControllerInterface {
 
     public static void main(String[] args)throws Exception{
         ProfileController profileController = new ProfileController();
+        Profile p1 = new Profile();
+        p1.setName("Most Similar");
 
-        List<Integer> profileIdList = profileController.listProfiles();
+        Profile p2 = new Profile();
+        p2.setName("Medium Similar");
 
-        System.out.println();
+        Profile p3 = new Profile();
+        p3.setName("Least");
 
-        for(int id : profileIdList) {
-            System.out.println(id + ", ");
+        Profile me = new Profile();
+        me.setName("Me");
+
+
+        ArrayList<String> l1 = new ArrayList<String>();
+        l1.add("Cats");l1.add("Dogs");l1.add("birds");
+
+
+        ArrayList<String> l2 = new ArrayList<String>();
+        l2.add("Cats");l2.add("Burgers");l2.add("birds");
+
+
+        ArrayList<String> l3 = new ArrayList<String>();
+        l3.add("Plants");l3.add("Burgers");l3.add("Hats");
+
+
+        ArrayList<String> l4 = new ArrayList<String>();
+        l4.add("Birds");l4.add("Dogs");l4.add("Cats");
+
+        ArrayList<Profile> list = new ArrayList<>();
+        p1.setInterests(l1);list.add(p2);
+        p2.setInterests(l2);list.add(p3);
+        p3.setInterests(l3);list.add(p1);
+        me.setInterests(l4);
+
+        profileController.sortByInterestCommonality(me,list);
+        for(Profile p: list){
+            System.out.println(p.getName());
         }
 
-        System.out.println();
+        Profile selected = (Profile)InputReader.readFromOptions("Select a profile to view",
+                new ArrayList<>(list));
 
-        profileController.printProfileIdList(profileIdList);
-
-        //        ProfileMapper pm = new ProfileMapper();
-//
-//        List<Profile> profiles = pm.createObjectList("select id from meetup.profile");
-//        List<Integer> ints = new ArrayList<>();
-//        for(Profile p: profiles){
-//            System.out.println("origins - "+p.getId());
-//            ints.add(p.getId());
-//        }
-//        ProfileController pc = new ProfileController();
-//        List<Integer> filetered = pc.filterOnlineConnections(ints);
-//        for(Integer i: filetered){
-//            System.out.println("Filtered online "+i);
-//        }
+        System.out.println(selected);
     }
 
     /**
@@ -773,5 +827,45 @@ public class ProfileController implements ProfileControllerInterface {
         if(acceptGroupInvite) groupAssociationController.joinGroup(profileId, groupId);
 
         groupAssociationController.removeInvite(profileId, groupId);
+    }
+
+    public void viewSuggestedProfiles(Account acc){
+        Profile myProfile = acc.getProfile();
+        ProfileMapper pm = new ProfileMapper();
+        try {
+            List<Profile> profiles = pm.createObjectList("Select * from meetup.profile where id != " + myProfile.getId());
+            sortByInterestCommonality(myProfile,profiles);
+            if(profiles.size() == 0){
+                System.out.println("Sorry, no one has the same interests as you. You're one of a kind!");
+                return;
+            }
+            Profile selected = (Profile)InputReader.readFromOptions("Select a profile to view",
+                    new ArrayList<>(profiles));
+
+            System.out.println(selected);
+        }catch (Exception e){
+            if(App.DEV_MODE)
+                e.printStackTrace();
+            System.out.println("Sorry, we're having trouble doing that right now.");
+        }
+    }
+
+    public void browseProfiles(Account acc){
+        switch (InputReader.readFromOptions("Please choose one.",
+                new String[]{"All Profiles","Suggested Profiles","Random Match"})){
+            case "Suggested Profiles":
+                viewSuggestedProfiles(acc);
+                break;
+            case "All Profiles":
+                try {
+                    ProfileMapper pm = new ProfileMapper();
+                    List<Profile> profileList = pm.createObjectList("Select * from meetup.profile where id != " +
+                            acc.getProfile().getId());
+                    Profile p = selectProfile(profileList,acc);
+                    System.out.println(p);
+                }catch (Exception e){
+                    System.out.println("Can't browse files at this time.");
+                }
+        }
     }
 }

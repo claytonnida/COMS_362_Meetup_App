@@ -142,14 +142,7 @@ public class App
 					break;
 				case "Browse Profiles":
 					//TODO implement fully and elsewhere
-					try {
-						ProfileMapper pm = new ProfileMapper();
-						List<Profile> profileList = pm.createObjectList("Select * from meetup.profile where id != " +
-								((Account) sessionVariables.get("account")).getProfile().getId());
-						Profile p = pc.selectProfile(profileList,((Account)sessionVariables.get("account")));
-					}catch (Exception e){
-						System.out.println("Can't browse files at this time.");
-					}
+					pc.browseProfiles(((Account)sessionVariables.get("account")));
                     break;
 				case "Exit":
 					if(InputReader.inputYesNo("Are you sure you want to quit?")) {

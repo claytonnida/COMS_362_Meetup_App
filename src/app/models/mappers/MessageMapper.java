@@ -30,12 +30,12 @@ public class MessageMapper implements ResultMapper<Message> {
     @Override
     public String toUpdateQueryQuery(Message object) {
         ReflectMapper<Message> pmapper = new ReflectMapper<>(Message.class);
-        return pmapper.toUpdateStatement(object);
+        return pmapper.toUpdateStatement(object,true);
     }
 
     @Override
     public String toInsertQueryQuery(Message object) {
         ReflectMapper<Message> pmapper = new ReflectMapper<>(Message.class);
-        return pmapper.toInsertStatement(object);
+        return pmapper.toInsertStatement(object,true);
     }
 }

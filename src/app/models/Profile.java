@@ -217,7 +217,8 @@ public class Profile implements ProfileInterface, Selectable
 				"\nSexual Preference: " + getSexualPref() +
 				"\nMajor: " + getMajor() +
 				"\nSpirit Animal: " + getSpiritAnimal() +
-				"\nZodiac Sign: " + getZodiac();
+				"\nZodiac Sign: " + getZodiac()+
+				"\nInterests: "+getInterests();
 
 		return profileDetails;
 	}
