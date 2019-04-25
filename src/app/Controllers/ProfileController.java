@@ -1,26 +1,36 @@
 package app.Controllers;
 
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import app.App;
 import app.InputReader;
 import app.MySQL.MySQLHelper;
 import app.interfaces.ProfileControllerInterface;
 import app.models.Account;
-import app.models.Group;
 import app.models.Profile;
 import app.models.mappers.ProfileMapper;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class ProfileController implements ProfileControllerInterface {
 
@@ -372,21 +382,16 @@ public class ProfileController implements ProfileControllerInterface {
     @Override
     public void editInterests(Profile p) {
         System.out.println("Your current 'Interests' are:");
-        ArrayList<String> interets = p.getInterests();
-        if(!interets.isEmpty())
-        {
-        	for (String string : interets)
-    		{
-    			System.out.println(string+", ");
-    		}
-        }
+        JSONArray interests = p.getInterests();
         
         String input = (InputReader.collectInput("Add an intrest"));
 
         boolean confirm = InputReader.requestConfirmation(input);
         if(confirm) {
-        	interets.add(input);
-            p.setInterests(interets);
+        	//JSONObject jo = new JSONObject();
+        	
+        	interests.put(input);
+            p.setInterests(interests.toString());
         }
         else {
             boolean cancel = InputReader.requestCancel();
@@ -467,7 +472,7 @@ public class ProfileController implements ProfileControllerInterface {
             byte[] buf = out.toByteArray();
             // setup stream for blob
             ByteArrayInputStream inStream = new ByteArrayInputStream(buf);
-
+            
             ProfileMapper pm = new ProfileMapper();
             String query = pm.toUpdateQueryQuery(p);
             PreparedStatement ps = MySQLHelper.getConnection().prepareStatement(query);
