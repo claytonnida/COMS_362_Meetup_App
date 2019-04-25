@@ -1,15 +1,17 @@
 package app.Controllers;
 
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashMap;
+import java.util.List;
+
+import app.App;
+import app.InputReader;
+import app.MySQL.MySQLHelper;
+import app.models.Group;
 import app.models.Message;
-import app.models.Profile;
 import app.models.mappers.MessageMapper;
 import app.models.mappers.ProfileMapper;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
 public class MessageController {
     public List<Message> getMessagesByGroupID(int groupid)throws SQLException{

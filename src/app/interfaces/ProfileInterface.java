@@ -1,5 +1,7 @@
 package app.interfaces;
 
+import java.util.ArrayList;
+
 public interface ProfileInterface
 {
 
@@ -15,6 +17,10 @@ public interface ProfileInterface
 	String getAboutMe() ;
 
 	void setAboutMe(String aboutMe) ;
+	
+	ArrayList<String> getInterests();
+	
+	void setInterests(ArrayList<String> interests);
 
 	int getAge() ;
 

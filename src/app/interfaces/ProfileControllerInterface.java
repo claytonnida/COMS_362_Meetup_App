@@ -150,4 +150,6 @@ public interface ProfileControllerInterface {
      *      {@code true} if the given {@link Profile} is online. {@code false}, otherwise.
      */
     boolean checkOnlineStatus(int pid);
+
+	void editInterests(Profile p);
 }

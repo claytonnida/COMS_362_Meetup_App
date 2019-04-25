@@ -217,7 +217,7 @@ public class GroupController implements GroupControllerInterface {
     public void editGroupFields(Group g){
 
         boolean edit = true;
-        String[] options = new String[]{"done","name","visibility"};
+        String[] options = new String[]{"done","name","visibility","Delete Chat History", "Delete Group"};
         while(edit) {
             String option = InputReader.readFromOptions("Which field would you like to edit?", options);
 
@@ -230,6 +230,21 @@ public class GroupController implements GroupControllerInterface {
                     break;
                 case "visibility":
                     editGroupVisibility(g);
+                    break;
+                case "Delete Chat History":
+                	try
+					{
+						deleteChatHistory(g);
+					}
+					catch (SQLException e)
+					{
+						System.out.println("SQL Error when trying to delete chat.");
+						e.printStackTrace();
+					}
+                	break;
+                case "Delete Group":
+                    removeGroup(g);
+                    break;
             }
         }
     }
@@ -275,6 +290,21 @@ public class GroupController implements GroupControllerInterface {
             }
         }
     }
+    
+    public void deleteChatHistory(Group group)throws SQLException{
+   	 boolean confirm = InputReader.requestConfirmation("Are you sure you want to remove chat history from " + group.getName());
+        if(confirm){
+        	try {
+        		Statement stmt = MySQLHelper.createStatement();
+        		stmt.executeUpdate("DELETE FROM meetup.message WHERE to_id =" + group.getId() +";");
+        		System.out.println("Chat for " + group.getName() + " was deleted.");
+        	}catch (Exception e){
+        		System.out.println("Failed to remove chat history.");
+                if(App.DEV_MODE)
+                    e.printStackTrace();
+        	}
+        }
+   }
 
     public void manageGroups(Account account){
         GroupController gc = new GroupController();
@@ -368,7 +398,7 @@ public class GroupController implements GroupControllerInterface {
      * @param group
      */
     public void manageGroup(Account account, Group group){
-        String[] options = new String[]{"Open Chat","Edit Group","Leave Group","Join Group","Rank Group","Delete Group","Exit"};
+        String[] options = new String[]{"Open Chat","Edit Group","Leave Group","Join Group","Rank Group","Exit"};
         GroupMapper gm = new GroupMapper();
 
         //Ask user what they would like to do
@@ -408,16 +438,7 @@ public class GroupController implements GroupControllerInterface {
             	rankGroup(group);
                 manageGroups(account);
             	break;
-            case "Delete Group":
-                if(isOwnerOfGroup(account,group)) {
-                    removeGroup(group);
-                    break;
-                }else {
-                    System.out.println("Cannot delete this group because you are not the owner");
-                }
-                //TODO Implement remove group
-                manageGroups(account);
-                break;
+           
             case "Exit":
                 manageGroups(account);
                 break;

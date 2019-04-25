@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 
 public class Profile implements ProfileInterface, Selectable
@@ -26,12 +27,13 @@ public class Profile implements ProfileInterface, Selectable
     private int isOnline;
 	private String name = "Anonymous";
 	private BufferedImage picture;
+	private ArrayList<String> interests;
 
 	private String pictureURL;
 	private BufferedImage profile_pic;
 
 	//If you change these values, you will also need to change ProfileController.editProfileFields(...)
-	public static final String[] OPTIONS = {"Name", "About Me", "Age", "Gender Identity",
+	public static final String[] OPTIONS = {"Name", "About Me","Interests", "Age", "Gender Identity",
             "Sexual Preference", "Major", "Spirit Animal", "Zodiac Sign", "Picture", "done"};
 
     public int getIsOnline() {
@@ -74,6 +76,17 @@ public class Profile implements ProfileInterface, Selectable
 	@Override
 	public void setAboutMe(String aboutMe) {
 		this.aboutMe = aboutMe;
+	}
+	
+	@Override
+	public ArrayList<String> getInterests() {
+		
+		return interests;
+	}
+	
+	@Override
+	public void setInterests(ArrayList<String> interests) {
+		this.interests  = interests;
 	}
 
 	// TODO: Javadoc

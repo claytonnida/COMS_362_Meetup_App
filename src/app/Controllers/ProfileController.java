@@ -72,6 +72,9 @@ public class ProfileController implements ProfileControllerInterface {
                 case "About Me":
                     editAboutMe(p);
                     break;
+                case "Interests":
+                    editInterests(p);
+                    break;
                 case "Age":
                     editAge(p);
                     break;
@@ -362,6 +365,36 @@ public class ProfileController implements ProfileControllerInterface {
             }
             else {
                 editAboutMe(p);
+            }
+        }
+    }
+    
+    @Override
+    public void editInterests(Profile p) {
+        System.out.println("Your current 'Interests' are:");
+        ArrayList<String> interets = p.getInterests();
+        if(!interets.isEmpty())
+        {
+        	for (String string : interets)
+    		{
+    			System.out.println(string+", ");
+    		}
+        }
+        
+        String input = (InputReader.collectInput("Add an intrest"));
+
+        boolean confirm = InputReader.requestConfirmation(input);
+        if(confirm) {
+        	interets.add(input);
+            p.setInterests(interets);
+        }
+        else {
+            boolean cancel = InputReader.requestCancel();
+            if(cancel) {
+                return;
+            }
+            else {
+            	editInterests(p);
             }
         }
     }
