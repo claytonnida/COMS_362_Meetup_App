@@ -9,12 +9,14 @@ import app.models.Profile;
 import app.models.mappers.MessageMapper;
 import app.models.mappers.ProfileMapper;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.ResultSet;
@@ -62,7 +64,7 @@ public class ChatGUI {
         ChatGUI tg = new ChatGUI(g,me);
         tg.loadMessages();
         tg.open();
-        tg.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        tg.frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     }
 
     /**
@@ -118,6 +120,25 @@ public class ChatGUI {
         send.setBackground(new Color(0,10,30));
         send.setForeground(new Color(255,255,255));
         send.setBorder(new EmptyBorder(4,10,4,10));
+
+        //create picture button
+        /*
+        JPanel pic_buttonPanel = new JPanel();
+        text = new JTextField(40);
+        addLimitToTextField(text,1000);
+        pic_buttonPanel.add(text);
+        JButton picture = new JButton("Picture");
+        establishServerCommunications(picture);
+        //text.addKeyListener(new EnterListener(this));
+        buttonPanel.add(picture);
+        buttonPanel.setBorder(null);
+        text.setBackground(new Color(70,70,70));
+        text.setForeground(new Color(255,255,255));
+        text.setBorder(new EmptyBorder(4,10,4,10));
+        picture.setBackground(new Color(0,10,30));
+        picture.setForeground(new Color(255,255,255));
+        picture.setBorder(new EmptyBorder(4,10,4,10));
+        */
 
         //add stuff to frame
         messagePanel = new JPanel();
@@ -461,9 +482,15 @@ public class ChatGUI {
         MessageMapper mm = new MessageMapper();
         m.setTo_id(groupid);
         m.setFrom_id(profile.getId());
+        try {
+            File file = new File(text.getText());
+            BufferedImage img = ImageIO.read(file);
+            m.setImage(img);
+        }
+        catch(Exception e) {
+            m.setBody(text.getText().trim());
+        }
         m.setBody(text.getText().trim());
-        m.setImage(null);
-
         //post message on server
         text.setText("");
         MySQLHelper.executeUpdate(mm.toInsertQueryQuery(m));

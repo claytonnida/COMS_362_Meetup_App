@@ -1,10 +1,17 @@
 package app.Controllers;
 
+import app.MySQL.MySQLHelper;
 import app.models.Message;
 import app.models.Profile;
 import app.models.mappers.MessageMapper;
 import app.models.mappers.ProfileMapper;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +22,28 @@ public class MessageController {
     public List<Message> getMessagesByGroupID(int groupid)throws SQLException{
         return getMessagesByGroupID(groupid,"0000-00-00 00:00:00.0");
     }
+
+    public void sendMessageToDB(Message msg){
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ImageIO.write(msg.getImage(), "png", out);
+            byte[] buf = out.toByteArray();
+            // setup stream for blob
+            ByteArrayInputStream inStream = new ByteArrayInputStream(buf);
+
+            MessageMapper mm = new MessageMapper();
+            String query = mm.toInsertQueryQuery(msg);
+            PreparedStatement ps = MySQLHelper.getConnection().prepareStatement(query);
+            ps.setBinaryStream(1, inStream, inStream.available());
+            ps.executeUpdate();
+        }
+        catch(Exception e){
+            System.out.println("Exception found in sendMessageToDB()");
+        }
+    }
+
+
+
     public List<Message> getMessagesByGroupID(int groupid,String date)throws SQLException {
         MessageMapper mm = new MessageMapper();
         ProfileMapper pm = new ProfileMapper();
