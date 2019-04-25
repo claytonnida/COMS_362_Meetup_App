@@ -91,6 +91,8 @@ public class App
 
 							System.out.println("Successfully loaded everything");
 						} catch (Exception e) {
+							if(App.DEV_MODE)
+								e.printStackTrace();
 							System.out.println("Couldn't fetch profile");
 							keepTrying = InputReader.inputYesNo("Try Again?");
 						}

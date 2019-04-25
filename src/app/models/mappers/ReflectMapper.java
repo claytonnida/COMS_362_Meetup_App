@@ -6,6 +6,10 @@ import app.MySQL.MySQLHelper;
 import app.models.Account;
 import app.models.Profile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -150,10 +154,13 @@ public class ReflectMapper<T> {
                 String value = rs.getString(fieldName);
                 value.replaceAll("'","\\'");
                 field.set(obj, value);
-            } else if (type.getName().contains("double"))
-            {  
-            	double value = rs.getDouble(fieldName);
-            	field.set(obj, value);
+            } else if (type.getName().contains("double")) {
+                double value = rs.getDouble(fieldName);
+                field.set(obj, value);
+            }else if(type.getName().contains("BufferedImage")){
+                InputStream is = rs.getBinaryStream(fieldName);
+                BufferedImage bi = ImageIO.read(is);
+                field.set(obj,bi);
             }else {
                 int value = rs.getInt(fieldName);
                 field.set(obj, value);
@@ -169,7 +176,8 @@ public class ReflectMapper<T> {
      * @param obj
      * @return
      */
-    public String toInsertStatement(T obj){
+    public String toInsertStatement(T obj){return toInsertStatement(obj,false);}
+    public String toInsertStatement(T obj,boolean allowBlob){
         try{
 
             String primaryKey = MySQLHelper.getPrimaryKeyForTable(useTableName);
@@ -185,7 +193,12 @@ public class ReflectMapper<T> {
                     continue;
 
                 //get field and make it accessible
-                Field field = clazz.getDeclaredField(fieldName);
+                Field field=null;
+                try {
+                    field = clazz.getDeclaredField(fieldName);
+                }catch (Exception e){
+                    continue;
+                }
                 boolean isAccessible = field.isAccessible();
                 field.setAccessible(true);
 
@@ -200,7 +213,7 @@ public class ReflectMapper<T> {
                 fields.put(fieldName,val);
                 field.setAccessible(isAccessible);
             }
-            return MySQLHelper.buildInsertStatement(className,fields);
+            return MySQLHelper.buildInsertStatement(className,fields,allowBlob);
         }catch (Exception e){
             if(App.DEV_MODE)
                 e.printStackTrace();
@@ -213,7 +226,8 @@ public class ReflectMapper<T> {
      * @param obj
      * @return
      */
-    public String toUpdateStatement(T obj){
+    public String toUpdateStatement(T obj){return toUpdateStatement(obj,false);}
+    public String toUpdateStatement(T obj,boolean allowBlob){
         try{
 
             String primaryKey = MySQLHelper.getPrimaryKeyForTable(useTableName);
@@ -229,7 +243,12 @@ public class ReflectMapper<T> {
                     continue;
 
                 //get field and make it accessible
-                Field field = clazz.getDeclaredField(fieldName);
+                Field field=null;
+                try {
+                    field = clazz.getDeclaredField(fieldName);
+                }catch (Exception e){
+                    continue;
+                }
                 boolean isAccessible = field.isAccessible();
                 field.setAccessible(true);
 
@@ -244,7 +263,7 @@ public class ReflectMapper<T> {
                 fields.put(fieldName,val);
                 field.setAccessible(isAccessible);
             }
-            return MySQLHelper.buildUpdateStatement(className,fields);
+            return MySQLHelper.buildUpdateStatement(className,fields,allowBlob);
         }catch (Exception e){
             if(App.DEV_MODE)
                 e.printStackTrace();

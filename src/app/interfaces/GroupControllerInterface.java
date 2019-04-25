@@ -34,9 +34,17 @@ public interface GroupControllerInterface {
     // TODO: Add JavaDocs
     void createGroup(Profile p);
 
-    // TODO: Add JavaDocs
+    
+    /**
+     * Removes the group from the system. This will also remove any associations 
+     * from anyone that was a member of the group.
+     * 
+     * @param group
+     * 		The group to be removed.
+     */
     public void removeGroup(Group group);
 
+<<<<<<< HEAD
     /**
     *Joins the {@link app.models.GroupAssociation} between a {@link Profile} and a {@link Group}.
     *
@@ -48,6 +56,15 @@ public interface GroupControllerInterface {
     void joinGroup(int profileId, int groupId);
 
     // TODO: Add JavaDocs
+=======
+    
+    /**
+     * Gives the group a rating of 1-5.
+     * 
+     * @param group
+     * 		The group to rank.
+     */
+>>>>>>> 80fe2523bbb5ed148209ed26b2bbd72856d8f60c
     void rankGroup(Group group);
 
     /**

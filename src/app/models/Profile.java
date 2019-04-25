@@ -3,7 +3,12 @@ package app.models;
 import app.interfaces.ProfileInterface;
 import app.interfaces.Selectable;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 
 public class Profile implements ProfileInterface, Selectable
@@ -23,6 +28,7 @@ public class Profile implements ProfileInterface, Selectable
 	private BufferedImage picture;
 
 	private String pictureURL;
+	private BufferedImage profile_pic;
 
 	//If you change these values, you will also need to change ProfileController.editProfileFields(...)
 	public static final String[] OPTIONS = {"Name", "About Me", "Age", "Gender Identity",
@@ -35,6 +41,16 @@ public class Profile implements ProfileInterface, Selectable
     public void setIsOnline(int isOnline) {
         this.isOnline = isOnline;
     }
+
+    public Profile(){
+    	Path path = Paths.get("./mystery.jpg").normalize().toAbsolutePath();
+    	try {
+			BufferedImage image = ImageIO.read(path.toFile());
+			setProfile_pic(image);
+		}catch (Exception e){
+    		e.printStackTrace();
+		}
+	}
 
     // TODO: Javadoc
 	@Override
@@ -155,6 +171,7 @@ public class Profile implements ProfileInterface, Selectable
 		return appearOffline;
 	}
 
+
 	// TODO: Javadoc
 	@Override
 	public void setAppearOffline(int appearOffline) {
@@ -192,6 +209,13 @@ public class Profile implements ProfileInterface, Selectable
 		return profileDetails;
 	}
 
+	public String showOnlineStatus(){
+		if(getAppearOffline() == 1 || isOnline == 0){
+			return "Offline";
+		}else{
+			return "Online";
+		}
+	}
 	// TODO: Javadoc
 	@Override
 	public String toString(){
@@ -200,6 +224,26 @@ public class Profile implements ProfileInterface, Selectable
 
 	@Override
 	public String getSelectionPrompt() {
-		return String.format("%s\t\t(%s)",getName(),((getAppearOffline()==1)?"Offline":"Online"));
+		return String.format("%s\t\t(%s)",getName(),showOnlineStatus());
+	}
+
+	public BufferedImage getProfile_pic() {
+		return profile_pic;
+	}
+
+	/**
+	 * Automatically scales the provided image to 40x40
+	 * @param profile_pic
+	 */
+	public void setProfile_pic(BufferedImage profile_pic) {
+        Image scaledImage = profile_pic.getScaledInstance(40,40,Image.SCALE_SMOOTH);
+
+        BufferedImage bimage = new BufferedImage(scaledImage.getWidth(null), scaledImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+        // Draw the image on to the buffered image
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(scaledImage, 0, 0, null);
+        bGr.dispose();
+		this.profile_pic = bimage;
 	}
 }

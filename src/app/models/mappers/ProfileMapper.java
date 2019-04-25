@@ -30,7 +30,7 @@ public class ProfileMapper implements ResultMapper<Profile> {
      */
     public String toUpdateQueryQuery(Profile object) {
         ReflectMapper<Profile> pmapper = new ReflectMapper<>(Profile.class);
-        return pmapper.toUpdateStatement(object);
+        return pmapper.toUpdateStatement(object,true)+" where id = "+object.getId();
     }
 
     @Override
@@ -40,7 +40,7 @@ public class ProfileMapper implements ResultMapper<Profile> {
      */
     public String toInsertQueryQuery(Profile object) {
         ReflectMapper<Profile> pmapper = new ReflectMapper<>(Profile.class);
-        return pmapper.toInsertStatement(object);
+        return pmapper.toInsertStatement(object,true);
     }
 
     @Override

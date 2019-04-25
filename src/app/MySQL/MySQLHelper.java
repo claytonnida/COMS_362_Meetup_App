@@ -10,6 +10,12 @@ import app.models.mappers.AccountMapper;
 import app.models.mappers.GroupAssociationMapper;
 import app.models.mappers.ProfileMapper;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,6 +25,28 @@ import java.util.Map;
 public class MySQLHelper {
 
 
+    public static void main(String[] args)throws Exception{
+
+
+        //executeUpdate("delete from meetup.accoutnt where id >= 7");
+        describeDataBase();
+        System.out.println("Groups");
+        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.profile "))){
+            System.out.println(s);
+        }
+
+        System.out.println("Accounts");
+        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.group "))){
+            System.out.println(s);
+        }
+
+        executeUpdate("delete from meetup.group where id < 20");
+
+//        System.out.println("GroupAssociations");
+//        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.groupAssociation"))){
+//            System.out.println(s);
+//        }
+    }
     //TODO: Note for later https://www.tutorialspoint.com/springjdbc/springjdbc_rowmapper.htm
 
 
@@ -42,7 +70,7 @@ public class MySQLHelper {
     //Establishes a connection to the database
     public static Connection getConnection() throws SQLException{
         return DriverManager.getConnection(
-                    "jdbc:mysql://cs362meetupdb.redirectme.net", "cs362admin", "q1w2e3r4t5000");
+                "jdbc:mysql://cs362meetupdb.redirectme.net", "cs362admin", "q1w2e3r4t5000");
 
     }
 
@@ -119,8 +147,10 @@ public class MySQLHelper {
         return str;
     }
 
-
     public static String buildInsertStatement(String table, Map<String,Object> map){
+        return buildInsertStatement(table,map,false);
+    }
+    public static String buildInsertStatement(String table, Map<String,Object> map,boolean allowBlob){
         int i = 0;
         Iterator<String> iter = map.keySet().iterator();
 
@@ -135,8 +165,11 @@ public class MySQLHelper {
             }
             keys += key;
 
-            if(val.getClass().getName().contains("String")){
-                vals += String.format("'%s'",val.toString().replaceAll("'","\\\\'"));
+            if(val.getClass().getName().contains("String")) {
+                vals += String.format("'%s'", val.toString().replaceAll("'", "\\\\'"));
+            }else if(val.getClass().getName().contains("BufferedImage")){
+                if(allowBlob && val!=null)
+                vals += "?";
             }else{
                 vals += val.toString();
             }
@@ -146,7 +179,11 @@ public class MySQLHelper {
         return String.format("INSERT INTO meetup.%s (%s) VALUES (%s) ",table,keys,vals);
     }
 
+
     public static String buildUpdateStatement(String table, Map<String,Object> map){
+        return buildUpdateStatement(table,map,false);
+    }
+    public static String buildUpdateStatement(String table, Map<String,Object> map,boolean allowBlob){
         int i = 0;
         Iterator<String> iter = map.keySet().iterator();
 
@@ -158,13 +195,18 @@ public class MySQLHelper {
                 sets += ", ";
             }
 
-            if(val.getClass().getName().contains("String")){
-                sets += key+" = '"+val.toString().replaceAll("'","\\\\'")+"'";
+            if(val.getClass().getName().contains("String")) {
+                sets += key + " = '" + val.toString().replaceAll("'", "\\\\'") + "'";
+            }else if(val.getClass().getName().contains("BufferedImage")){
+                if(allowBlob && val != null)
+                sets += key + " = ?";
             }else{
                 sets += key+" = "+val.toString();
             }
             i++;
         }
+
+
 
         return String.format("UPDATE meetup.%s " +
                 "SET %s ",table,sets);
@@ -214,38 +256,16 @@ public class MySQLHelper {
      * @param query
      * @return
      */
-    public static ResultSet executeQuery(String query){
-        try{
+    public static ResultSet executeQuery(String query) {
+        try {
             return createStatement().executeQuery(query);
 
-        }catch (SQLException sql){
+        } catch (SQLException sql) {
             System.out.println("Oops! Server error! Sorry, whatever was supposed to happen didn't.");
-            if(App.DEV_MODE)
+            if (App.DEV_MODE)
                 sql.printStackTrace();
             return null;
         }
-    }
-
-    public static void main(String[] args)throws Exception{
-
-        describeDataBase();
-        //executeUpdate("Update meetup.group set isPublic = 'Public' where id != ");
-
-
-        System.out.println("Profiles");
-        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.profile"))){
-            System.out.println(s);
-        }
-//
-//        System.out.println("Groups");
-//        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.group"))){
-//            System.out.println(s);
-//        }
-//
-//        System.out.println("GroupAssociations");
-//        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.groupAssociation"))){
-//            System.out.println(s);
-//        }
     }
 
     private static void resetDatabase()throws SQLException{
@@ -279,6 +299,7 @@ public class MySQLHelper {
                     "appearOffline INT(1), " +
                     "isOnline INT(1), " +
                     "pictureURL varchar(255), " +
+                    "profile_pic Blob, "+
                     "PRIMARY KEY ( id )" +
                     ");");
 
@@ -295,6 +316,16 @@ public class MySQLHelper {
                     "groupid INT(11) " +
                     ");");
 
+
+            executeUpdate("create table meetup.message (" +
+                    "message_id INT NOT NULL AUTO_INCREMENT, " +
+                    "from_id INT(11), "+
+                    "to_id INT(11), "+
+                    "body VARCHAR(1000), " +
+                    "image Blob, "+
+                    "time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, "+
+                    "PRIMARY KEY ( message_id )" +
+                    ");");
 
         }
     }

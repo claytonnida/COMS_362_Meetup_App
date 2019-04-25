@@ -18,8 +18,14 @@ import app.models.GroupAssociation;
 import app.models.Profile;
 import app.models.mappers.GroupAssociationMapper;
 import app.models.mappers.GroupMapper;
+import app.serverclient.ChatGUI;
 
 public class GroupController implements GroupControllerInterface {
+
+    //TODO: Javadoc
+    public void inviteToGroup(int groupId) {
+        new GroupAssociationController().inviteToGroup(groupId);
+    }
 
     public List<Group> getGroupsForUser(Profile p){
         try {
@@ -113,7 +119,7 @@ public class GroupController implements GroupControllerInterface {
 
             boolean confirm = InputReader.requestConfirmation(group.getName());
             if(confirm){
-                //TODO push changes to database
+                
                 System.out.println("Group confirmed.");
 
 
@@ -157,7 +163,10 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
-    // TODO: Add JavaDocs
+    
+    /** 
+     * @see app.interfaces.GroupControllerInterface#removeGroup(app.models.Group)
+     */
     @Override
     public void removeGroup(Group group) {
         boolean confirm = InputReader.requestConfirmation(group.getName());
@@ -174,7 +183,10 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
-    // TODO: Add JavaDocs
+    
+    /**
+     * @see app.interfaces.GroupControllerInterface#rankGroup(app.models.Group)
+     */
     @Override
     public void rankGroup(Group group) {
     	String prompt = "Please enter a ranking of 1-5. (5 being the highest)";
@@ -342,6 +354,8 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
+    
+
     public void joinGroup(int profileId, int groupId){
         GroupAssociationController gac = new GroupAssociationController();
         gac.joinGroup(profileId, groupId);
@@ -365,11 +379,12 @@ public class GroupController implements GroupControllerInterface {
     * @param group
     */
     public void manageGroup(Account account, Group group){
-        String[] options = new String[]{"Edit Group","Leave Group","Rank Group","Delete Group","Exit"};
+        String[] options = new String[]{"Open Chat","Edit Group","Leave Group","Join Group","Rank Group","Delete Group","Exit"};
         GroupMapper gm = new GroupMapper();
 
         //Ask user what they would like to do
         switch (InputReader.readFromOptions("Edit "+group.getName(), options)){
+<<<<<<< HEAD
             case "Edit Group":
             try{
                 int id = ((Account)App.sessionVariables.get("account")).getProfile().getId();
@@ -396,12 +411,33 @@ public class GroupController implements GroupControllerInterface {
             //        }else {
             //             System.out.println("Cannot edit this group because you are not the owner");
             //         }
+=======
+            case "Open Chat":
+                try {
+                    ChatGUI tg = new ChatGUI(group,((Account)App.sessionVariables.get("account")).getProfile());
+                    tg.loadMessages();
+                    tg.open();
+                }catch (Exception e){
+                    System.out.println("Oops, couldn't open chat at this time!");
+                    if(App.DEV_MODE)
+                    e.printStackTrace();
+                }
+                break;
+            case "Join Group":
+                joinGroup(account.getProfile().getId(),group.getId());
+                manageGroups(account);
+                break;
+            case "Leave Group":
+                leaveGroup(account.getProfileid(),group.getId());
+                manageGroups(account);
+                break;
+>>>>>>> 80fe2523bbb5ed148209ed26b2bbd72856d8f60c
 
             case "Edit Group":
                 if(isOwnerOfGroup(account,group)) {
                     editGroupFields(group);
                     String query = gm.toUpdateQueryQuery(group);
-                    MySQLHelper.executeUpdate(query);
+                    MySQLHelper.executeUpdate(query+" where id = "+group.getId());
                 }else {
                     System.out.println("Cannot edit this group because you are not the owner");
                 }
