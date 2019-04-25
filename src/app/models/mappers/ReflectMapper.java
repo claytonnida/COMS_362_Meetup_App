@@ -1,14 +1,6 @@
 package app.models.mappers;
 
-import app.App;
-import app.Controllers.AccountController;
-import app.MySQL.MySQLHelper;
-import app.models.Account;
-import app.models.Profile;
-
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
@@ -19,6 +11,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import app.App;
+import app.Controllers.AccountController;
+import app.MySQL.MySQLHelper;
+import app.models.Account;
 
 public class ReflectMapper<T> {
 
@@ -162,6 +164,9 @@ public class ReflectMapper<T> {
                 InputStream is = rs.getBinaryStream(fieldName);
                 BufferedImage bi = ImageIO.read(is);
                 field.set(obj,bi);
+            }else if(type.getName().contains("JSONArray")){
+                JSONArray ja = new JSONArray(rs.getString(fieldName));
+                field.set(obj,ja);
             }else {
                 int value = rs.getInt(fieldName);
                 field.set(obj, value);
