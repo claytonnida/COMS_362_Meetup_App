@@ -1,8 +1,10 @@
 package app.Controllers;
 
+import app.App;
 import app.InputReader;
 import app.MySQL.MySQLHelper;
 import app.interfaces.ProfileControllerInterface;
+import app.models.Account;
 import app.models.Profile;
 import app.models.mappers.ProfileMapper;
 
@@ -10,15 +12,11 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -105,8 +103,9 @@ public class ProfileController implements ProfileControllerInterface {
             else
                 System.out.println("Profile changes discarded.");
         }catch (SQLException e){
-            e.printStackTrace();
             System.out.println("Couldn't save profile to server at this time.");
+            if(App.DEV_MODE)
+                e.printStackTrace();
         }
     }
 
@@ -131,7 +130,13 @@ public class ProfileController implements ProfileControllerInterface {
                 boolean confirm = InputReader.requestConfirmation(input);
                 if (confirm) {
                     p.setPicture(input_picture);
-                    p.setPictureURL(file_name);
+                    p.setPictureURL(file_name.replaceAll("\\\\","/"));
+                    System.out.println(p.getPictureURL());
+                    //Quick Test
+                    //
+                    //BufferedImage test_image = ImageIO.read(new File(p.getPictureURL()));
+                    //displayPicture(test_image);
+                    //
                     System.out.println("Your profile picture was added successfully! The following picture will be displayed.");
                     displayPicture(p.getPicture());
                 } else {
@@ -176,13 +181,14 @@ public class ProfileController implements ProfileControllerInterface {
         //}
     }
 
-        /**
-         * A series of prompts to guide user through editing their online status.
-         *
-         * @param p {@link Profile} to edit the online status of.
-         */
-        @Override
-        public void editOnlineStatus(Profile p) {
+    /**
+     * A series of prompts to guide user through editing their online status.
+     *
+     * @param p
+     * 		{@link Profile} to edit the online status of.
+     */
+    @Override
+    public void editOnlineStatus(Profile p) {
             System.out.print("Your are currently appearing:\t");
             System.out.println((p.getAppearOffline() == 1 ? "Offline" : "Online"));
 
@@ -430,10 +436,28 @@ public class ProfileController implements ProfileControllerInterface {
     @Override
     public void updateProfile(Profile p) throws SQLException{
 
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ImageIO.write(p.getProfile_pic(), "png", out);
+            byte[] buf = out.toByteArray();
+            // setup stream for blob
+            ByteArrayInputStream inStream = new ByteArrayInputStream(buf);
+
             ProfileMapper pm = new ProfileMapper();
-            Statement stmt = MySQLHelper.createStatement();
             String query = pm.toUpdateQueryQuery(p);
-            stmt.executeUpdate(query);
+            PreparedStatement ps = MySQLHelper.getConnection().prepareStatement(query);
+            ps.setBinaryStream(1,inStream,inStream.available());
+            ps.executeUpdate();
+
+        }catch (Exception e){
+
+            ProfileMapper pm = new ProfileMapper();
+            String query = pm.toUpdateQueryQuery(p);
+            query.replaceAll("profile_pic = \\?,","");
+            PreparedStatement ps = MySQLHelper.getConnection().prepareStatement(query);
+            ps.executeUpdate();
+        }
+
     }
 
     /**
@@ -453,22 +477,65 @@ public class ProfileController implements ProfileControllerInterface {
     }
 
     /**
-     * Lists {@link Profile}s
+     * Lists {@link Profile}s.
+     *
+     * @return A {@link List} containing the IDs of the profiles.
      */
     @Override
-    public void listProfiles(){
-        try{
+    public List<Integer> listProfiles() {
+        List<Integer> profileIdList = new ArrayList<>();
+
+        try {
             Statement stmt = MySQLHelper.createStatement();
             ResultSet rs = stmt.executeQuery("Select * from meetup.profile");
-            while(rs.next()){
+
+            while (rs.next()) {
                 ResultSetMetaData rsmd = rs.getMetaData();
-                for(int i = 1; i < rsmd.getColumnCount(); i++){
-                    System.out.print(rs.getString(i)+",\t");
+
+                for (int i = 1; i < rsmd.getColumnCount(); i++) {
+                    if (rsmd.getColumnName(i).equals("id")) {
+                        profileIdList.add(rs.getInt(i));
+                    }
+
+                    System.out.print(rs.getString(i) + ",\t");
                 }
                 System.out.println();
             }
-        }catch (Exception e){
-            e.printStackTrace();
+        } catch (Exception e) {
+            if (App.DEV_MODE)
+                e.printStackTrace();
+        }
+
+        return profileIdList;
+    }
+
+    /**
+     * Prints out the columns of rows in database with profile IDs matching those in given {@link List}
+     * @param profileIdList The {@link List<Integer>} of {@link Profile} IDs to print database rows of.
+     *
+     * @throws SQLException If an error occurs when executing the MySQL query.
+     */
+    public void printProfileIdList(List<Integer> profileIdList) throws SQLException {
+        if(profileIdList == null) {
+            throw new IllegalArgumentException("ERROR! Profile ID List cannot be null!");
+        }
+        StringBuilder queryStringBuilder = new StringBuilder("SELECT * FROM meetup.profile WHERE id IN (");
+        for(int id : profileIdList) {
+            queryStringBuilder.append(String.format("\'%s\', ", id));
+        }
+        queryStringBuilder.deleteCharAt(queryStringBuilder.length() - 2);
+        queryStringBuilder.append(")");
+
+        Statement statement = MySQLHelper.createStatement();
+        ResultSet resultSet = statement.executeQuery(queryStringBuilder.toString());
+
+        while(resultSet.next()) {
+            ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+
+            for(int i = 1; i < resultSetMetaData.getColumnCount(); i++) {
+                System.out.print(resultSet.getString(i) + ",\t");
+            }
+            System.out.println();
         }
     }
 
@@ -518,47 +585,91 @@ public class ProfileController implements ProfileControllerInterface {
     public int saveProfile(Profile p)throws SQLException{
         ProfileMapper pm = new ProfileMapper();
 
-        if(p.getId() == 0) {
-            String query = pm.toInsertQueryQuery(p);
-            Statement stmt = MySQLHelper.createStatement();
-            stmt.executeUpdate(query);
+        try {
+            if (p.getId() == 0) {
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                ImageIO.write(p.getProfile_pic(), "png", out);
+                byte[] buf = out.toByteArray();
+                // setup stream for blob
+                ByteArrayInputStream inStream = new ByteArrayInputStream(buf);
 
-            ResultSet rs = stmt.executeQuery("Select @@identity");
-            rs.next();
-            return rs.getInt(1);
-        }else {
-            String query = pm.toUpdateQueryQuery(p) + " where id="+p.getId();
-            MySQLHelper.createStatement().executeUpdate(query);
-            return p.getId();
+                pm = new ProfileMapper();
+                String query = pm.toInsertQueryQuery(p);
+                PreparedStatement ps = MySQLHelper.getConnection().prepareStatement(query);
+                ps.setBinaryStream(1, inStream, inStream.available());
+                ps.executeUpdate();
+
+                ResultSet rs = ps.executeQuery("Select @@identity");
+                rs.next();
+                return rs.getInt(1);
+            } else {
+                updateProfile(p);
+                return p.getId();
+            }
+        }catch (Exception e){
+            if(App.DEV_MODE)
+                e.printStackTrace();
         }
+
+        return p.getId();
     }
 
+    //TODO: Add this to the UI!
     /**
      * Returns a version of the given {@link List<Integer>} with "offline" connections removed.
      *
-     * @param pidList {@link List<Integer>} of {@link Profile} IDs to filter.
+     * @param profileIdList {@link List<Integer>} of {@link Profile} IDs to filter.
      *
      * @return
      *      {@link List<Integer>} of IDs associated with online {@link Profile}s.
      */
     @Override
-    public List<Integer> filterOnlineConnections(List<Integer> pidList) {
+    public List<Integer> filterOnlineConnections(List<Integer> profileIdList) {
 
-        if(pidList == null) {
+        if(profileIdList == null) {
             throw new IllegalArgumentException("ERROR! Given pid List cannot be null!");
         }
 
-        Iterator<Integer> iterator = pidList.iterator();
-
+        Iterator<Integer> iterator = profileIdList.iterator();
 
         while(iterator.hasNext()) {
             Integer pid = iterator.next();
             if(appearsOffline(pid) || !checkOnlineStatus(pid)) {
-                pidList.remove(pid);
+                profileIdList.remove(pid);
             }
         }
 
-        return pidList;
+        return profileIdList;
+    }
+
+    public static void main(String[] args)throws Exception{
+        ProfileController profileController = new ProfileController();
+
+        List<Integer> profileIdList = profileController.listProfiles();
+
+        System.out.println();
+
+        for(int id : profileIdList) {
+            System.out.println(id + ", ");
+        }
+
+        System.out.println();
+
+        profileController.printProfileIdList(profileIdList);
+
+        //        ProfileMapper pm = new ProfileMapper();
+//
+//        List<Profile> profiles = pm.createObjectList("select id from meetup.profile");
+//        List<Integer> ints = new ArrayList<>();
+//        for(Profile p: profiles){
+//            System.out.println("origins - "+p.getId());
+//            ints.add(p.getId());
+//        }
+//        ProfileController pc = new ProfileController();
+//        List<Integer> filetered = pc.filterOnlineConnections(ints);
+//        for(Integer i: filetered){
+//            System.out.println("Filtered online "+i);
+//        }
     }
 
     /**
@@ -571,24 +682,59 @@ public class ProfileController implements ProfileControllerInterface {
      */
     @Override
     public boolean appearsOffline(int pid) {
-        // TODO: Have this actually look at the database for the "appearsOffline"  column
 
-        return false;
+        ResultSet rs = MySQLHelper.executeQuery("SELECT appearOffline FROM meetup.profile where id = " + pid);
+
+        try {
+            rs.next();
+            return rs.getInt(1) == 1;
+        }
+        catch(SQLException e) {
+            if(App.DEV_MODE)
+                e.printStackTrace();
+            return false;
+        }
+        catch(NullPointerException e) {
+            System.out.println("ERROR! The given Profile ID does not exist or the \"apearOffline\" column has a value of null!");
+            return false;
+        }
     }
 
     /**
      * Pings the server to see if {@link Profile} associated with given ID is online.
      *
-     * @param pid The ID of the {@link Profile} to ping the server for.
+     * @param profileId The ID of the {@link Profile} to ping the server for.
      *
      * @return
      *      {@code true} if the given {@link Profile} is online. {@code false}, otherwise.
      */
     @Override
-    public boolean checkOnlineStatus(int pid) {
+    public boolean checkOnlineStatus(int profileId) {
         // TODO: Ping the server for the actual connection status
 
-        return true;
+        ResultSet rs = MySQLHelper.executeQuery("SELECT isOnline FROM meetup.profile where id = " + profileId);
+
+        try {
+            rs.next();
+            return rs.getInt(1) == 1;
+        }
+        catch(SQLException e) {
+            if(App.DEV_MODE)
+                e.printStackTrace();
+            return false;
+        }
+        catch(NullPointerException e) {
+            if(App.DEV_MODE)
+                e.printStackTrace();
+            System.out.println("ERROR! The given Profile ID does not exist or the \"apearOffline\" column has a value of null!");
+            return false;
+        }
     }
 
+
+    public Profile selectProfile(List<Profile> profiles, Account account){
+
+        Profile p = (Profile)InputReader.readFromOptions("Choose a group",new ArrayList<>(profiles));
+        return p;
+    }
 }

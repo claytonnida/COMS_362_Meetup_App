@@ -1,5 +1,6 @@
 package app.Controllers;
 
+import app.App;
 import app.MySQL.MySQLHelper;
 import app.interfaces.AccountControllerInterface;
 import app.models.Account;
@@ -23,9 +24,18 @@ public class AccountController implements AccountControllerInterface {
 	 */
 	@Override
 	public boolean isUsernameUnique(String username) {
-		//TODO: Check the database for the username once it is implemented in future iteration
 
-		return true;
+		ResultSet rs = MySQLHelper.executeQuery("SELECT * FROM meetup.account WHERE username = \"" + username + "\"");
+
+		try {
+			return !rs.first();
+		}
+		catch(SQLException e) {
+			if(App.DEV_MODE)
+				e.printStackTrace();
+		}
+
+		return false;
 	}
 
 	/**
@@ -139,6 +149,8 @@ public class AccountController implements AccountControllerInterface {
 			acc.setProfile(prof);
 		}catch (Exception e){
 			System.out.println("ERROR: Failed to Load Profile.");
+			if(App.DEV_MODE)
+				e.printStackTrace();
 		}
 
 		return acc;

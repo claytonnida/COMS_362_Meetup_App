@@ -1,5 +1,6 @@
 package app.interfaces;
 
+import app.models.Account;
 import app.models.Group;
 import app.models.Profile;
 
@@ -10,17 +11,47 @@ public interface GroupControllerInterface {
     // TODO: Add JavaDocs
     List<Group> searchGroup(String sub_string);
 
-    // TODO: Add JavaDocs
-    void leaveGroup(int accountId, int groupId);
+	/**
+	 * Removes the {@link app.models.GroupAssociation} between a {@link Profile} and a {@link Group}.
+	 *
+	 * @param profileId
+	 * 		The ID of the {@link Profile} to disassociate.
+	 * @param groupId
+	 * 		The ID of the {@link Group} to disassociate.
+	 */
+	void leaveGroup(int profileId, int groupId);
+
+    /**
+    *Joins the {@link app.models.GroupAssociation} between a {@link Profile} and a {@link Group}.
+    *
+    * @param profileId
+    *     The ID of the {@link Profile} to associate with a Group.
+    * @param groupId
+    *     The ID of the {@link Group} to associate.
+    */
+    void joinGroup(int profileId, int groupId);
 
     // TODO: Add JavaDocs
     void createGroup(Profile p);
 
-    // TODO: Add JavaDocs
-    void removeGroup(String gname);
+    
+    /**
+     * Removes the group from the system. This will also remove any associations 
+     * from anyone that was a member of the group.
+     * 
+     * @param group
+     * 		The group to be removed.
+     */
+    public void removeGroup(Group group);
 
-    // TODO: Add JavaDocs
-    void rankGroup(int rank);
+    
+    /**
+     * Gives the group a rating of 1-5.
+     * 
+     * @param group
+     * 		The group to rank.
+     */
+    void rankGroup(Group group);
 
     /**
      * A series of prompts to guide user through editing their profile

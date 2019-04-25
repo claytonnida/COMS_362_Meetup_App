@@ -18,5 +18,7 @@ public interface GroupInterface {
 
    void setIsPublic(String isPublic);
 
-
+   double getRankAvg();
+   
+   void setRankAvg(double rankAvg);
 }
