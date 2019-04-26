@@ -23,6 +23,23 @@ public class MessageController {
         return getMessagesByGroupID(groupid,"0000-00-00 00:00:00.0");
     }
 
+
+
+    public List<Message> getMessagesByGroupID(int groupid,String date)throws SQLException {
+        MessageMapper mm = new MessageMapper();
+
+        List<Message> messages = mm.createObjectList(
+                "select to_id, body, image, time, name , profile_pic "+
+                        " from (" +
+                        "select * from meetup.message as a inner join meetup.profile as b " +
+                        "on a.from_id = b.id ) as c "
+                        +"where to_id = "+groupid
+                        +" and time > '"+date+"'"
+        );
+
+        return messages;
+    }
+
     public static void sendMessageToDB(Message msg){
         try {
             if (msg.getImage() != null) {
@@ -69,44 +86,6 @@ public class MessageController {
     }
 
 
-
-    public List<Message> getMessagesByGroupID(int groupid,String date)throws SQLException {
-        MessageMapper mm = new MessageMapper();
-        ProfileMapper pm = new ProfileMapper();
-        HashMap<Integer, List<Message>> map = new HashMap<>();
-
-        List<Message> messages = mm.createObjectList(
-                "select to_id, body, image, time, name , profile_pic "+
-                        " from (" +
-                        "select * from meetup.message as a inner join meetup.profile as b " +
-                        "on a.from_id = b.id ) as c "
-               +"where to_id = "+groupid
-               +" and time > '"+date+"'"
-        );
-//        for(Message m: messages){
-//            if(map.containsKey(m.getFrom_id())){
-//                map.get(m.getFrom_id()).add(m);
-//            }else{
-//                map.put(m.getFrom_id(),new ArrayList<>());
-//                map.get(m.getFrom_id()).add(m);
-//            }
-//        }
-//
-//        Iterator<Integer> iter = map.keySet().iterator();
-//        while(iter.hasNext()){
-//            int id = iter.next();
-//            Profile p = pm.createObjectList("Select profile_pic, name from meetup.profile where " +
-//                    "id = "+id).get(0);
-//
-//            for(Message m: map.get(id)){
-//                m.setSender_name(p.getName());
-//                m.setFrom_pic(p.getProfile_pic());
-//
-//            }
-//        }
-
-        return messages;
-    }
 
     public static BufferedImage resize(BufferedImage img, int newW, int newH) {
         Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);

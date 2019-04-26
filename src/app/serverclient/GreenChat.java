@@ -21,9 +21,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class GreenChat {
 
@@ -36,26 +35,35 @@ public class GreenChat {
     private String lastUpdate = "00000000 00:00:00.000";
     private PrintWriter out;
 
+	private static Map<String, Color> colorMap = new HashMap<>();
+
+	static {
+		colorMap.put("Red", new Color(.5f, .1f, .1f));
+		colorMap.put("Orange", new Color(.8f, .3f, .1f));
+		colorMap.put("Yellow", new Color(.8f, .8f, 0f));
+		colorMap.put("Green", new Color(.1f, .5f, .1f));
+		colorMap.put("Blue", new Color(.1f, .1f, .5f));
+		colorMap.put("Purple", new Color(.5f, .1f, .5f));
+		colorMap.put("White", new Color(1f, 1f, 1f));
+		colorMap.put("Black", new Color(0f, 0f, 0f));
+	}
+
 
     //TODO change name and owner text color
     //TODO change text box color
     //TODO set Background color for message container
     //TODO change username and body text color
+
     //TODO change box containing username and message
-    //TODO edit location of image?
-    //TODO edit location of username?
-    //TODO edit location of message?
     //TODO edit color for box surrounding username and their message
-
-
 
     public static void main(String[] args)throws Exception{
         ProfileMapper pm = new ProfileMapper();
         Profile me = pm.createObjectList("Select * from meetup.profile where id = 3").get(0);
         //Profile me = new Profile();
         Group g = new Group();
-        g.setId(21);
-        g.setCreated_by(3);
+        g.setId(23);
+        g.setCreated_by(8);
         g.setName("Maverick");
 
 
@@ -93,7 +101,7 @@ public class GreenChat {
         name.setFont(new Font(name.getFont().getName(), Font.BOLD, 28));
         name.setHorizontalAlignment(JLabel.CENTER);
         propertyPanel.add(name,BorderLayout.NORTH);
-        propertyPanel.setForeground(new Color(255,255,255));
+	    propertyPanel.setForeground(colorMap.get("White"));
         name.setForeground(new Color(70,120,90));
         Profile ownerp = getOwner(group);
         if(ownerp!=null) {
@@ -117,10 +125,10 @@ public class GreenChat {
         buttonPanel.setBorder(null);
         //TODO change text box color
         text.setBackground(new Color(20,50,20));
-        text.setForeground(new Color(255,255,255));
+	    text.setForeground(colorMap.get("White"));
         text.setBorder(new EmptyBorder(4,10,4,10));
         send.setBackground(new Color(50,100,50));
-        send.setForeground(new Color(255,255,255));
+	    send.setForeground(colorMap.get("White"));
         send.setBorder(new EmptyBorder(4,10,4,10));
 
         //add stuff to frame
@@ -318,7 +326,7 @@ public class GreenChat {
 
         JLabel timeLabel = new JLabel(time);
         timeLabel.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,10));
-        timeLabel.setBackground(new Color(255,255,255));
+	    timeLabel.setBackground(colorMap.get("White"));
 
         //build username and their message
         JPanel header = new JPanel(new BorderLayout());
@@ -330,8 +338,8 @@ public class GreenChat {
         username.setFont(new Font(panel.getFont().getName(), Font.BOLD, 15));
         JTextArea body = new JTextArea(message);
         //TODO change username and body text color
-        username.setForeground(new Color(255,255,255));
-        body.setForeground(new Color(255,255,255));
+	    username.setForeground(colorMap.get("White"));
+	    body.setForeground(colorMap.get("White"));
         text.setBackground(null);
         body.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,12));
         body.setLineWrap(true);

@@ -1,5 +1,6 @@
 package app.interfaces;
 
+import app.models.Group;
 import app.models.Profile;
 
 import java.sql.SQLException;
@@ -185,5 +186,7 @@ public interface ProfileControllerInterface {
      * @param groupId The ID of the {@link app.models.Group} that the user is being invited to.
      */
     void respondToGroupInvite(int profileId, int groupId);
+
+	void rateProfile(Profile p);
 
 }

@@ -30,11 +30,14 @@ public class Profile implements ProfileInterface, Selectable
     private int isOnline;
 	private String name = "Anonymous";
 	private BufferedImage picture;
-
+	
 
 	private String pictureURL;
 	private BufferedImage profile_pic;
 	private String interests = "[]";// = new JSONArray();
+	private int rankTotal;
+    private int numRanks;
+    private double rankAvg;
 	private String blockedUsers = "[]";
 
 	//If you change these values, you will also need to change ProfileController.editProfileFields(...)
@@ -209,15 +212,15 @@ public class Profile implements ProfileInterface, Selectable
 	public String getProfileDetails(){
 		String profileDetails = "Name: " + getName() +
 				"\nAbout Me: " + getAboutMe() +
-				"\nInterests: " + getInterests().toString() +
+				"\nInterests: " + getInterests() +
 				"\nAge: " + getAge() +
 				"\nGender Identity: " + getGenderId() +
 				"\nSexual Preference: " + getSexualPref() +
 				"\nMajor: " + getMajor() +
 				"\nSpirit Animal: " + getSpiritAnimal() +
-				"\nZodiac Sign: " + getZodiac()+
-				"\nInterests: "+getInterests()+
-				"\nBlocked Users: "+getBlockedUsers().toString();
+				"\nZodiac Sign: " + getZodiac() +
+				"\nRating: "+ getRankAvg();
+
 
 		return profileDetails;
 	}
@@ -259,9 +262,14 @@ public class Profile implements ProfileInterface, Selectable
         bGr.dispose();
 		this.profile_pic = bimage;
 	}
+	
+	 @Override
+    public double getRankAvg() {
+    	return rankAvg;
+    }
 
-	public static void main(String[] args)
-	{
-		JSONArray ja = new JSONArray("[]");
-	}
+    @Override
+    public void setRankAvg(double rankAvg) {
+    	this.rankAvg = rankAvg;
+    }
 }

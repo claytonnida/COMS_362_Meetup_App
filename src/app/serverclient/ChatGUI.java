@@ -24,9 +24,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+
 import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class ChatGUI {
 
@@ -39,33 +39,18 @@ public class ChatGUI {
     private String lastUpdate = "00000000 00:00:00.000";
     private PrintWriter out;
 
-
-    //TODO change name and owner text color
-    //TODO change text box color
-    //TODO set Background color for message container
-    //TODO Edit include Date in timestamp
-    //TODO change timeLabel color
-    //TODO change username and body text color
-    //TODO change box containing username and message
-    //TODO edit location of image?
-    //TODO edit location of username?
-    //TODO edit location of message?
-    //TODO edit color for box surrounding username and their message
-
-
-
     public static void main(String[] args)throws Exception{
         ProfileMapper pm = new ProfileMapper();
-        Profile me = pm.createObjectList("Select * from meetup.profile where id = 3").get(0);
+        Profile me = pm.createObjectList("Select * from meetup.profile where id = 7").get(0);
         //Profile me = new Profile();
         Group g = new Group();
         g.setId(23);
         g.setName("Maverick");
 
-        ChatGUI tg = new ChatGUI(g,me);
+        ChatGUI tg = new ChatGUI(g, me);
         tg.loadMessages();
         tg.open();
-        tg.frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        tg.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     /**
@@ -84,69 +69,83 @@ public class ChatGUI {
 
         //setup scroll pane for messages
         scroll = new JScrollPane();
+        scroll.addMouseListener(new ThemeMouseListener(scroll));
+
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         Container contentPane = frame.getContentPane();
         scroll.setBorder(null);
+
         //Display name of the group
-        //TODO change name and owner text color
         JPanel propertyPanel = new JPanel(new BorderLayout());
+
+        //Display name of the group
         JLabel name = new JLabel(group.getName());
         name.setFont(new Font(name.getFont().getName(), Font.BOLD, 28));
         name.setHorizontalAlignment(JLabel.CENTER);
+        name.addMouseListener(new ThemeMouseListener(name));
         propertyPanel.add(name,BorderLayout.NORTH);
+
+        //Display owner of the group
         Profile ownerp = getOwner(group);
         if(ownerp!=null) {
             JLabel owner = new JLabel("Owned by " + ownerp.getName());
             owner.setFont(new Font(owner.getFont().getName(), Font.PLAIN, 10));
             owner.setHorizontalAlignment(JLabel.CENTER);
+            owner.addMouseListener(new ThemeMouseListener(owner));
             propertyPanel.add(owner, BorderLayout.SOUTH);
         }
         propertyPanel.setBackground(null);
 
         //create send button
-        JPanel buttonPanel = new JPanel();
+        JPanel buttonPanel = new JPanel(new BorderLayout());
         text = new JTextField(30);
         addLimitToTextField(text,1000);
-        buttonPanel.add(text);
+        text.addKeyListener(new EnterListener(this));
+        buttonPanel.addMouseListener(new ThemeMouseListener(buttonPanel));
+        text.addMouseListener(new ThemeMouseListener(text));
+        buttonPanel.add(text,BorderLayout.CENTER);
+
+        //create send button
         JButton send = new JButton("Send");
         establishServerCommunications(send);
-        text.addKeyListener(new EnterListener(this));
-        buttonPanel.add(send);
+        send.addMouseListener(new ThemeMouseListener(send));
+        buttonPanel.add(send,BorderLayout.EAST);
         buttonPanel.setBorder(null);
-        //TODO change text box color
+        buttonPanel.setFont(new Font(buttonPanel.getFont().getName(),Font.PLAIN,30));
+
         text.setBackground(new Color(70,70,70));
         text.setForeground(new Color(255,255,255));
         text.setBorder(new EmptyBorder(4,10,4,10));
+
         send.setBackground(new Color(0,10,30));
         send.setForeground(new Color(255,255,255));
         send.setBorder(new EmptyBorder(4,10,4,10));
 
-        //create picture button
-        /*
-        JPanel pic_buttonPanel = new JPanel();
-        text = new JTextField(40);
-        addLimitToTextField(text,1000);
-        pic_buttonPanel.add(text);
-        JButton picture = new JButton("Picture");
-        establishServerCommunications(picture);
-        //text.addKeyListener(new EnterListener(this));
-        buttonPanel.add(picture);
-        buttonPanel.setBorder(null);
-        text.setBackground(new Color(70,70,70));
-        text.setForeground(new Color(255,255,255));
-        text.setBorder(new EmptyBorder(4,10,4,10));
-        picture.setBackground(new Color(0,10,30));
-        picture.setForeground(new Color(255,255,255));
-        picture.setBorder(new EmptyBorder(4,10,4,10));
-        */
+        // Add button to access changing of window theme
+//        JButton themeButton = new JButton("Change Colors");
+//        themeButton.setBackground(new Color(0,10,30));
+//        themeButton.setForeground(new Color(255,255,255));
+//        themeButton.setBorder(new EmptyBorder(4,10,4,10));
+//        buttonPanel.add(themeButton, BorderLayout.WEST);
+
+        JPopupMenu themeMenu = new JPopupMenu("Theme Settings");
+        JMenuItem changeForegroundColor = new JMenuItem("Change Foreground Color");
+        themeMenu.add(changeForegroundColor);
+
+        text.addMouseListener(new ThemeMouseListener(text));
+
+        text.add(themeMenu);
+
+
 
         //add stuff to frame
         messagePanel = new JPanel();
+        messagePanel.addMouseListener(new ThemeMouseListener(messagePanel));
         messagePanel.setLayout(new GridBagLayout());
         contentPane.setLayout(new BorderLayout());
         messagePanel.add(propertyPanel);
-        //TODO set Background color for message container
+
         messagePanel.setBackground(new Color(0,0,0));
         messagePanel.setBorder(null);
 
@@ -155,8 +154,10 @@ public class ChatGUI {
         scroll.setPreferredSize(new Dimension(500,500));
         scroll.setViewportView(messagePanel);
         scroll.setAlignmentX(JScrollPane.LEFT_ALIGNMENT);
+
         contentPane.add(scroll);
-        contentPane.add(buttonPanel,BorderLayout.SOUTH);
+        contentPane.add(buttonPanel, BorderLayout.SOUTH);
+
         frame.setSize(500, 600);
         frame.setResizable(false);
 
@@ -201,13 +202,7 @@ public class ChatGUI {
             out.flush();
 
             //Notify everyone in the group that you have messaged them
-            jbutton.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent e)
-                {
-                    sendAndNotify();
-                }
-            });
+            jbutton.addActionListener(e -> sendAndNotify());
 
         }catch (Exception e){
             if(App.DEV_MODE)
@@ -228,7 +223,9 @@ public class ChatGUI {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.");
             Date date = new Date();
             return dateFormat.format(date)+"0"; //2016/11/16 12:08:43
+
         }
+
     }
 
     /**
@@ -278,10 +275,11 @@ public class ChatGUI {
             addMessage(m);
         }
 
-
         scroll.setViewportView(messagePanel);
         lastUpdate = getTime();
         JScrollBar vertical = scroll.getVerticalScrollBar();
+        vertical.addMouseListener(new ThemeMouseListener(vertical));
+
         vertical.setValue( vertical.getMaximum() );
         scroll.revalidate();
     }
@@ -327,17 +325,17 @@ public class ChatGUI {
         //Scale user's pic
         Image scaledImage = image.getScaledInstance(40,40,Image.SCALE_SMOOTH);
         JLabel picLabel = new JLabel(new ImageIcon(scaledImage));
+        picLabel.addMouseListener(new ThemeMouseListener(picLabel));
+
         GridBagConstraints gbc = new GridBagConstraints();
 
         //build username and their message
-        //TODO Edit timestampt color
-        //TODO Edit include Date in timestamp
         time = convertTime(time,true);
 
         JLabel timeLabel = new JLabel(time);
         timeLabel.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,10));
-        //TODO change timeLabel color
         timeLabel.setForeground(new Color(90,170,255));
+        timeLabel.addMouseListener(new ThemeMouseListener(timeLabel));
 
         //build username and their message
         JPanel header = new JPanel(new BorderLayout());
@@ -356,12 +354,19 @@ public class ChatGUI {
         }
         */
         JLabel username = new JLabel(from);
+
+        text.addMouseListener(new ThemeMouseListener(text));
+        username.addMouseListener(new ThemeMouseListener(username));
+
         header.add(username,BorderLayout.WEST);
         header.add(timeLabel,BorderLayout.EAST);
         header.setBackground(null);
+        header.addMouseListener(new ThemeMouseListener(header));
+
         username.setFont(new Font(panel.getFont().getName(), Font.BOLD, 15));
         JTextArea body = new JTextArea(message);
-        //TODO change username and body text color
+        body.addMouseListener(new ThemeMouseListener(body));
+
         username.setForeground(new Color(255,255,255));
         body.setForeground(new Color(255,255,255));
         text.setBackground(null);
@@ -373,9 +378,16 @@ public class ChatGUI {
         body.setBackground(null);
         text.add(header,BorderLayout.NORTH);
         text.add(body,BorderLayout.SOUTH);
+        text.add(body,BorderLayout.CENTER);
         //TODO change box containing username and message
         text.setBackground(null);
         text.setBorder(new EmptyBorder(5,5,5,5));
+
+
+        //display picture
+        if(picture != null) {
+            text.add(pic, BorderLayout.SOUTH);
+        }
 
         //TODO edit location of image?
         //add pic to row
@@ -391,32 +403,22 @@ public class ChatGUI {
         //Add username and their message
         gbc.gridx = 1;
         gbc.gridy = 0;
-        //panel.add(username,gbc);
 
-        //TODO edit location of message?
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.weightx = 4.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel.add(text,gbc);
 
-        //display picture
-        if(picture != null) {
-            gbc.anchor = GridBagConstraints.WEST;
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            gbc.insets = new Insets(4, 70, 4, 50);
-            panel.add(pic, gbc);
-            gbc.insets = new Insets(0, 0, 0, 0);
-        }
 
         //tidy up
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
         row.setBorder(new EmptyBorder(5,10,5,10));
 
+
+
         //beautify
         row.setBackground(null);
-        //TODO edit color for box surrounding username and their message
         panel.setBackground(new Color(0,10,30));
         LineBorder lb = new LineBorder(null,2,true);
         panel.setBorder(lb);
@@ -511,7 +513,9 @@ public class ChatGUI {
             File file = new File(text.getText());
             BufferedImage img = ImageIO.read(file);
             m.setImage(img);
-            m.setBody("");
+            m.setBody(text.getText()
+                    .replaceAll("\\w:","")
+                    .replaceAll("([\\s\\w]+[\\\\/])",""));
             text.setText("");
             MessageController.sendMessageToDB(m);
         }
@@ -551,6 +555,86 @@ public class ChatGUI {
 
         }
     }
+
+    static class ThemeMouseListener implements MouseListener {
+
+        private JComponent parentComponent;
+
+        private JPopupMenu themeMenu = new JPopupMenu("Change Color");
+        private static Map<String, Color> colorChoices = new HashMap<>();
+
+        static {
+            // Whatever colors you add will appear as choices for the user
+            colorChoices.put("Red", new Color(.5f, .1f, .1f));
+            colorChoices.put("Orange", new Color(.8f, .3f, .1f));
+            colorChoices.put("Yellow", new Color(.8f, .8f, 0f));
+            colorChoices.put("Green", new Color(.1f, .5f, .1f));
+            colorChoices.put("Blue", new Color(.1f, .1f, .5f));
+            colorChoices.put("Purple", new Color(.3f, .1f, .3f));
+            colorChoices.put("Cyan", new Color(.15f, .7f, .7f));
+            colorChoices.put("White", new Color(1f, 1f, 1f));
+            colorChoices.put("Grey", new Color(.3f, .3f, .3f));
+            colorChoices.put("Blue-ish Black", new Color(10, 10, 50));
+            colorChoices.put("Black", new Color(0f, 0f, 0f));
+        }
+
+        public ThemeMouseListener(JComponent jComponent) {
+            parentComponent = jComponent;
+
+            JMenu foregroundMenu = new JMenu("Foreground Color");
+            JMenu backgroundMenu = new JMenu("Background Color");
+
+            for(String colorName : colorChoices.keySet()) {
+                JMenuItem foregroundMenuItem = new JMenuItem(colorName);
+                JMenuItem backgroundMenuItem = new JMenuItem(colorName);
+
+                foregroundMenu.add(foregroundMenuItem);
+                backgroundMenu.add(backgroundMenuItem);
+
+                foregroundMenuItem.setForeground(colorChoices.get(colorName));
+                backgroundMenuItem.setBackground(colorChoices.get(colorName));
+                foregroundMenuItem.addActionListener(e -> parentComponent.setForeground(foregroundMenuItem.getForeground()));
+                backgroundMenuItem.addActionListener(e -> parentComponent.setBackground(backgroundMenuItem.getBackground()));
+            }
+
+            String name = parentComponent.getName();
+            if(name == null) {
+                themeMenu.add("Change Color").setEnabled(false);
+            } else {
+                themeMenu.add(String.format("Change %s Color", parentComponent.getName())).setEnabled(false);
+            }
+
+            themeMenu.addSeparator();
+            themeMenu.add(foregroundMenu);
+            themeMenu.add(backgroundMenu);
+
+            parentComponent.add(themeMenu);
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if(e.getButton() == MouseEvent.BUTTON3) {
+                themeMenu.show(e.getComponent(), e.getX(), e.getY());
+            }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+        }
+    }
+
 
     public static BufferedImage resize(BufferedImage img, int newW, int newH) {
         Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);

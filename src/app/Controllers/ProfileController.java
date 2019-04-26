@@ -14,6 +14,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,31 +23,19 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import app.models.mappers.GroupInvitationMapper;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import app.App;
 import app.InputReader;
 import app.MySQL.MySQLHelper;
 import app.interfaces.ProfileControllerInterface;
 import app.models.Account;
+import app.models.Group;
 import app.models.GroupInvitation;
 import app.models.Profile;
+import app.models.mappers.GroupInvitationMapper;
 import app.models.mappers.ProfileMapper;
 import javafx.util.Pair;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.sql.*;
-import java.util.List;
-import java.util.*;
 
 public class ProfileController implements ProfileControllerInterface {
 
@@ -122,10 +112,14 @@ public class ProfileController implements ProfileControllerInterface {
                     setPicture(p);
                     break;
                 case "Blocked Users":
+<<<<<<< HEAD
                     blockUser(p);
                     break;
                 case "Unblocked Users":
                     unblockUser(p);
+=======
+                   // editBlockedUsers(p);
+>>>>>>> 09c40af29a4f0e5d03996557448f964896d61a09
                     break;
             }
         }
@@ -439,27 +433,90 @@ public class ProfileController implements ProfileControllerInterface {
     //TODO: Javadocs
     @Override
     public void editInterests(Profile p) {
-        System.out.println("Your current 'Interests' are:");
+    	String option;
+    	boolean confirm;
         JSONArray interests = p.getInterests();
+        System.out.println("Your current 'Interests' are:\n" + interests.toString());
+        String[] options = new String[]{"Add Interest", "Remove Interest", "Done"};
+        option = InputReader.readFromOptions("What would you like to do?", options);
 
-        String input = (InputReader.collectInput("Add an intrest"));
+        switch(option)
+        {
+        	 case "Add Interest":
+        		 String input = (InputReader.collectInput("Enter the Interest you would like to add:\n"));
+        		 confirm = InputReader.requestConfirmation(input);
+        	        if(confirm) {
+        	        	if(!interests.toString().contains(input))
+        	        	{
+        	        		interests.put(input);
+            	            p.setInterests(interests.toString());
+            	            editInterests(p);
+        	        	}
+        	        	else
+        	        	{
+        	        		System.out.println("You are already interested in that!");
+        	        	}
 
-        boolean confirm = InputReader.requestConfirmation(input);
-        if(confirm) {
-        	//JSONObject jo = new JSONObject();
+        	        }
+        	        else {
+        	            boolean cancel = InputReader.requestCancel();
+        	            if(cancel) {
+        	                return;
+        	            }
+        	            else {
+        	            	editInterests(p);
+        	            }
+        	        }
+        		 break;
+        	 case "Remove Interest":
+        		 String[] removeOptions = new String[interests.length()];
+        		 for (int i = 0; i < interests.length(); i++)
+				 {
+					removeOptions[i] = interests.getString(i);
+				 }
 
-        	interests.put(input);
-            p.setInterests(interests.toString());
+        		 option = InputReader.readFromOptions("Enter the Interest you would like to remove:", removeOptions);
+        		 confirm = InputReader.requestConfirmation(option);
+        	        if(confirm) {
+        	        	for (int i = 0; i < interests.length(); i++)
+         				{
+         					if(removeOptions[i].equals(option))
+         					{
+         						 interests.remove(i);
+         						 p.setInterests(interests.toString());
+         						editInterests(p);
+         					}
+         				}
+        	        }
+        	        else {
+        	            boolean cancel = InputReader.requestCancel();
+        	            if(cancel) {
+        	                return;
+        	            }
+        	            else {
+        	            	editInterests(p);
+        	            }
+        	        }
+
+        		 break;
+        	 case "Done":
+        		 confirm = InputReader.requestConfirmation("Are you done? Your Interests are now:\n" + interests.toString());
+     	        if(confirm) {
+        		 break;
+     	        }
+     	       else {
+   	            boolean cancel = InputReader.requestCancel();
+   	            if(cancel) {
+   	                return;
+   	            }
+   	            else {
+   	            	editInterests(p);
+   	            }
+   	        }
         }
-        else {
-            boolean cancel = InputReader.requestCancel();
-            if(cancel) {
-                return;
-            }
-            else {
-            	editInterests(p);
-            }
-        }
+
+
+
     }
 
     /**
@@ -508,14 +565,14 @@ public class ProfileController implements ProfileControllerInterface {
 
         boolean confirm = InputReader.requestConfirmation(input);
         if(confirm) {
-            int userPos = null;
-            for (int i = 0; i < blockedUsers.length(): i++) {
+            int userPos = 0;
+            for (int i = 0; i < blockedUsers.length(); i++) {
                 if (blockedUsers.getJSONObject(i).toString().equals(input)) {
                     userPos = i;
                     break;
                 }
             }
-            if (userPos != null) {
+            if (userPos != 0) {
                 blockedUsers.remove(userPos);
                 p.removeBlockedUsers(blockedUsers.toString());
             }
@@ -922,14 +979,54 @@ public class ProfileController implements ProfileControllerInterface {
                     }
                     Profile p = selectProfile(profileList,acc);
                     System.out.println(p);
+                    boolean confirm = InputReader.requestConfirmation("Would you like to rate this profile?");
+                    if(confirm)
+                    {
+                    	rateProfile(p);
+                    }
                 }catch (Exception e){
                     System.out.println("Can't browse files at this time.");
                 }
         }
+
+
     }
 
     public String chooseFilter(String[] filters){
         String choice = InputReader.readFromOptions("Please select your filter", filters);
         return choice;
     }
+
+    /**
+     * @see app.interfaces.GroupControllerInterface#rankGroup(app.models.Group)
+     */
+    @Override
+    public void rateProfile(Profile p) {
+    	String prompt = "Please enter a Rating of 1-5. (5 being the highest)";
+    	int rank = InputReader.readInputInt(prompt);
+    	System.out.println("Rating entered was " +rank);
+    	if(rank != 1 && rank != 2 && rank != 3 && rank != 4 && rank != 5)
+    	{
+    		System.out.println("I'm sorry, that wasn't a correct input.");
+    		rateProfile(p);
+    	}
+    	boolean confirm = InputReader.requestConfirmation(rank);
+        if(confirm){
+        	try {
+        		Statement stmt = MySQLHelper.createStatement();
+        		ResultSet rs = stmt.executeQuery("SELECT * FROM meetup.profile WHERE id=" + p.getId() + ";");
+        		rs.next();
+        		int rankTotal = rs.getInt("rankTotal") + rank;
+        		int numRanks = rs.getInt("numRanks") + 1;
+        		stmt.executeUpdate("UPDATE meetup.profile SET rankTotal ="+rankTotal+", numRanks ="+numRanks+", rankAvg="+((double)rankTotal/(double)numRanks) +" WHERE id="+ p.getId() +";");
+
+        		System.out.println("You rated " + p.getName() + " with a rating of " + rank +".");
+        	}catch (Exception e){
+        		System.out.println("Failed to rate profile.");
+        		if(App.DEV_MODE)
+        		    e.printStackTrace();
+        	}
+        }
+    }
+
 }

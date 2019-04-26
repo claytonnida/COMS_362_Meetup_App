@@ -7,6 +7,7 @@ import app.Controllers.ProfileController;
 import app.MySQL.MySQLHelper;
 import app.models.Account;
 import app.models.Profile;
+import app.models.mappers.ProfileMapper;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -127,7 +128,7 @@ public class App
 		ProfileController pc = new ProfileController();
 		while(play){
 			switch (InputReader.readFromOptions("What would you like to do?",new String[]
-					{"Edit My Profile","Edit Online Status",
+					{"Edit My Profile","Edit Online Status","View Invites",
 							"Browse Profiles", "Filter Profiles", "Manage Groups","Exit"})){
 				case "Edit My Profile":
 					new ProfileController().editProfileFields(((Account)sessionVariables.get("account")).getProfile());
@@ -154,8 +155,11 @@ public class App
 					selection = InputReader.collectInput("What would you like to filter?");
 					ProfileMapper pm = new ProfileMapper();
 					try {
-						ArrayList<Profile> profileList = (ArrayList<Profile>) pm.createObjectList("Select * from meetup.profile where " + choice + " like '%" + selection + "%'");
+						ArrayList<Profile> profileList = (ArrayList<Profile>) pm.createObjectList(
+								"Select * from meetup.profile where " + choice + " like '%" + selection + "%' and id != "
+										+((Account)sessionVariables.get("account")).getProfile().getId());
 						Profile p = pc.selectProfile(profileList,((Account)sessionVariables.get("account")));
+						System.out.println(p);
 					}
 					catch(SQLException e){
 						e.printStackTrace();

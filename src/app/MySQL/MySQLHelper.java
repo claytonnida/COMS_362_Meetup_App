@@ -1,6 +1,7 @@
 package app.MySQL;
 
 import app.App;
+import app.Controllers.ProfileController;
 import app.InputReader;
 
 import java.sql.*;
@@ -18,13 +19,13 @@ public class MySQLHelper {
         //executeUpdate("delete from meetup.accoutnt where id >= 7");
         describeDataBase();
         System.out.println("Groups");
-        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.profile" ))){
+        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.account" ))){
             System.out.println(s);
         }
 
 
 
-        //executeUpdate("delete from meetup.message where to_id = 21");
+       // executeUpdate("update  meetup.profile where to_id = 23");
        // executeUpdate("delete from meetup.message where to_id = 21");
 
 //        System.out.println("GroupAssociations");
@@ -154,7 +155,7 @@ public class MySQLHelper {
                 vals += String.format("'%s'", val.toString().replaceAll("'", "\\\\'"));
             }else if(val.getClass().getName().contains("BufferedImage")){
                 if(allowBlob && val!=null)
-                vals += "?";
+                    vals += "?";
             }else{
                 vals += val.toString();
             }
@@ -184,7 +185,7 @@ public class MySQLHelper {
                 sets += key + " = '" + val.toString().replaceAll("'", "\\\\'") + "'";
             }else if(val.getClass().getName().contains("BufferedImage")){
                 if(allowBlob && val != null)
-                sets += key + " = ?";
+                    sets += key + " = ?";
             }else{
                 sets += key+" = "+val.toString();
             }
@@ -208,12 +209,12 @@ public class MySQLHelper {
     public static String getPrimaryKeyForTable(String tableName)throws SQLException{
 
 
-            String query = String.format("describe meetup.%s",tableName);
-            ResultSet trs = createStatement().executeQuery(query);
-            while (trs.next()){
-                if(trs.getString("Key").equals("PRI"))
-                    return trs.getString("FIELD");
-            }
+        String query = String.format("describe meetup.%s",tableName);
+        ResultSet trs = createStatement().executeQuery(query);
+        while (trs.next()){
+            if(trs.getString("Key").equals("PRI"))
+                return trs.getString("FIELD");
+        }
 
 
         return null;
@@ -255,7 +256,7 @@ public class MySQLHelper {
 
     private static void resetDatabase()throws SQLException{
         if(InputReader.inputYesNo("Are your really sure?")
-            && InputReader.inputYesNo("Like... REALLY sure?")){
+                && InputReader.inputYesNo("Like... REALLY sure?")){
 
             ResultSet rs = createStatement().executeQuery("show tables in meetup");
             while(rs.next()){
