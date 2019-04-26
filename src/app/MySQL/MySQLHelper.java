@@ -18,13 +18,13 @@ public class MySQLHelper {
         //executeUpdate("delete from meetup.accoutnt where id >= 7");
         describeDataBase();
         System.out.println("Groups");
-        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.profile" ))){
+        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.account" ))){
             System.out.println(s);
         }
 
 
 
-        //executeUpdate("delete from meetup.message where to_id = 21");
+       // executeUpdate("update  meetup.profile where to_id = 23");
        // executeUpdate("delete from meetup.message where to_id = 21");
 
 //        System.out.println("GroupAssociations");
@@ -61,7 +61,9 @@ public class MySQLHelper {
 
     //Creates a statement for a query
     public static Statement createStatement() throws SQLException{
-        return getConnection().createStatement();
+        Connection con = DriverManager.getConnection(
+                "jdbc:mysql://cs362meetupdb.redirectme.net", "cs362admin", "q1w2e3r4t5000");
+        return con.createStatement();
     }
 
     /* create table example
@@ -209,7 +211,8 @@ public class MySQLHelper {
 
 
             String query = String.format("describe meetup.%s",tableName);
-            ResultSet trs = createStatement().executeQuery(query);
+            Connection con = getConnection();
+            ResultSet trs = con.createStatement().executeQuery(query);
             while (trs.next()){
                 if(trs.getString("Key").equals("PRI"))
                     return trs.getString("FIELD");
@@ -226,7 +229,9 @@ public class MySQLHelper {
      */
     public static boolean executeUpdate(String query){
         try{
-            createStatement().executeUpdate(query);
+            Connection con = getConnection();
+            con.createStatement().executeUpdate(query);
+            con.close();
             return true;
         }catch (SQLException sql){
             System.out.println("Oops! Server error! Sorry, whatever was supposed to happen didn't.");
@@ -243,8 +248,10 @@ public class MySQLHelper {
      */
     public static ResultSet executeQuery(String query) {
         try {
-            return createStatement().executeQuery(query);
-
+            Connection con = getConnection();
+            ResultSet rs = con.createStatement().executeQuery(query);
+            con.close();
+            return rs;
         } catch (SQLException sql) {
             System.out.println("Oops! Server error! Sorry, whatever was supposed to happen didn't.");
             if (App.DEV_MODE)

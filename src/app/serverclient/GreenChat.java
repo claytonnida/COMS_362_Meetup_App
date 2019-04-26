@@ -54,8 +54,8 @@ public class GreenChat {
         Profile me = pm.createObjectList("Select * from meetup.profile where id = 3").get(0);
         //Profile me = new Profile();
         Group g = new Group();
-        g.setId(21);
-        g.setCreated_by(3);
+        g.setId(23);
+        g.setCreated_by(8);
         g.setName("Maverick");
 
 
