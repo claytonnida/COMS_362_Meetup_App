@@ -119,7 +119,7 @@ public class GroupController implements GroupControllerInterface {
 
             boolean confirm = InputReader.requestConfirmation(group.getName());
             if(confirm){
-                
+
                 System.out.println("Group confirmed.");
 
 
@@ -163,8 +163,8 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
-    
-    /** 
+
+    /**
      * @see app.interfaces.GroupControllerInterface#removeGroup(app.models.Group)
      */
     @Override
@@ -183,7 +183,7 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
-    
+
     /**
      * @see app.interfaces.GroupControllerInterface#rankGroup(app.models.Group)
      */
@@ -354,7 +354,7 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
-    
+
 
     public void joinGroup(int profileId, int groupId){
         GroupAssociationController gac = new GroupAssociationController();
@@ -384,34 +384,6 @@ public class GroupController implements GroupControllerInterface {
 
         //Ask user what they would like to do
         switch (InputReader.readFromOptions("Edit "+group.getName(), options)){
-<<<<<<< HEAD
-            case "Edit Group":
-            try{
-                int id = ((Account)App.sessionVariables.get("account")).getProfile().getId();
-                ResultSet rs = MySQLHelper.executeQuery("Select * from meetup.group where created_by = "+id
-                +" and id = "+group.getId());
-                if(!rs.next()){
-                    System.out.println("You are not the owner of this group.");
-                    return;
-                }
-            }catch (SQLException e){
-                manageGroup(account,group);
-            }
-            editGroupFields(group);
-            break;
-            case "Leave Group":
-            leaveGroup(account.getProfileid(),group.getId());
-            break;
-            //  case "Edit Group":
-            //      if(isOwnerOfGroup(account,group)) {
-            //            editGroupFields(group);
-            //            String query = gm.toUpdateQueryQuery(group);
-            //           MySQLHelper.executeUpdate(query);
-            //            break;
-            //        }else {
-            //             System.out.println("Cannot edit this group because you are not the owner");
-            //         }
-=======
             case "Open Chat":
                 try {
                     ChatGUI tg = new ChatGUI(group,((Account)App.sessionVariables.get("account")).getProfile());
@@ -431,7 +403,6 @@ public class GroupController implements GroupControllerInterface {
                 leaveGroup(account.getProfileid(),group.getId());
                 manageGroups(account);
                 break;
->>>>>>> 80fe2523bbb5ed148209ed26b2bbd72856d8f60c
 
             case "Edit Group":
                 if(isOwnerOfGroup(account,group)) {
