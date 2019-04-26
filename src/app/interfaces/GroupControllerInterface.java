@@ -15,15 +15,15 @@ public interface GroupControllerInterface {
      */
     List<Group> searchGroup(String sub_string);
 
-	/**
-	 * Removes the {@link app.models.GroupAssociation} between a {@link Profile} and a {@link Group}.
-	 *
-	 * @param profileId
-	 * 		The ID of the {@link Profile} to disassociate.
-	 * @param groupId
-	 * 		The ID of the {@link Group} to disassociate.
-	 */
-	void leaveGroup(int profileId, int groupId);
+    /**
+    * Removes the {@link app.models.GroupAssociation} between a {@link Profile} and a {@link Group}.
+    *
+    * @param profileId
+    * 		The ID of the {@link Profile} to disassociate.
+    * @param groupId
+    * 		The ID of the {@link Group} to disassociate.
+    */
+    void leaveGroup(int profileId, int groupId);
 
     /**
     *Joins the {@link app.models.GroupAssociation} between a {@link Profile} and a {@link Group}.
@@ -39,9 +39,9 @@ public interface GroupControllerInterface {
     void createGroup(Profile p);
 
     /**
-     * Removes the group from the system. This will also remove any associations 
+     * Removes the group from the system. This will also remove any associations
      * from anyone that was a member of the group.
-     * 
+     *
      * @param group
      * 		The group to be removed.
      */
@@ -49,17 +49,17 @@ public interface GroupControllerInterface {
 
     /**
      * Gives the group a rating of 1-5.
-     * 
+     *
      * @param group
      * 		The group to rank.
      */
     void rankGroup(Group group);
 
     /**
-     * A series of prompts to guide user through editing their profile
-     *
-     * @param g The {@link Group} whose fields will be modified.
-     */
+    * A series of prompts to guide user through editing their profile
+    *
+    * @param g The {@link Group} whose fields will be modified.
+    */
     void editGroupFields(Group g);
 
     // TODO: Add JavaDocs

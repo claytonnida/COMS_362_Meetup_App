@@ -111,6 +111,9 @@ public class ProfileController implements ProfileControllerInterface {
                 case "Picture":
                     setPicture(p);
                     break;
+                case "Blocked Users":
+                   // editBlockedUsers(p);
+                    break;
             }
         }
 
@@ -507,6 +510,75 @@ public class ProfileController implements ProfileControllerInterface {
 
 
 
+    }
+
+    /**
+     * Add {@link Profile} to the blocked list.
+     *
+     * @param p {@link Profile} to save in the database.
+     *
+     * @throws SQLException
+     */
+    @Override
+    public void blockUser(Profile p) throws SQLException {
+        System.out.print("You're current 'Blocked Users' are: ");
+        JSONArray blockedUsers = p.getBlockedUsers();
+
+        String input = (InputReader.collectInput("Block a user"));
+
+        boolean confirm = InputReader.requestConfirmation(input);
+        if(confirm) {
+        	blockedUsers.put(input);
+            p.addBlockedUsers(blockedUsers.toString());
+        }
+        else {
+            boolean cancel = InputReader.requestCancel();
+            if(cancel) {
+                return;
+            }
+            else {
+            	blockUser(p);
+            }
+        }
+    }
+
+    /**
+     * Remove {@link Profile} from the blocked list.
+     *
+     * @param p {@link Profile} to remove in the database.
+     *
+     * @throws SQLException
+     */
+    @Override
+    public void unblockUser(Profile p) throws SQLException {
+        System.out.print("You're current 'Blocked Users' are: ");
+        JSONArray blockedUsers = p.getBlockedUsers();
+
+        String input = (InputReader.collectInput("Unblock a user"));
+
+        boolean confirm = InputReader.requestConfirmation(input);
+        if(confirm) {
+            int userPos = 0;
+            for (int i = 0; i < blockedUsers.length(); i++) {
+                if (blockedUsers.getJSONObject(i).toString().equals(input)) {
+                    userPos = i;
+                    break;
+                }
+            }
+            if (userPos != 0) {
+                blockedUsers.remove(userPos);
+                p.removeBlockedUsers(blockedUsers.toString());
+            }
+        }
+        else {
+            boolean cancel = InputReader.requestCancel();
+            if(cancel) {
+                return;
+            }
+            else {
+            	unblockUser(p);
+            }
+        }
     }
 
     /**

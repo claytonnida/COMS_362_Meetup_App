@@ -15,10 +15,16 @@ public interface ProfileInterface
 	String getAboutMe() ;
 
 	void setAboutMe(String aboutMe) ;
-	
+
 	JSONArray getInterests();
-	
+
 	void setInterests(String interests);
+
+	JSONArray getBlockedUsers();
+
+	void addBlockedUsers(String blockedUser);
+
+	void removeBlockedUsers(String unblockedUser);
 
 	int getAge() ;
 
