@@ -53,4 +53,8 @@ public interface ProfileInterface
 	void setAppearOffline(int appearOffline);
 
 	String getProfileDetails();
+	
+	double getRankAvg();
+	   
+	void setRankAvg(double rankAvg);
 }

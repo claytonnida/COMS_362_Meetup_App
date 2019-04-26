@@ -223,7 +223,9 @@ public class ChatGUI {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.");
             Date date = new Date();
             return dateFormat.format(date)+"0"; //2016/11/16 12:08:43
+
         }
+
     }
 
     /**

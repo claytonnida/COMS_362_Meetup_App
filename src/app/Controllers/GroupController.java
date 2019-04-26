@@ -297,6 +297,7 @@ public class GroupController implements GroupControllerInterface {
         		Statement stmt = MySQLHelper.createStatement();
         		stmt.executeUpdate("DELETE FROM meetup.message WHERE to_id =" + group.getId() +";");
         		System.out.println("Chat for " + group.getName() + " was deleted.");
+        		stmt.close();
         	}catch (Exception e){
         		System.out.println("Failed to remove chat history.");
                 if(App.DEV_MODE)

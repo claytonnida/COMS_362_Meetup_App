@@ -35,6 +35,9 @@ public class Profile implements ProfileInterface, Selectable
 	private String pictureURL;
 	private BufferedImage profile_pic;
 	private String interests = "[]";// = new JSONArray();
+	private int rankTotal;
+    private int numRanks;
+    private double rankAvg;
 
 	//If you change these values, you will also need to change ProfileController.editProfileFields(...)
 	public static final String[] OPTIONS = {"Name", "About Me","Interests", "Age", "Gender Identity",
@@ -193,14 +196,15 @@ public class Profile implements ProfileInterface, Selectable
 	public String getProfileDetails(){
 		String profileDetails = "Name: " + getName() +
 				"\nAbout Me: " + getAboutMe() +
-				"\nInterests: " + getInterests().toString() +
+				"\nInterests: " + getInterests() +
 				"\nAge: " + getAge() +
 				"\nGender Identity: " + getGenderId() +
 				"\nSexual Preference: " + getSexualPref() +
 				"\nMajor: " + getMajor() +
 				"\nSpirit Animal: " + getSpiritAnimal() +
-				"\nZodiac Sign: " + getZodiac()+
-				"\nInterests: "+getInterests();
+				"\nZodiac Sign: " + getZodiac() +
+				"\nRating: "+ getRankAvg();
+		
 
 		return profileDetails;
 	}
@@ -243,8 +247,13 @@ public class Profile implements ProfileInterface, Selectable
 		this.profile_pic = bimage;
 	}
 	
-	public static void main(String[] args)
-	{
-		JSONArray ja = new JSONArray("[]");
-	}
+	 @Override
+    public double getRankAvg() {
+    	return rankAvg;
+    }
+
+    @Override
+    public void setRankAvg(double rankAvg) {
+    	this.rankAvg = rankAvg;
+    }
 }

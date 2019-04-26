@@ -155,7 +155,9 @@ public class App
 					selection = InputReader.collectInput("What would you like to filter?");
 					ProfileMapper pm = new ProfileMapper();
 					try {
-						ArrayList<Profile> profileList = (ArrayList<Profile>) pm.createObjectList("Select * from meetup.profile where " + choice + " like '%" + selection + "%'");
+						ArrayList<Profile> profileList = (ArrayList<Profile>) pm.createObjectList(
+								"Select * from meetup.profile where " + choice + " like '%" + selection + "%' and id != "
+										+((Account)sessionVariables.get("account")).getProfile().getId());
 						Profile p = pc.selectProfile(profileList,((Account)sessionVariables.get("account")));
 						System.out.println(p);
 					}
