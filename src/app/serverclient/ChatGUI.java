@@ -24,6 +24,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
 import java.util.List;
 import java.util.*;
 
@@ -37,19 +38,6 @@ public class ChatGUI {
     private Profile profile;
     private String lastUpdate = "00000000 00:00:00.000";
     private PrintWriter out;
-
-
-
-    //TODO change name and owner text color
-    //TODO change text box color
-    //TODO set Background color for message container
-    //TODO Edit include Date in timestamp
-    //TODO change timeLabel color
-    //TODO change username and body text color
-    //TODO change box containing username and message
-    //TODO edit color for box surrounding username and their message
-
-
 
     public static void main(String[] args)throws Exception{
         ProfileMapper pm = new ProfileMapper();
@@ -81,41 +69,55 @@ public class ChatGUI {
 
         //setup scroll pane for messages
         scroll = new JScrollPane();
+        scroll.addMouseListener(new ThemeMouseListener(scroll));
+
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         Container contentPane = frame.getContentPane();
         scroll.setBorder(null);
+
         //Display name of the group
-        //TODO change name and owner text color
         JPanel propertyPanel = new JPanel(new BorderLayout());
+
+        //Display name of the group
         JLabel name = new JLabel(group.getName());
         name.setFont(new Font(name.getFont().getName(), Font.BOLD, 28));
         name.setHorizontalAlignment(JLabel.CENTER);
+        name.addMouseListener(new ThemeMouseListener(name));
         propertyPanel.add(name,BorderLayout.NORTH);
+
+        //Display owner of the group
         Profile ownerp = getOwner(group);
         if(ownerp!=null) {
             JLabel owner = new JLabel("Owned by " + ownerp.getName());
             owner.setFont(new Font(owner.getFont().getName(), Font.PLAIN, 10));
             owner.setHorizontalAlignment(JLabel.CENTER);
+            owner.addMouseListener(new ThemeMouseListener(owner));
             propertyPanel.add(owner, BorderLayout.SOUTH);
         }
         propertyPanel.setBackground(null);
 
         //create send button
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BorderLayout());
+        JPanel buttonPanel = new JPanel(new BorderLayout());
         text = new JTextField(30);
         addLimitToTextField(text,1000);
-        buttonPanel.add(text, BorderLayout.CENTER);
+        text.addKeyListener(new EnterListener(this));
+        buttonPanel.addMouseListener(new ThemeMouseListener(buttonPanel));
+        text.addMouseListener(new ThemeMouseListener(text));
+        buttonPanel.add(text,BorderLayout.CENTER);
+
+        //create send button
         JButton send = new JButton("Send");
         establishServerCommunications(send);
-        text.addKeyListener(new EnterListener(this));
-        buttonPanel.add(send, BorderLayout.EAST);
+        send.addMouseListener(new ThemeMouseListener(send));
+        buttonPanel.add(send,BorderLayout.EAST);
         buttonPanel.setBorder(null);
-        //TODO change text box color
+        buttonPanel.setFont(new Font(buttonPanel.getFont().getName(),Font.PLAIN,30));
+
         text.setBackground(new Color(70,70,70));
         text.setForeground(new Color(255,255,255));
         text.setBorder(new EmptyBorder(4,10,4,10));
+
         send.setBackground(new Color(0,10,30));
         send.setForeground(new Color(255,255,255));
         send.setBorder(new EmptyBorder(4,10,4,10));
@@ -139,10 +141,11 @@ public class ChatGUI {
 
         //add stuff to frame
         messagePanel = new JPanel();
+        messagePanel.addMouseListener(new ThemeMouseListener(messagePanel));
         messagePanel.setLayout(new GridBagLayout());
         contentPane.setLayout(new BorderLayout());
         messagePanel.add(propertyPanel);
-        //TODO set Background color for message container
+
         messagePanel.setBackground(new Color(0,0,0));
         messagePanel.setBorder(null);
 
@@ -151,8 +154,10 @@ public class ChatGUI {
         scroll.setPreferredSize(new Dimension(500,500));
         scroll.setViewportView(messagePanel);
         scroll.setAlignmentX(JScrollPane.LEFT_ALIGNMENT);
+
         contentPane.add(scroll);
-        contentPane.add(buttonPanel,BorderLayout.SOUTH);
+        contentPane.add(buttonPanel, BorderLayout.SOUTH);
+
         frame.setSize(500, 600);
         frame.setResizable(false);
 
@@ -197,13 +202,7 @@ public class ChatGUI {
             out.flush();
 
             //Notify everyone in the group that you have messaged them
-            jbutton.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent e)
-                {
-                    sendAndNotify();
-                }
-            });
+            jbutton.addActionListener(e -> sendAndNotify());
 
         }catch (Exception e){
             if(App.DEV_MODE)
@@ -274,10 +273,11 @@ public class ChatGUI {
             addMessage(m);
         }
 
-
         scroll.setViewportView(messagePanel);
         lastUpdate = getTime();
         JScrollBar vertical = scroll.getVerticalScrollBar();
+        vertical.addMouseListener(new ThemeMouseListener(vertical));
+
         vertical.setValue( vertical.getMaximum() );
         scroll.revalidate();
     }
@@ -323,17 +323,17 @@ public class ChatGUI {
         //Scale user's pic
         Image scaledImage = image.getScaledInstance(40,40,Image.SCALE_SMOOTH);
         JLabel picLabel = new JLabel(new ImageIcon(scaledImage));
+        picLabel.addMouseListener(new ThemeMouseListener(picLabel));
+
         GridBagConstraints gbc = new GridBagConstraints();
 
         //build username and their message
-        //TODO Edit timestampt color
-        //TODO Edit include Date in timestamp
         time = convertTime(time,true);
 
         JLabel timeLabel = new JLabel(time);
         timeLabel.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,10));
-        //TODO change timeLabel color
         timeLabel.setForeground(new Color(90,170,255));
+        timeLabel.addMouseListener(new ThemeMouseListener(timeLabel));
 
         //build username and their message
         JPanel header = new JPanel(new BorderLayout());
@@ -352,12 +352,19 @@ public class ChatGUI {
         }
         */
         JLabel username = new JLabel(from);
+
+        text.addMouseListener(new ThemeMouseListener(text));
+        username.addMouseListener(new ThemeMouseListener(username));
+
         header.add(username,BorderLayout.WEST);
         header.add(timeLabel,BorderLayout.EAST);
         header.setBackground(null);
+        header.addMouseListener(new ThemeMouseListener(header));
+
         username.setFont(new Font(panel.getFont().getName(), Font.BOLD, 15));
         JTextArea body = new JTextArea(message);
-        //TODO change username and body text color
+        body.addMouseListener(new ThemeMouseListener(body));
+
         username.setForeground(new Color(255,255,255));
         body.setForeground(new Color(255,255,255));
         text.setBackground(null);
@@ -394,7 +401,6 @@ public class ChatGUI {
         //Add username and their message
         gbc.gridx = 1;
         gbc.gridy = 0;
-        //panel.add(username,gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 0;
@@ -552,41 +558,61 @@ public class ChatGUI {
 
         private JComponent parentComponent;
 
-        private static JPopupMenu themeMenu = new JPopupMenu("Change Color");
+        private JPopupMenu themeMenu = new JPopupMenu("Change Color");
         private static Map<String, Color> colorChoices = new HashMap<>();
 
         static {
+            // Whatever colors you add will appear as choices for the user
             colorChoices.put("Red", new Color(.5f, .1f, .1f));
             colorChoices.put("Orange", new Color(.8f, .3f, .1f));
             colorChoices.put("Yellow", new Color(.8f, .8f, 0f));
             colorChoices.put("Green", new Color(.1f, .5f, .1f));
             colorChoices.put("Blue", new Color(.1f, .1f, .5f));
             colorChoices.put("Purple", new Color(.3f, .1f, .3f));
+            colorChoices.put("Cyan", new Color(.15f, .7f, .7f));
             colorChoices.put("White", new Color(1f, 1f, 1f));
             colorChoices.put("Grey", new Color(.3f, .3f, .3f));
-            colorChoices.put("Blue-ish Black", new Color(0, 10, 30));
+            colorChoices.put("Blue-ish Black", new Color(10, 10, 50));
             colorChoices.put("Black", new Color(0f, 0f, 0f));
-
-            for(String colorName : colorChoices.keySet()) {
-                JMenuItem menuItem = new JMenuItem(colorName);
-
-                themeMenu.add(menuItem);
-
-                menuItem.setBackground(colorChoices.get(colorName));
-                menuItem.addActionListener(e -> themeMenu.getParent().setBackground(menuItem.getBackground()));
-            }
-
         }
 
         public ThemeMouseListener(JComponent jComponent) {
             parentComponent = jComponent;
+
+            JMenu foregroundMenu = new JMenu("Foreground Color");
+            JMenu backgroundMenu = new JMenu("Background Color");
+
+            for(String colorName : colorChoices.keySet()) {
+                JMenuItem foregroundMenuItem = new JMenuItem(colorName);
+                JMenuItem backgroundMenuItem = new JMenuItem(colorName);
+
+                foregroundMenu.add(foregroundMenuItem);
+                backgroundMenu.add(backgroundMenuItem);
+
+                foregroundMenuItem.setForeground(colorChoices.get(colorName));
+                backgroundMenuItem.setBackground(colorChoices.get(colorName));
+                foregroundMenuItem.addActionListener(e -> parentComponent.setForeground(foregroundMenuItem.getForeground()));
+                backgroundMenuItem.addActionListener(e -> parentComponent.setBackground(backgroundMenuItem.getBackground()));
+            }
+
+            String name = parentComponent.getName();
+            if(name == null) {
+                themeMenu.add("Change Color").setEnabled(false);
+            } else {
+                themeMenu.add(String.format("Change %s Color", parentComponent.getName())).setEnabled(false);
+            }
+
+            themeMenu.addSeparator();
+            themeMenu.add(foregroundMenu);
+            themeMenu.add(backgroundMenu);
+
             parentComponent.add(themeMenu);
         }
 
         @Override
         public void mouseClicked(MouseEvent e) {
             if(e.getButton() == MouseEvent.BUTTON3) {
-                System.out.println(parentComponent);
+                themeMenu.show(e.getComponent(), e.getX(), e.getY());
             }
         }
 
@@ -605,5 +631,17 @@ public class ChatGUI {
         @Override
         public void mouseExited(MouseEvent e) {
         }
+    }
+
+
+    public static BufferedImage resize(BufferedImage img, int newW, int newH) {
+        Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
+        BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D g2d = dimg.createGraphics();
+        g2d.drawImage(tmp, 0, 0, null);
+        g2d.dispose();
+
+        return dimg;
     }
 }

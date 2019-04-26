@@ -55,8 +55,8 @@ public class MySQLHelper {
     //Tells the program what driver to use at startup
     static{
         try {
-//            Class.forName("com.mysql.jdbc.Driver");
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName("com.mysql.jdbc.Driver");
+            //Class.forName("com.mysql.cj.jdbc.Driver");
         }catch (ClassNotFoundException cnf){
             System.out.println("DEPENDENCY ERROR!! Don't worry, its an easy fix for us!\n" +
                     "1.\tDownload 'mysql-connector-java' version '5.1.39' from 'https://dev.mysql.com/downloads/connector/j/5.1.html'\n" +
