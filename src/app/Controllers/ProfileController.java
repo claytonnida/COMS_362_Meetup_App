@@ -129,6 +129,7 @@ public class ProfileController implements ProfileControllerInterface {
                 boolean confirm = InputReader.requestConfirmation(input);
                 if (confirm) {
                     p.setPicture(input_picture);
+                    p.setProfile_pic(input_picture);
                     p.setPictureURL(file_name.replaceAll("\\\\","/"));
                     System.out.println(p.getPictureURL());
                     //Quick Test
@@ -740,5 +741,10 @@ public class ProfileController implements ProfileControllerInterface {
         if(acceptGroupInvite) groupAssociationController.joinGroup(profileId, groupId);
 
         groupAssociationController.removeInvite(profileId, groupId);
+    }
+
+    public String chooseFilter(String[] filters){
+        String choice = InputReader.readFromOptions("Please select your filter", filters);
+        return choice;
     }
 }

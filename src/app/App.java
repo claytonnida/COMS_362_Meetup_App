@@ -9,6 +9,8 @@ import app.models.Account;
 import app.models.Profile;
 import app.models.mappers.ProfileMapper;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,7 +130,7 @@ public class App
 		while(play){
 			switch (InputReader.readFromOptions("What would you like to do?",new String[]
 					{"Edit My Profile","Edit Online Status",
-							"Browse Profiles","Manage Groups","Exit"})){
+							"Browse Profiles", "Filter Profiles", "Manage Groups","Exit"})){
 				case "Edit My Profile":
 					new ProfileController().editProfileFields(((Account)sessionVariables.get("account")).getProfile());
 					break;
@@ -151,6 +153,20 @@ public class App
 						System.out.println("Can't browse files at this time.");
 					}
                     break;
+				case "Filter Profiles":
+					String filters[] = {"name", "aboutMe", "Age", "genderId", "sexualPref", "major", "spiritAnimal", "zodiac", "interests"};
+					String choice = pc.chooseFilter(filters);
+					String selection = null;
+					selection = InputReader.collectInput("What would you like to filter?");
+					ProfileMapper pm = new ProfileMapper();
+					try {
+						ArrayList<Profile> profileList = (ArrayList<Profile>) pm.createObjectList("Select * from meetup.profile where " + choice + " like '%" + selection + "%'");
+						Profile p = pc.selectProfile(profileList,((Account)sessionVariables.get("account")));
+					}
+					catch(SQLException e){
+						e.printStackTrace();
+					}
+					break;
 				case "Exit":
 					if(InputReader.inputYesNo("Are you sure you want to quit?")) {
 						exitApp();
