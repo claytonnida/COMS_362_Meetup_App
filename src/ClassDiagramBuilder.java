@@ -43,7 +43,9 @@ public class ClassDiagramBuilder {
         try{
             Scanner s = new Scanner(f);
             while(s.hasNextLine()){
-                String line = s.nextLine();
+                String line = s.nextLine().trim();
+                if(line.matches("public\\s+\\w+\\(.*")
+                || line.matches("public\\s+static\\s+void\\s+main.*"))continue;
                 Matcher m = p.matcher(line);
                 if(m.find()){
                     build(m.toMatchResult().group(2),pw);
