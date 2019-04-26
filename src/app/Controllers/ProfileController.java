@@ -381,28 +381,92 @@ public class ProfileController implements ProfileControllerInterface {
     
     @Override
     public void editInterests(Profile p) {
-        System.out.println("Your current 'Interests' are:");
+    	String option;
+    	boolean confirm;
         JSONArray interests = p.getInterests();
+        System.out.println("Your current 'Interests' are:\n" + interests.toString());
+        String[] options = new String[]{"Add Interest", "Remove Interest", "Done"};
+        option = InputReader.readFromOptions("What would you like to do?", options);
         
-        String input = (InputReader.collectInput("Add an intrest"));
+        switch(option)
+        {
+        	 case "Add Interest":
+        		 String input = (InputReader.collectInput("Enter the Interest you would like to add:\n"));
+        		 confirm = InputReader.requestConfirmation(input);
+        	        if(confirm) {
+        	        	if(!interests.toString().contains(input))
+        	        	{
+        	        		interests.put(input);
+            	            p.setInterests(interests.toString());
+            	            editInterests(p);
+        	        	}
+        	        	else
+        	        	{
+        	        		System.out.println("You are already interested in that!");
+        	        	}
+        	        	
+        	        }
+        	        else {
+        	            boolean cancel = InputReader.requestCancel();
+        	            if(cancel) {
+        	                return;
+        	            }
+        	            else {
+        	            	editInterests(p);
+        	            }
+        	        }
+        		 break;
+        	 case "Remove Interest":
+        		 String[] removeOptions = new String[interests.length()];
+        		 for (int i = 0; i < interests.length(); i++)
+				 {
+					removeOptions[i] = interests.getString(i);
+				 }
+        		
+        		 option = InputReader.readFromOptions("Enter the Interest you would like to remove:", removeOptions);
+        		 confirm = InputReader.requestConfirmation(option);
+        	        if(confirm) {
+        	        	for (int i = 0; i < interests.length(); i++)
+         				{
+         					if(removeOptions[i].equals(option))
+         					{
+         						 interests.remove(i);
+         						 p.setInterests(interests.toString());
+         						editInterests(p);
+         					}
+         				}
+        	        }
+        	        else {
+        	            boolean cancel = InputReader.requestCancel();
+        	            if(cancel) {
+        	                return;
+        	            }
+        	            else {
+        	            	editInterests(p);
+        	            }
+        	        }
+        		
+        		 break;
+        	 case "Done":
+        		 confirm = InputReader.requestConfirmation("Are you done? Your Interests are now:\n" + interests.toString());
+     	        if(confirm) {
+        		 break;
+     	        }
+     	       else {
+   	            boolean cancel = InputReader.requestCancel();
+   	            if(cancel) {
+   	                return;
+   	            }
+   	            else {
+   	            	editInterests(p);
+   	            }
+   	        }
+        }
+       
 
-        boolean confirm = InputReader.requestConfirmation(input);
-        if(confirm) {
-        	//JSONObject jo = new JSONObject();
-        	
-        	interests.put(input);
-            p.setInterests(interests.toString());
-        }
-        else {
-            boolean cancel = InputReader.requestCancel();
-            if(cancel) {
-                return;
-            }
-            else {
-            	editInterests(p);
-            }
-        }
+        
     }
+    
 
     /**
      * A series of prompts to guide user through editing their gender identity.
