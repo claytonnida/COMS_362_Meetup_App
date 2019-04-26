@@ -291,7 +291,7 @@ public class ChatGUI {
      * @param m
      */
     private void addMessage(Message m){
-        JPanel message = generateRow(m.getFrom_pic(),m.getSender_name(),m.getBody(),m.getTime());
+        JPanel message = generateRow(m.getFrom_pic(),m.getSender_name(),m.getBody(),m.getTime(), m.getImage());
         addMessage(message);
     }
 
@@ -319,7 +319,7 @@ public class ChatGUI {
      * @param message
      * @return
      */
-    public JPanel generateRow(BufferedImage image,String from, String message,String time){
+    public JPanel generateRow(BufferedImage image,String from, String message,String time, BufferedImage picture){
         //Create Containers
         JPanel row = new JPanel(new BorderLayout());
         JPanel panel = new JPanel(new GridBagLayout());
@@ -342,6 +342,19 @@ public class ChatGUI {
         //build username and their message
         JPanel header = new JPanel(new BorderLayout());
         JPanel text = new JPanel(new BorderLayout());
+        Image scaledPic = null;
+        JLabel pic = null;
+        if(picture != null) {
+            scaledPic = picture.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+            pic = new JLabel(new ImageIcon(scaledPic));
+        }
+        /*
+        if(picture != null){
+            pic.add(header, BorderLayout.NORTH);
+            pic.add(body, BorderLayout.SOUTH);
+
+        }
+        */
         JLabel username = new JLabel(from);
         header.add(username,BorderLayout.WEST);
         header.add(timeLabel,BorderLayout.EAST);
@@ -373,6 +386,7 @@ public class ChatGUI {
         panel.add(picLabel,gbc);
         gbc.insets = new Insets(0,0,0,0);
 
+
         //TODO edit location of username?
         //Add username and their message
         gbc.gridx = 1;
@@ -385,6 +399,16 @@ public class ChatGUI {
         gbc.weightx = 4.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel.add(text,gbc);
+
+        //display picture
+        if(picture != null) {
+            gbc.anchor = GridBagConstraints.WEST;
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.insets = new Insets(4, 70, 4, 50);
+            panel.add(pic, gbc);
+            gbc.insets = new Insets(0, 0, 0, 0);
+        }
 
         //tidy up
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -488,24 +512,15 @@ public class ChatGUI {
             BufferedImage img = ImageIO.read(file);
             m.setImage(img);
             m.setBody("");
-            System.out.println("Image success");
+            text.setText("");
+            MessageController.sendMessageToDB(m);
         }
         catch(Exception e) {
             m.setBody(text.getText().trim());
-            System.out.println("Image failure");
+            m.setImage(null);
+            text.setText("");
+            MySQLHelper.executeUpdate(mm.toInsertQueryQuery(m));
         }
-        //post message on server
-        text.setText("");
-        String query = mm.toInsertQueryQuery(m);
-        try {
-            PreparedStatement ps = MySQLHelper.getConnection().prepareStatement(query);
-            ps.executeUpdate(mm.toInsertQueryQuery(m));
-        }
-        catch(SQLException e){
-            //System.out.println("sendAndNotify() SQLException found");
-            e.printStackTrace();
-        }
-        //MySQLHelper.executeUpdate(mm.toInsertQueryQuery(m));
 
         //ping other members
         out.println("rec:"+groupid);
@@ -535,5 +550,16 @@ public class ChatGUI {
         public void keyReleased(KeyEvent e) {
 
         }
+    }
+
+    public static BufferedImage resize(BufferedImage img, int newW, int newH) {
+        Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
+        BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D g2d = dimg.createGraphics();
+        g2d.drawImage(tmp, 0, 0, null);
+        g2d.dispose();
+
+        return dimg;
     }
 }

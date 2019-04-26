@@ -38,4 +38,9 @@ public class MessageMapper implements ResultMapper<Message> {
         ReflectMapper<Message> pmapper = new ReflectMapper<>(Message.class);
         return pmapper.toInsertStatement(object);
     }
+
+    public String toInsertQuery(Message object, boolean blob){
+        ReflectMapper<Message> pmapper = new ReflectMapper<>(Message.class);
+        return pmapper.toInsertStatement(object, blob);
+    }
 }

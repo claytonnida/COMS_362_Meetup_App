@@ -5,8 +5,10 @@ import app.models.Message;
 import app.models.Profile;
 import app.models.mappers.MessageMapper;
 import app.models.mappers.ProfileMapper;
+import app.models.mappers.ReflectMapper;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -23,22 +25,48 @@ public class MessageController {
         return getMessagesByGroupID(groupid,"0000-00-00 00:00:00.0");
     }
 
-    public void sendMessageToDB(Message msg){
+    public static void sendMessageToDB(Message msg){
         try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            ImageIO.write(msg.getImage(), "png", out);
-            byte[] buf = out.toByteArray();
-            // setup stream for blob
-            ByteArrayInputStream inStream = new ByteArrayInputStream(buf);
+            if (msg.getImage() != null) {
+                int newh = msg.getImage().getHeight();
+                int neww = msg.getImage().getWidth();
+                while ((newh > 100) && (neww > 100)) {
+                    newh = (int) (newh * .99);
+                    neww = (int) (neww * .99);
+                }
+                msg.setImage(resize(msg.getImage(), neww, newh));
+                //msg.setImage(Scalr.resize(msg.getImage(), 100, 100));
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                ImageIO.write(msg.getImage(), "png", out);
+                byte[] buf = out.toByteArray();
+                // setup stream for blob
+                ByteArrayInputStream inStream = new ByteArrayInputStream(buf);
 
-            MessageMapper mm = new MessageMapper();
-            String query = mm.toInsertQueryQuery(msg);
-            PreparedStatement ps = MySQLHelper.getConnection().prepareStatement(query);
-            ps.setBinaryStream(1, inStream, inStream.available());
-            ps.executeUpdate();
+                MessageMapper mm = new MessageMapper();
+                //String query = rm.toInsertQueryQuery(msg);
+                String query = null;
+                query = mm.toInsertQuery(msg, true);
+                PreparedStatement ps = MySQLHelper.getConnection().prepareStatement(query);
+                ps.setBinaryStream(1, inStream, inStream.available());
+                ps.executeUpdate();
+            }
+            else{
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                ImageIO.write(msg.getImage(), "png", out);
+                byte[] buf = out.toByteArray();
+                // setup stream for blob
+                ByteArrayInputStream inStream = new ByteArrayInputStream(buf);
+
+                MessageMapper mm = new MessageMapper();
+                String query = mm.toInsertQueryQuery(msg);
+                PreparedStatement ps = MySQLHelper.getConnection().prepareStatement(query);
+                ps.setBinaryStream(1, inStream, inStream.available());
+                ps.executeUpdate();
+            }
         }
         catch(Exception e){
-            System.out.println("Exception found in sendMessageToDB()");
+            //System.out.println("Exception found in sendMessageToDB()");
+            e.printStackTrace();
         }
     }
 
@@ -81,4 +109,16 @@ public class MessageController {
 
         return messages;
     }
+
+    public static BufferedImage resize(BufferedImage img, int newW, int newH) {
+        Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
+        BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D g2d = dimg.createGraphics();
+        g2d.drawImage(tmp, 0, 0, null);
+        g2d.dispose();
+
+        return dimg;
+    }
+
 }
