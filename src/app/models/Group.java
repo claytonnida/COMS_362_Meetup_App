@@ -72,6 +72,7 @@ public class Group implements GroupInterface, Selectable {
         return getName() + "  Rating: " + rank + "/5";
     }
 
+    @Override
     public String toString(){
         String str = "Name:\t"+getName()+
                 "\nVisibility:\t"+getIsPublic();

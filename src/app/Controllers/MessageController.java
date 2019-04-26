@@ -2,7 +2,6 @@ package app.Controllers;
 
 import app.MySQL.MySQLHelper;
 import app.models.Message;
-import app.models.Profile;
 import app.models.mappers.MessageMapper;
 import app.models.mappers.ProfileMapper;
 import app.models.mappers.ReflectMapper;
@@ -15,12 +14,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 public class MessageController {
+    // TODO: Javadocs
     public List<Message> getMessagesByGroupID(int groupid)throws SQLException{
         return getMessagesByGroupID(groupid,"0000-00-00 00:00:00.0");
     }

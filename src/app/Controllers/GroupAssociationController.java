@@ -1,7 +1,5 @@
 package app.Controllers;
 
-import app.App;
-import app.InputReader;
 import app.MySQL.MySQLHelper;
 import app.interfaces.GroupAssociationControllerInterface;
 import app.models.Group;
@@ -11,70 +9,33 @@ import app.models.mappers.GroupAssociationMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 public class GroupAssociationController implements GroupAssociationControllerInterface {
 
-    //TODO: Javadoc
-    public void inviteToGroup(int groupId) {
-        ProfileController profileController = new ProfileController();
-
-        int chosenId;
-        while (true) {
-            List<Integer> profileIdList = profileController.listProfiles();
-
-            chosenId = InputReader.readInputInt("Please select a profile ID from the list.");
-
-            if(chosenId < 0 || !profileIdList.contains(chosenId)) {
-                System.out.println("You must enter a number from the list.");
-            } else {
-                break;
-            }
-        }
-
-        if(InputReader.inputYesNo("Send group invite to id " + chosenId + "?")) {
-            try {
-                if(doesInviteExist(chosenId, groupId)) {
-                    System.out.println("That invite has already been sent!");
-                } else {
-                    createInvite(groupId, chosenId);
-                }
-            } catch (SQLException e) {
-                if(App.DEV_MODE) e.printStackTrace();
-            }
-        }
-    }
-
-    //TODO: Javadoc
-    private boolean doesInviteExist(int profileId, int groupId) throws SQLException {
-        //TODO: Implement
-        // If it doesn't work, check if the table still exists. Don't comment it out and push to master.
+    /**
+     * Checks the database to see if a {@link GroupAssociation} with the given IDs exists.
+     *
+     * @param profileId The ID of the {@link Profile} in the {@link GroupAssociation}.
+     * @param groupId The ID of the {@link Group} in the {@link GroupAssociation}.
+     *
+     * @return {@code true}, if the {@link GroupAssociation} does exist on the database. {@code false} otherwise.
+     *
+     * @throws SQLException Occurs if there is an error when querying the database.
+     */
+    public boolean doesGroupAssociationExist(int  profileId, int groupId) throws SQLException {
         ResultSet resultSet = MySQLHelper.executeQuery(
                 String.format("SELECT * " +
-                        "FROM meetup.groupInvitation " +
-                        "WHERE groupID = %s" +
-                        "AND profileId = %s", groupId, profileId)
+                        "FROM meetup.groupAssociation " +
+                        "WHERE groupid = %s " +
+                        "AND profileid = %s", groupId, profileId)
         );
 
-        return resultSet.first();
+        return resultSet != null && resultSet.first();
     }
 
-    // TODO: Javadoc
-    private void createInvite(int profileId, int groupId) {
-        MySQLHelper.executeUpdate(String.format("INSERT INTO meetup.groupAssociation (profileid, groupid) VALUES (%d, %d)",
-                profileId, groupId));
-        System.out.println("Invite was successfully sent!");
-    }
+    // For debugging purposes
+    public static void main(String[] args) {
 
-    // TODO: Javadoc
-    public void removeInvite(int profileId, int groupId) {
-        MySQLHelper.executeUpdate(
-                String.format("DELETE FROM meetup.groupAssociation " +
-                                "WHERE profileid = %s" +
-                                "AND groupid = %s", profileId, groupId)
-        );
-
-        System.out.println("Successfully removed invitation for profile ID: " + profileId + " to group ID: " + groupId + "!");
     }
 
     /**

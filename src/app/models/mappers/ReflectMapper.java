@@ -4,11 +4,9 @@ import app.App;
 import app.Controllers.AccountController;
 import app.MySQL.MySQLHelper;
 import app.models.Account;
-import app.models.Profile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
@@ -19,6 +17,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import app.App;
+import app.Controllers.AccountController;
+import app.MySQL.MySQLHelper;
+import app.models.Account;
 
 public class ReflectMapper<T> {
 

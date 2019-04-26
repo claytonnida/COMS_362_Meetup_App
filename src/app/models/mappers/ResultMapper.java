@@ -2,7 +2,6 @@ package app.models.mappers;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public interface ResultMapper<T> {
@@ -13,7 +12,6 @@ public interface ResultMapper<T> {
 
     //Creates a list of the desired object
     public List<T> createObjectList(ResultSet rs) throws SQLException;
-
 
     //Creates a list of the desired object from query
     public List<T> createObjectList(String query) throws SQLException;
