@@ -40,6 +40,11 @@ public class MessageController {
         return messages;
     }
 
+    /**
+     * This method will send messages in the chat to the database. This is mostly used for sending Images to the database but it also maintains
+     * normal messages as well. This method is the implementation of the sendPicture Use Case
+     * @param msg Message to be sent to the database
+     */
     public static void sendMessageToDB(Message msg){
         try {
             if (msg.getImage() != null) {

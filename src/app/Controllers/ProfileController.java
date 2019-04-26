@@ -966,6 +966,11 @@ public class ProfileController implements ProfileControllerInterface {
 
     }
 
+    /**
+     * This method is called in the App.java class and helps guide the user through which filter they want to use
+     * @param filters list of choices for the user to select from for their filter
+     * @return
+     */
     public String chooseFilter(String[] filters){
         String choice = InputReader.readFromOptions("Please select your filter", filters);
         return choice;
