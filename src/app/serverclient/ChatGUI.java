@@ -21,9 +21,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class ChatGUI {
 
@@ -37,6 +36,7 @@ public class ChatGUI {
     private PrintWriter out;
 
 
+
     //TODO change name and owner text color
     //TODO change text box color
     //TODO set Background color for message container
@@ -44,9 +44,6 @@ public class ChatGUI {
     //TODO change timeLabel color
     //TODO change username and body text color
     //TODO change box containing username and message
-    //TODO edit location of image?
-    //TODO edit location of username?
-    //TODO edit location of message?
     //TODO edit color for box surrounding username and their message
 
 
@@ -59,7 +56,7 @@ public class ChatGUI {
         g.setId(23);
         g.setName("Maverick");
 
-        ChatGUI tg = new ChatGUI(g,me);
+        ChatGUI tg = new ChatGUI(g, me);
         tg.loadMessages();
         tg.open();
         tg.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -103,13 +100,14 @@ public class ChatGUI {
 
         //create send button
         JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BorderLayout());
         text = new JTextField(30);
         addLimitToTextField(text,1000);
-        buttonPanel.add(text);
+        buttonPanel.add(text, BorderLayout.CENTER);
         JButton send = new JButton("Send");
         establishServerCommunications(send);
         text.addKeyListener(new EnterListener(this));
-        buttonPanel.add(send);
+        buttonPanel.add(send, BorderLayout.EAST);
         buttonPanel.setBorder(null);
         //TODO change text box color
         text.setBackground(new Color(70,70,70));
@@ -119,6 +117,21 @@ public class ChatGUI {
         send.setForeground(new Color(255,255,255));
         send.setBorder(new EmptyBorder(4,10,4,10));
 
+        // Add button to access changing of window theme
+//        JButton themeButton = new JButton("Change Colors");
+//        themeButton.setBackground(new Color(0,10,30));
+//        themeButton.setForeground(new Color(255,255,255));
+//        themeButton.setBorder(new EmptyBorder(4,10,4,10));
+//        buttonPanel.add(themeButton, BorderLayout.WEST);
+
+        JPopupMenu themeMenu = new JPopupMenu("Theme Settings");
+        JMenuItem changeForegroundColor = new JMenuItem("Change Foreground Color");
+        themeMenu.add(changeForegroundColor);
+
+        text.addMouseListener(new ThemeMouseListener(text));
+
+        text.add(themeMenu);
+
         //add stuff to frame
         messagePanel = new JPanel();
         messagePanel.setLayout(new GridBagLayout());
@@ -127,8 +140,6 @@ public class ChatGUI {
         //TODO set Background color for message container
         messagePanel.setBackground(new Color(0,0,0));
         messagePanel.setBorder(null);
-
-
         //messagePanel.setPreferredSize(new Dimension(messagePanel.getWidth(), 1500));
         scroll.setPreferredSize(new Dimension(500,500));
         scroll.setViewportView(messagePanel);
@@ -338,11 +349,9 @@ public class ChatGUI {
         body.setBackground(null);
         text.add(header,BorderLayout.NORTH);
         text.add(body,BorderLayout.SOUTH);
-        //TODO change box containing username and message
         text.setBackground(null);
         text.setBorder(new EmptyBorder(5,5,5,5));
 
-        //TODO edit location of image?
         //add pic to row
         gbc.anchor = GridBagConstraints.WEST;
         gbc.gridx = 0;
@@ -351,13 +360,11 @@ public class ChatGUI {
         panel.add(picLabel,gbc);
         gbc.insets = new Insets(0,0,0,0);
 
-        //TODO edit location of username?
         //Add username and their message
         gbc.gridx = 1;
         gbc.gridy = 0;
         //panel.add(username,gbc);
 
-        //TODO edit location of message?
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.weightx = 4.0;
@@ -370,7 +377,6 @@ public class ChatGUI {
 
         //beautify
         row.setBackground(null);
-        //TODO edit color for box surrounding username and their message
         panel.setBackground(new Color(0,10,30));
         LineBorder lb = new LineBorder(null,2,true);
         panel.setBorder(lb);
@@ -497,4 +503,64 @@ public class ChatGUI {
 
         }
     }
+
+    static class ThemeMouseListener implements MouseListener {
+
+        private JComponent parentComponent;
+
+        private static JPopupMenu themeMenu = new JPopupMenu("Change Color");
+        private static Map<String, Color> colorChoices = new HashMap<>();
+
+        static {
+            colorChoices.put("Red", new Color(.5f, .1f, .1f));
+            colorChoices.put("Orange", new Color(.8f, .3f, .1f));
+            colorChoices.put("Yellow", new Color(.8f, .8f, 0f));
+            colorChoices.put("Green", new Color(.1f, .5f, .1f));
+            colorChoices.put("Blue", new Color(.1f, .1f, .5f));
+            colorChoices.put("Purple", new Color(.3f, .1f, .3f));
+            colorChoices.put("White", new Color(1f, 1f, 1f));
+            colorChoices.put("Grey", new Color(.3f, .3f, .3f));
+            colorChoices.put("Blue-ish Black", new Color(0, 10, 30));
+            colorChoices.put("Black", new Color(0f, 0f, 0f));
+
+            for(String colorName : colorChoices.keySet()) {
+                JMenuItem menuItem = new JMenuItem(colorName);
+
+                themeMenu.add(menuItem);
+
+                menuItem.setBackground(colorChoices.get(colorName));
+                menuItem.addActionListener(e -> themeMenu.getParent().setBackground(menuItem.getBackground()));
+            }
+
+        }
+
+        public ThemeMouseListener(JComponent jComponent) {
+            parentComponent = jComponent;
+            parentComponent.add(themeMenu);
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if(e.getButton() == MouseEvent.BUTTON3) {
+                System.out.println(parentComponent);
+            }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+        }
+    }
+
 }
