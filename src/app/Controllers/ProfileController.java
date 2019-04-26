@@ -112,10 +112,20 @@ public class ProfileController implements ProfileControllerInterface {
                     setPicture(p);
                     break;
                 case "Blocked Users":
-                    blockUser(p);
+                    try {
+                        blockUser(p);
+                    }catch (Exception e){
+                        if(App.DEV_MODE)
+                            e.printStackTrace();
+                    }
                     break;
                 case "Unblocked Users":
-                    unblockUser(p);
+                    try {
+                        unblockUser(p);
+                    }catch (Exception e){
+                        if(App.DEV_MODE)
+                            e.printStackTrace();
+                    }
                     break;
             }
         }
@@ -524,7 +534,7 @@ public class ProfileController implements ProfileControllerInterface {
      */
     @Override
     public void blockUser(Profile p) throws SQLException {
-        System.out.print("You're current 'Blocked Users' are: ");
+        System.out.println("You're current 'Blocked Users' are: ");
         JSONArray blockedUsers = p.getBlockedUsers();
 
         String input = (InputReader.collectInput("Block a user"));
@@ -925,7 +935,7 @@ public class ProfileController implements ProfileControllerInterface {
             List<Profile> profiles = pm.createObjectList("Select * from meetup.profile where id != " + myProfile.getId());
             sortByInterestCommonality(myProfile,profiles);
 
-            for (int i = 0;i < profiles.length(); i++) {
+            for (int i = 0;i < profiles.size(); i++) {
                 for (int j = 0;j < blocked.length(); j++) {
                     if (profiles.get(i).getName().equalsIgnoreCase(blocked.getJSONObject(j).toString())) {
                         profiles.remove(i);
@@ -966,7 +976,7 @@ public class ProfileController implements ProfileControllerInterface {
                     ProfileMapper pm = new ProfileMapper();
                     List<Profile> profileList = pm.createObjectList("Select * from meetup.profile where id != " +
                             acc.getProfile().getId());
-                    for (int i = 0;i < profileList.length(); i++) {
+                    for (int i = 0;i < profileList.size(); i++) {
                         for (int j = 0;j < blocked.length(); j++) {
                             if (profileList.get(i).getName().equalsIgnoreCase(blocked.getJSONObject(j).toString())) {
                                 profileList.remove(i);

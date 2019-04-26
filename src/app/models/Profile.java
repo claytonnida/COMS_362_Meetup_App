@@ -42,7 +42,7 @@ public class Profile implements ProfileInterface, Selectable
 
 	//If you change these values, you will also need to change ProfileController.editProfileFields(...)
 	public static final String[] OPTIONS = {"Name", "About Me","Interests", "Age", "Gender Identity",
-            "Sexual Preference", "Major", "Spirit Animal", "Zodiac Sign", "Picture", "Blocked Users", "done"};
+            "Sexual Preference", "Major", "Spirit Animal", "Zodiac Sign", "Picture", "Blocked Users", "Unblocked Users","done"};
 
     public int getIsOnline() {
         return isOnline;
@@ -99,7 +99,7 @@ public class Profile implements ProfileInterface, Selectable
 
 	@Override
 	public void addBlockedUsers(String blockedUser) {
-		this.blockedUsers = blockedUsers;
+		this.blockedUsers = blockedUser;
 	}
 
 	@Override
@@ -219,7 +219,8 @@ public class Profile implements ProfileInterface, Selectable
 				"\nMajor: " + getMajor() +
 				"\nSpirit Animal: " + getSpiritAnimal() +
 				"\nZodiac Sign: " + getZodiac() +
-				"\nRating: "+ getRankAvg();
+				"\nRating: "+ getRankAvg() +
+				"\nBlocked: "+ getBlockedUsers();
 
 
 		return profileDetails;
