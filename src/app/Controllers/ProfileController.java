@@ -30,6 +30,7 @@ import app.InputReader;
 import app.MySQL.MySQLHelper;
 import app.interfaces.ProfileControllerInterface;
 import app.models.Account;
+import app.models.Group;
 import app.models.GroupInvitation;
 import app.models.Profile;
 import app.models.mappers.GroupInvitationMapper;
@@ -879,9 +880,49 @@ public class ProfileController implements ProfileControllerInterface {
                             acc.getProfile().getId());
                     Profile p = selectProfile(profileList,acc);
                     System.out.println(p);
+                    boolean confirm = InputReader.requestConfirmation("Would you like to rate this profile?");
+                    if(confirm)
+                    {
+                    	rateProfile(p);
+                    }
                 }catch (Exception e){
                     System.out.println("Can't browse files at this time.");
                 }
         }
+        
+        
     }
+    
+    /**
+     * @see app.interfaces.GroupControllerInterface#rankGroup(app.models.Group)
+     */
+    @Override
+    public void rateProfile(Profile p) {
+    	String prompt = "Please enter a Rating of 1-5. (5 being the highest)";
+    	int rank = InputReader.readInputInt(prompt);
+    	System.out.println("Rating entered was " +rank);
+    	if(rank != 1 && rank != 2 && rank != 3 && rank != 4 && rank != 5)
+    	{
+    		System.out.println("I'm sorry, that wasn't a correct input.");
+    		rateProfile(p);
+    	}
+    	boolean confirm = InputReader.requestConfirmation(rank);
+        if(confirm){
+        	try {
+        		Statement stmt = MySQLHelper.createStatement();
+        		ResultSet rs = stmt.executeQuery("SELECT * FROM meetup.profile WHERE id=" + p.getId() + ";");
+        		rs.next();
+        		int rankTotal = rs.getInt("rankTotal") + rank;
+        		int numRanks = rs.getInt("numRanks") + 1;
+        		stmt.executeUpdate("UPDATE meetup.profile SET rankTotal ="+rankTotal+", numRanks ="+numRanks+", rankAvg="+((double)rankTotal/(double)numRanks) +" WHERE id="+ p.getId() +";");
+
+        		System.out.println("You rated " + p.getName() + " with a rating of " + rank +".");
+        	}catch (Exception e){
+        		System.out.println("Failed to rate profile.");
+        		if(App.DEV_MODE)
+        		    e.printStackTrace();
+        	}
+        }
+    }
+    
 }
