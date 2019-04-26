@@ -30,15 +30,16 @@ public class Profile implements ProfileInterface, Selectable
     private int isOnline;
 	private String name = "Anonymous";
 	private BufferedImage picture;
-	
+
 
 	private String pictureURL;
 	private BufferedImage profile_pic;
 	private String interests = "[]";// = new JSONArray();
+	private String blockedUsers = "[]";
 
 	//If you change these values, you will also need to change ProfileController.editProfileFields(...)
 	public static final String[] OPTIONS = {"Name", "About Me","Interests", "Age", "Gender Identity",
-            "Sexual Preference", "Major", "Spirit Animal", "Zodiac Sign", "Picture", "done"};
+            "Sexual Preference", "Major", "Spirit Animal", "Zodiac Sign", "Picture", "Blocked Users", "done"};
 
     public int getIsOnline() {
         return isOnline;
@@ -77,15 +78,30 @@ public class Profile implements ProfileInterface, Selectable
 	public void setAboutMe(String aboutMe) {
 		this.aboutMe = aboutMe;
 	}
-	
+
 	@Override
 	public JSONArray getInterests() {
 		return new JSONArray(interests);
 	}
-	
+
 	@Override
 	public void setInterests(String interests) {
 		this.interests  = interests;
+	}
+
+	@Override
+	public JSONArray getBlockedUsers() {
+		return new JSONArray(blockedUsers);
+	}
+
+	@Override
+	public void addBlockedUsers(String blockedUser) {
+		this.blockedUsers = blockedUsers;
+	}
+
+	@Override
+	public void removeBlockedUsers(String unblockedUser) {
+		this.blockedUsers = unblockedUser;
 	}
 
 	@Override
@@ -200,7 +216,8 @@ public class Profile implements ProfileInterface, Selectable
 				"\nMajor: " + getMajor() +
 				"\nSpirit Animal: " + getSpiritAnimal() +
 				"\nZodiac Sign: " + getZodiac()+
-				"\nInterests: "+getInterests();
+				"\nInterests: "+getInterests()+
+				"\nBlocked Users: "+getBlockedUsers().toString();
 
 		return profileDetails;
 	}
@@ -242,7 +259,7 @@ public class Profile implements ProfileInterface, Selectable
         bGr.dispose();
 		this.profile_pic = bimage;
 	}
-	
+
 	public static void main(String[] args)
 	{
 		JSONArray ja = new JSONArray("[]");

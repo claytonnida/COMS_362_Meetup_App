@@ -154,6 +154,24 @@ public interface ProfileControllerInterface {
 	void editInterests(Profile p);
 
     /**
+     * Add {@link Profile} to the blocked list.
+     *
+     * @param p {@link Profile} to save in the database.
+     *
+     * @throws SQLException
+     */
+    void blockUser(Profile p) throws SQLException;
+
+    /**
+     * Remove {@link Profile} from the blocked list.
+     *
+     *@param p {@link Profile} to save in the database.
+     *
+     *@throws SQLException
+     */
+    void unblockUser(Profile p) throws SQLException;
+
+    /**
      * Lists the invites sent to a {@link Profile} and allows a user to respond to them.
      *
      * @param profileId The ID associated with a {@link Profile} to get the invites of.
