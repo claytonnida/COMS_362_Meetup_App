@@ -9,14 +9,17 @@ import app.models.Profile;
 import app.models.mappers.MessageMapper;
 import app.models.mappers.ProfileMapper;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -38,7 +41,7 @@ public class ChatGUI {
 
     public static void main(String[] args)throws Exception{
         ProfileMapper pm = new ProfileMapper();
-        Profile me = pm.createObjectList("Select * from meetup.profile where id = 3").get(0);
+        Profile me = pm.createObjectList("Select * from meetup.profile where id = 5").get(0);
         //Profile me = new Profile();
         Group g = new Group();
         g.setId(23);
@@ -47,7 +50,7 @@ public class ChatGUI {
         ChatGUI tg = new ChatGUI(g, me);
         tg.loadMessages();
         tg.open();
-        tg.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        tg.frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     }
 
     /**
@@ -94,6 +97,7 @@ public class ChatGUI {
         }
         propertyPanel.setBackground(null);
 
+        //create send button
         JPanel buttonPanel = new JPanel();
         text = new JTextField(30);
         addLimitToTextField(text,1000);
@@ -127,6 +131,8 @@ public class ChatGUI {
         messagePanel.setBackground(new Color(0,0,0));
         messagePanel.setBorder(null);
 
+
+        //messagePanel.setPreferredSize(new Dimension(messagePanel.getWidth(), 1500));
         scroll.setPreferredSize(new Dimension(500,500));
         scroll.setViewportView(messagePanel);
         scroll.setAlignmentX(JScrollPane.LEFT_ALIGNMENT);
@@ -263,7 +269,7 @@ public class ChatGUI {
      * @param m
      */
     private void addMessage(Message m){
-        JPanel message = generateRow(m.getFrom_pic(),m.getSender_name(),m.getBody(),m.getTime());
+        JPanel message = generateRow(m.getFrom_pic(),m.getSender_name(),m.getBody(),m.getTime(), m.getImage());
         addMessage(message);
     }
 
@@ -291,7 +297,7 @@ public class ChatGUI {
      * @param message
      * @return
      */
-    public JPanel generateRow(BufferedImage image,String from, String message,String time){
+    public JPanel generateRow(BufferedImage image,String from, String message,String time, BufferedImage picture){
         //Create Containers
         JPanel row = new JPanel(new BorderLayout());
         JPanel panel = new JPanel(new GridBagLayout());
@@ -299,6 +305,8 @@ public class ChatGUI {
         //Scale user's pic
         Image scaledImage = image.getScaledInstance(40,40,Image.SCALE_SMOOTH);
         JLabel picLabel = new JLabel(new ImageIcon(scaledImage));
+        picLabel.addMouseListener(new ThemeMouseListener(picLabel));
+
         GridBagConstraints gbc = new GridBagConstraints();
 
         //build username and their message
@@ -312,6 +320,19 @@ public class ChatGUI {
         //build username and their message
         JPanel header = new JPanel(new BorderLayout());
         JPanel text = new JPanel(new BorderLayout());
+        Image scaledPic = null;
+        JLabel pic = null;
+        if(picture != null) {
+            scaledPic = picture.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+            pic = new JLabel(new ImageIcon(scaledPic));
+        }
+        /*
+        if(picture != null){
+            pic.add(header, BorderLayout.NORTH);
+            pic.add(body, BorderLayout.SOUTH);
+
+        }
+        */
         JLabel username = new JLabel(from);
 
         text.addMouseListener(new ThemeMouseListener(text));
@@ -320,6 +341,8 @@ public class ChatGUI {
         header.add(username,BorderLayout.WEST);
         header.add(timeLabel,BorderLayout.EAST);
         header.setBackground(null);
+        header.addMouseListener(new ThemeMouseListener(header));
+
         username.setFont(new Font(panel.getFont().getName(), Font.BOLD, 15));
         JTextArea body = new JTextArea(message);
         body.addMouseListener(new ThemeMouseListener(body));
@@ -356,6 +379,16 @@ public class ChatGUI {
         gbc.weightx = 4.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel.add(text,gbc);
+
+        //display picture
+        if(picture != null) {
+            gbc.anchor = GridBagConstraints.WEST;
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.insets = new Insets(4, 70, 4, 50);
+            panel.add(pic, gbc);
+            gbc.insets = new Insets(0, 0, 0, 0);
+        }
 
         //tidy up
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -453,12 +486,20 @@ public class ChatGUI {
         MessageMapper mm = new MessageMapper();
         m.setTo_id(groupid);
         m.setFrom_id(profile.getId());
-        m.setBody(text.getText().trim());
-        m.setImage(null);
-
-        //post message on server
-        text.setText("");
-        MySQLHelper.executeUpdate(mm.toInsertQueryQuery(m));
+        try {
+            File file = new File(text.getText());
+            BufferedImage img = ImageIO.read(file);
+            m.setImage(img);
+            m.setBody("");
+            text.setText("");
+            MessageController.sendMessageToDB(m);
+        }
+        catch(Exception e) {
+            m.setBody(text.getText().trim());
+            m.setImage(null);
+            text.setText("");
+            MySQLHelper.executeUpdate(mm.toInsertQueryQuery(m));
+        }
 
         //ping other members
         out.println("rec:"+groupid);
@@ -569,4 +610,15 @@ public class ChatGUI {
         }
     }
 
+
+    public static BufferedImage resize(BufferedImage img, int newW, int newH) {
+        Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
+        BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D g2d = dimg.createGraphics();
+        g2d.drawImage(tmp, 0, 0, null);
+        g2d.dispose();
+
+        return dimg;
+    }
 }

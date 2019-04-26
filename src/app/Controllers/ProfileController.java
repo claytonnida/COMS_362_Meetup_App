@@ -1,5 +1,30 @@
 package app.Controllers;
 
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import app.models.mappers.GroupInvitationMapper;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import app.App;
 import app.InputReader;
 import app.MySQL.MySQLHelper;
@@ -7,7 +32,6 @@ import app.interfaces.ProfileControllerInterface;
 import app.models.Account;
 import app.models.GroupInvitation;
 import app.models.Profile;
-import app.models.mappers.GroupInvitationMapper;
 import app.models.mappers.ProfileMapper;
 import javafx.util.Pair;
 
@@ -135,6 +159,7 @@ public class ProfileController implements ProfileControllerInterface {
                 boolean confirm = InputReader.requestConfirmation(input);
                 if (confirm) {
                     p.setPicture(input_picture);
+                    p.setProfile_pic(input_picture);
                     p.setPictureURL(file_name.replaceAll("\\\\","/"));
                     System.out.println(p.getPictureURL());
                     //Quick Test
@@ -378,10 +403,10 @@ public class ProfileController implements ProfileControllerInterface {
         List<Pair<Integer,Profile>> profilePairs = new ArrayList<>();
         for(Profile p: otherProfies){
             int similarities = 0;
-            for(int i = 0; i < target.getInterests().size(); i++){
-                String myInterest = target.getInterests().get(i);
-                for(int j = 0; j < p.getInterests().size(); j++){
-                    if(myInterest.equalsIgnoreCase(p.getInterests().get(j))){
+            for(int i = 0; i < target.getInterests().length(); i++){
+                String myInterest = target.getInterests().getString(i);
+                for(int j = 0; j < p.getInterests().length(); j++){
+                    if(myInterest.equalsIgnoreCase(p.getInterests().getString(j))){
                         similarities++;
                     }
                 }
@@ -409,25 +434,16 @@ public class ProfileController implements ProfileControllerInterface {
     @Override
     public void editInterests(Profile p) {
         System.out.println("Your current 'Interests' are:");
-        ArrayList<String> interets = p.getInterests();
-
-        if(interets==null){
-            interets = new ArrayList<>();
-        }
-        if(!interets.isEmpty())
-        {
-        	for (String string : interets)
-    		{
-    			System.out.println(string+", ");
-    		}
-        }
-
+        JSONArray interests = p.getInterests();
+        
         String input = (InputReader.collectInput("Add an intrest"));
 
         boolean confirm = InputReader.requestConfirmation(input);
         if(confirm) {
-        	interets.add(input);
-            p.setInterests(interets);
+        	//JSONObject jo = new JSONObject();
+
+        	interests.put(input);
+            p.setInterests(interests.toString());
         }
         else {
             boolean cancel = InputReader.requestCancel();
@@ -670,49 +686,6 @@ public class ProfileController implements ProfileControllerInterface {
         return profileIdList;
     }
 
-    // For debugging porpoises. Squee!
-    public static void main(String[] args)throws Exception {
-        ProfileController profileController = new ProfileController();
-        Profile p1 = new Profile();
-        p1.setName("Most Similar");
-
-        Profile p2 = new Profile();
-        p2.setName("Medium Similar");
-
-        Profile p3 = new Profile();
-        p3.setName("Least");
-
-        Profile me = new Profile();
-        me.setName("Me");
-
-        ArrayList<String> l1 = new ArrayList<String>();
-        l1.add("Cats");l1.add("Dogs");l1.add("birds");
-
-        ArrayList<String> l2 = new ArrayList<String>();
-        l2.add("Cats");l2.add("Burgers");l2.add("birds");
-
-        ArrayList<String> l3 = new ArrayList<String>();
-        l3.add("Plants");l3.add("Burgers");l3.add("Hats");
-
-        ArrayList<String> l4 = new ArrayList<String>();
-        l4.add("Birds");l4.add("Dogs");l4.add("Cats");
-
-        ArrayList<Profile> list = new ArrayList<>();
-        p1.setInterests(l1);list.add(p2);
-        p2.setInterests(l2);list.add(p3);
-        p3.setInterests(l3);list.add(p1);
-        me.setInterests(l4);
-
-        profileController.sortByInterestCommonality(me,list);
-        for(Profile p: list){
-            System.out.println(p.getName());
-        }
-
-        Profile selected = (Profile)InputReader.readFromOptions("Select a profile to view",
-                new ArrayList<>(list));
-
-        System.out.println(selected);
-    }
 
     /**
      * Queries the database for the "appearsOffline" column for the given Profile ID.
@@ -773,7 +746,6 @@ public class ProfileController implements ProfileControllerInterface {
         }
     }
 
-    // TODO: Javadocs
     public Profile selectProfile(List<Profile> profiles, Account account){
 
         Profile p = (Profile)InputReader.readFromOptions("Choose a profile",new ArrayList<>(profiles));
@@ -843,7 +815,11 @@ public class ProfileController implements ProfileControllerInterface {
         switch (InputReader.readFromOptions("Please choose one.",
                 new String[]{"All Profiles","Suggested Profiles","Random Match"})){
             case "Suggested Profiles":
-                viewSuggestedProfiles(acc);
+                if(acc.getProfile().getInterests().length()==0) {
+                    System.out.println("You need to set some interests before we can do that!");
+                    editInterests(acc.getProfile());
+                }else
+                    viewSuggestedProfiles(acc);
                 break;
             case "All Profiles":
                 try {
@@ -856,5 +832,10 @@ public class ProfileController implements ProfileControllerInterface {
                     System.out.println("Can't browse files at this time.");
                 }
         }
+    }
+
+    public String chooseFilter(String[] filters){
+        String choice = InputReader.readFromOptions("Please select your filter", filters);
+        return choice;
     }
 }

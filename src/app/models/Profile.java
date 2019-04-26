@@ -1,14 +1,18 @@
 package app.models;
 
-import app.interfaces.ProfileInterface;
-import app.interfaces.Selectable;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
+
+import org.json.JSONArray;
+
+import app.interfaces.ProfileInterface;
+import app.interfaces.Selectable;
 
 
 public class Profile implements ProfileInterface, Selectable
@@ -26,10 +30,11 @@ public class Profile implements ProfileInterface, Selectable
     private int isOnline;
 	private String name = "Anonymous";
 	private BufferedImage picture;
-	private ArrayList<String> interests;
+	
 
 	private String pictureURL;
 	private BufferedImage profile_pic;
+	private String interests = "[]";// = new JSONArray();
 
 	//If you change these values, you will also need to change ProfileController.editProfileFields(...)
 	public static final String[] OPTIONS = {"Name", "About Me","Interests", "Age", "Gender Identity",
@@ -74,13 +79,12 @@ public class Profile implements ProfileInterface, Selectable
 	}
 	
 	@Override
-	public ArrayList<String> getInterests() {
-		
-		return interests;
+	public JSONArray getInterests() {
+		return new JSONArray(interests);
 	}
 	
 	@Override
-	public void setInterests(ArrayList<String> interests) {
+	public void setInterests(String interests) {
 		this.interests  = interests;
 	}
 
@@ -189,6 +193,7 @@ public class Profile implements ProfileInterface, Selectable
 	public String getProfileDetails(){
 		String profileDetails = "Name: " + getName() +
 				"\nAbout Me: " + getAboutMe() +
+				"\nInterests: " + getInterests().toString() +
 				"\nAge: " + getAge() +
 				"\nGender Identity: " + getGenderId() +
 				"\nSexual Preference: " + getSexualPref() +
@@ -236,5 +241,10 @@ public class Profile implements ProfileInterface, Selectable
         bGr.drawImage(scaledImage, 0, 0, null);
         bGr.dispose();
 		this.profile_pic = bimage;
+	}
+	
+	public static void main(String[] args)
+	{
+		JSONArray ja = new JSONArray("[]");
 	}
 }

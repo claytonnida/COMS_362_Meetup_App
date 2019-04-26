@@ -1,6 +1,6 @@
 package app.interfaces;
 
-import java.util.ArrayList;
+import org.json.JSONArray;
 
 public interface ProfileInterface
 {
@@ -16,9 +16,9 @@ public interface ProfileInterface
 
 	void setAboutMe(String aboutMe) ;
 	
-	ArrayList<String> getInterests();
+	JSONArray getInterests();
 	
-	void setInterests(ArrayList<String> interests);
+	void setInterests(String interests);
 
 	int getAge() ;
 
