@@ -925,6 +925,7 @@ public class ProfileController implements ProfileControllerInterface {
             List<Profile> profiles = pm.createObjectList("Select * from meetup.profile where id != " + myProfile.getId());
             sortByInterestCommonality(myProfile,profiles);
 
+            //Remove blocked users
             for (int i = 0;i < profiles.length(); i++) {
                 for (int j = 0;j < blocked.length(); j++) {
                     if (profiles.get(i).getName().equalsIgnoreCase(blocked.getJSONObject(j).toString())) {
@@ -966,6 +967,7 @@ public class ProfileController implements ProfileControllerInterface {
                     ProfileMapper pm = new ProfileMapper();
                     List<Profile> profileList = pm.createObjectList("Select * from meetup.profile where id != " +
                             acc.getProfile().getId());
+                    //Remove blocked users
                     for (int i = 0;i < profileList.length(); i++) {
                         for (int j = 0;j < blocked.length(); j++) {
                             if (profileList.get(i).getName().equalsIgnoreCase(blocked.getJSONObject(j).toString())) {

@@ -159,6 +159,15 @@ public class App
 								"Select * from meetup.profile where " + choice + " like '%" + selection + "%' and id != "
 										+((Account)sessionVariables.get("account")).getProfile().getId());
 						Profile p = pc.selectProfile(profileList,((Account)sessionVariables.get("account")));
+						JSONArray blocked = p.getBlockedUsers();
+						//Remove blocked users
+						for (int i = 0;i < profileList.length(); i++) {
+							for (int j = 0;j < blocked.length(); j++) {
+								if (profileList.get(i).getName().equalsIgnoreCase(blocked.getJSONObject(j).toString())) {
+									profileList.remove(i);
+								}
+							}
+						}
 						System.out.println(p);
 					}
 					catch(SQLException e){
