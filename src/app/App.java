@@ -7,10 +7,8 @@ import app.Controllers.ProfileController;
 import app.MySQL.MySQLHelper;
 import app.models.Account;
 import app.models.Profile;
-import app.models.mappers.ProfileMapper;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class App
@@ -108,7 +106,7 @@ public class App
 	}
 
 	private static void exitApp() {
-		System.out.println("No? Okay then. Have a good day!");
+		System.out.println("Okay then. Have a good day!");
 
 		// TODO: Remove once server is implemented.
 		if(sessionVariables.containsKey("account"))
@@ -127,7 +125,7 @@ public class App
 		ProfileController pc = new ProfileController();
 		while(play){
 			switch (InputReader.readFromOptions("What would you like to do?",new String[]
-					{"Edit My Profile","Edit Online Status",
+					{"Edit My Profile","Edit Online Status", "View Invites",
 							"Browse Profiles","Manage Groups","Exit"})){
 				case "Edit My Profile":
 					new ProfileController().editProfileFields(((Account)sessionVariables.get("account")).getProfile());
@@ -140,16 +138,12 @@ public class App
 				case "Edit Online Status":
 					pc.editOnlineStatus(((Account)sessionVariables.get("account")).getProfile());
 					break;
+				case "View Invites":
+					new ProfileController().viewInvitations(((Account)sessionVariables.get("account")).getProfile().getId());
+					break;
 				case "Browse Profiles":
 					//TODO implement fully and elsewhere
-					try {
-						ProfileMapper pm = new ProfileMapper();
-						List<Profile> profileList = pm.createObjectList("Select * from meetup.profile where id != " +
-								((Account) sessionVariables.get("account")).getProfile().getId());
-						Profile p = pc.selectProfile(profileList,((Account)sessionVariables.get("account")));
-					}catch (Exception e){
-						System.out.println("Can't browse files at this time.");
-					}
+					pc.browseProfiles(((Account)sessionVariables.get("account")));
                     break;
 				case "Exit":
 					if(InputReader.inputYesNo("Are you sure you want to quit?")) {

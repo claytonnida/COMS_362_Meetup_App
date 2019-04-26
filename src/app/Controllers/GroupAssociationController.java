@@ -7,11 +7,35 @@ import app.models.GroupAssociation;
 import app.models.Profile;
 import app.models.mappers.GroupAssociationMapper;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class GroupAssociationController implements GroupAssociationControllerInterface {
 
-    //TODO: Javadoc
-    public void inviteToGroup(int groupId) {
-        // TODO: Implement
+    /**
+     * Checks the database to see if a {@link GroupAssociation} with the given IDs exists.
+     *
+     * @param profileId The ID of the {@link Profile} in the {@link GroupAssociation}.
+     * @param groupId The ID of the {@link Group} in the {@link GroupAssociation}.
+     *
+     * @return {@code true}, if the {@link GroupAssociation} does exist on the database. {@code false} otherwise.
+     *
+     * @throws SQLException Occurs if there is an error when querying the database.
+     */
+    public boolean doesGroupAssociationExist(int  profileId, int groupId) throws SQLException {
+        ResultSet resultSet = MySQLHelper.executeQuery(
+                String.format("SELECT * " +
+                        "FROM meetup.groupAssociation " +
+                        "WHERE groupid = %s " +
+                        "AND profileid = %s", groupId, profileId)
+        );
+
+        return resultSet != null && resultSet.first();
+    }
+
+    // For debugging purposes
+    public static void main(String[] args) {
+
     }
 
     /**
@@ -45,9 +69,12 @@ public class GroupAssociationController implements GroupAssociationControllerInt
         GroupAssociation ga = new GroupAssociation();
         ga.setGroupid(groupId);
         ga.setProfileid(profileId);
-        MySQLHelper.executeUpdate(gam.toInsertQueryQuery(ga)
-        );
+        MySQLHelper.executeUpdate(gam.toInsertQueryQuery(ga));
 
+<<<<<<< HEAD
         System.out.println("Successfully added GroupAssociation between profile ID: " + profileId + " and group ID: " + groupId + "!");
+=======
+        System.out.println("Successfully created GroupAssociation between profile ID: " + profileId + " and group ID: " + groupId + "!");
+>>>>>>> f2589526040129d10bcf2d4d84f9c25c0a20cba2
     }
 }

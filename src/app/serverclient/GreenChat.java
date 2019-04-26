@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
-public class ChatGUI {
+public class GreenChat {
 
     private JTextField text;
     private JScrollPane scroll;
@@ -40,8 +40,6 @@ public class ChatGUI {
     //TODO change name and owner text color
     //TODO change text box color
     //TODO set Background color for message container
-    //TODO Edit include Date in timestamp
-    //TODO change timeLabel color
     //TODO change username and body text color
     //TODO change box containing username and message
     //TODO edit location of image?
@@ -56,10 +54,13 @@ public class ChatGUI {
         Profile me = pm.createObjectList("Select * from meetup.profile where id = 3").get(0);
         //Profile me = new Profile();
         Group g = new Group();
-        g.setId(23);
+        g.setId(21);
+        g.setCreated_by(3);
         g.setName("Maverick");
 
-        ChatGUI tg = new ChatGUI(g,me);
+
+        GreenChat tg = new GreenChat(g,me);
+        System.out.println(tg.getTime());
         tg.loadMessages();
         tg.open();
         tg.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -70,7 +71,7 @@ public class ChatGUI {
      * @param group
      * @param profile
      */
-    public ChatGUI(Group group, Profile profile){
+    public GreenChat(Group group, Profile profile){
 
         this.groupid = group.getId();
         this.profile = profile;
@@ -92,12 +93,15 @@ public class ChatGUI {
         name.setFont(new Font(name.getFont().getName(), Font.BOLD, 28));
         name.setHorizontalAlignment(JLabel.CENTER);
         propertyPanel.add(name,BorderLayout.NORTH);
+        propertyPanel.setForeground(new Color(255,255,255));
+        name.setForeground(new Color(70,120,90));
         Profile ownerp = getOwner(group);
         if(ownerp!=null) {
             JLabel owner = new JLabel("Owned by " + ownerp.getName());
             owner.setFont(new Font(owner.getFont().getName(), Font.PLAIN, 10));
             owner.setHorizontalAlignment(JLabel.CENTER);
             propertyPanel.add(owner, BorderLayout.SOUTH);
+            owner.setForeground(new Color(70,120,90));
         }
         propertyPanel.setBackground(null);
 
@@ -112,10 +116,10 @@ public class ChatGUI {
         buttonPanel.add(send);
         buttonPanel.setBorder(null);
         //TODO change text box color
-        text.setBackground(new Color(70,70,70));
+        text.setBackground(new Color(20,50,20));
         text.setForeground(new Color(255,255,255));
         text.setBorder(new EmptyBorder(4,10,4,10));
-        send.setBackground(new Color(0,10,30));
+        send.setBackground(new Color(50,100,50));
         send.setForeground(new Color(255,255,255));
         send.setBorder(new EmptyBorder(4,10,4,10));
 
@@ -125,7 +129,7 @@ public class ChatGUI {
         contentPane.setLayout(new BorderLayout());
         messagePanel.add(propertyPanel);
         //TODO set Background color for message container
-        messagePanel.setBackground(new Color(0,0,0));
+        messagePanel.setBackground(new Color(30,60,30));
         messagePanel.setBorder(null);
 
 
@@ -138,7 +142,7 @@ public class ChatGUI {
         frame.setSize(500, 600);
         frame.setResizable(false);
 
-        buttonPanel.setBackground(new Color(20,50,100));
+        buttonPanel.setBackground(new Color(50,130,80));
     }
 
     /**
@@ -160,7 +164,7 @@ public class ChatGUI {
     /**
      * Opens an output stream to notify server that a message was sent
      *      Adds listener for jbutton to send such notification
- *      Opens an input stream to receive notifications that a message was sent
+     *      Opens an input stream to receive notifications that a message was sent
      * @param jbutton
      */
     private void establishServerCommunications(JButton jbutton){
@@ -281,12 +285,13 @@ public class ChatGUI {
 
         GridBagConstraints gbc = new GridBagConstraints();
 
-            gbc.gridx = 0;
-            gbc.gridy = messagePanel.getComponentCount() + 1;
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            gbc.weightx = 1.0;
-            gbc.anchor = GridBagConstraints.WEST;
-            messagePanel.add(row, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = messagePanel.getComponentCount() + 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        messagePanel.add(row,gbc);
+
 
     }
 
@@ -307,15 +312,13 @@ public class ChatGUI {
         JLabel picLabel = new JLabel(new ImageIcon(scaledImage));
         GridBagConstraints gbc = new GridBagConstraints();
 
-        //build username and their message
-        //TODO Edit timestampt color
-        //TODO Edit include Date in timestamp
-        time = convertTime(time,true);
+
+        //Time
+        time = convertTime(time,false);
 
         JLabel timeLabel = new JLabel(time);
         timeLabel.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,10));
-        //TODO change timeLabel color
-        timeLabel.setForeground(new Color(90,170,255));
+        timeLabel.setBackground(new Color(255,255,255));
 
         //build username and their message
         JPanel header = new JPanel(new BorderLayout());
@@ -339,8 +342,9 @@ public class ChatGUI {
         text.add(header,BorderLayout.NORTH);
         text.add(body,BorderLayout.SOUTH);
         //TODO change box containing username and message
-        text.setBackground(null);
+        text.setBackground(new Color(50,150,70));
         text.setBorder(new EmptyBorder(5,5,5,5));
+
 
         //TODO edit location of image?
         //add pic to row
@@ -371,13 +375,23 @@ public class ChatGUI {
         //beautify
         row.setBackground(null);
         //TODO edit color for box surrounding username and their message
-        panel.setBackground(new Color(0,10,30));
-        LineBorder lb = new LineBorder(null,2,true);
-        panel.setBorder(lb);
+        panel.setBackground(new Color(50,120,70));
+        panel.setBorder(new LineBorder(new Color(20,50,20),2,false));
         row.add(panel,BorderLayout.CENTER);
         row.setSize(row.getWidth(),panel.getHeight());
         return row;
     }
+
+    public Profile getOwner(Group g){
+        ProfileMapper pm = new ProfileMapper();
+        try {
+            return pm.createObjectList("Select * from meetup.profile where id = " + g.getCreated_by()).get(0);
+        }catch (Exception e ){
+            return null;
+        }
+    }
+
+
     private String convertTime(String dt){
         return convertTime(dt,true);
     }
@@ -408,24 +422,14 @@ public class ChatGUI {
         return hour+":"+split[1]+" "+half+"  "+dd;
     }
 
-
-    public Profile getOwner(Group g){
-        ProfileMapper pm = new ProfileMapper();
-        try {
-            return pm.createObjectList("Select * from meetup.profile where id = " + g.getCreated_by()).get(0);
-        }catch (Exception e ){
-            return null;
-        }
-    }
-
     /**
      * Listens to server for when to update the GUI
      */
     static class ServerListener implements Runnable{
 
-        ChatGUI tg;
+        GreenChat tg;
         Scanner in ;
-        public ServerListener(Scanner in, ChatGUI tg){
+        public ServerListener(Scanner in, GreenChat tg){
             this.tg = tg;
             this.in = in;
         }
@@ -438,7 +442,7 @@ public class ChatGUI {
                         tg.getNewMessages();
                 }catch (Exception e){
                     if(App.DEV_MODE)
-                    e.printStackTrace();
+                        e.printStackTrace();
                 }
             }
         }
@@ -467,7 +471,6 @@ public class ChatGUI {
         //post message on server
         text.setText("");
         MySQLHelper.executeUpdate(mm.toInsertQueryQuery(m));
-
         //ping other members
         out.println("rec:"+groupid);
         out.flush();
@@ -476,8 +479,8 @@ public class ChatGUI {
 
     class EnterListener implements KeyListener{
 
-        ChatGUI cg;
-        public EnterListener(ChatGUI b){
+        GreenChat cg;
+        public EnterListener(GreenChat b){
             cg = b;
         }
         @Override

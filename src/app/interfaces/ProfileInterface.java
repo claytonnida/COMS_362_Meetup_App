@@ -1,13 +1,13 @@
 package app.interfaces;
 
+import org.json.JSONArray;
+
 public interface ProfileInterface
 {
+	int getIsOnline();
 
-	public int getIsOnline();
+	void setIsOnline(int isOnline);
 
-	public void setIsOnline(int isOnline);
-
-	// TODO: Javadoc
 	int getId() ;
 
 	void setId(int id) ;
@@ -15,6 +15,10 @@ public interface ProfileInterface
 	String getAboutMe() ;
 
 	void setAboutMe(String aboutMe) ;
+	
+	JSONArray getInterests();
+	
+	void setInterests(String interests);
 
 	int getAge() ;
 

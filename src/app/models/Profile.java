@@ -1,14 +1,18 @@
 package app.models;
 
-import app.interfaces.ProfileInterface;
-import app.interfaces.Selectable;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
+
+import org.json.JSONArray;
+
+import app.interfaces.ProfileInterface;
+import app.interfaces.Selectable;
 
 
 public class Profile implements ProfileInterface, Selectable
@@ -26,12 +30,14 @@ public class Profile implements ProfileInterface, Selectable
     private int isOnline;
 	private String name = "Anonymous";
 	private BufferedImage picture;
+	
 
 	private String pictureURL;
 	private BufferedImage profile_pic;
+	private String interests = "[]";// = new JSONArray();
 
 	//If you change these values, you will also need to change ProfileController.editProfileFields(...)
-	public static final String[] OPTIONS = {"Name", "About Me", "Age", "Gender Identity",
+	public static final String[] OPTIONS = {"Name", "About Me","Interests", "Age", "Gender Identity",
             "Sexual Preference", "Major", "Spirit Animal", "Zodiac Sign", "Picture", "done"};
 
     public int getIsOnline() {
@@ -52,127 +58,116 @@ public class Profile implements ProfileInterface, Selectable
 		}
 	}
 
-    // TODO: Javadoc
 	@Override
 	public int getId() {
 		return id;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public void setId(int id) {
 		this.id = id;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public String getAboutMe() {
 		return aboutMe;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public void setAboutMe(String aboutMe) {
 		this.aboutMe = aboutMe;
 	}
+	
+	@Override
+	public JSONArray getInterests() {
+		return new JSONArray(interests);
+	}
+	
+	@Override
+	public void setInterests(String interests) {
+		this.interests  = interests;
+	}
 
-	// TODO: Javadoc
 	@Override
 	public int getAge() {
 		return age;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public void setAge(int age) {
 		this.age = age;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public String getGenderId() {
 		return genderId;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public void setGenderId(String genderId) {
 		this.genderId = genderId;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public String getSexualPref() {
 		return sexualPref;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public void setSexualPref(String sexualPref) {
 		this.sexualPref = sexualPref;
 	}
 
-	// TODO: Javadoc
 	public BufferedImage getPicture() { return picture; }
 
 	public void setPicture(BufferedImage picture) { this.picture = picture; }
 
-	// TODO: Javadoc
 	@Override
 	public String getMajor() {
 		return major;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public void setMajor(String major) {
 		this.major = major;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public String getSpiritAnimal() {
 		return spiritAnimal;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public void setSpiritAnimal(String spiritAnimal) {
 		this.spiritAnimal = spiritAnimal;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public String getZodiac() {
 		return zodiac;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public void setZodiac(String zodiac) {
 		this.zodiac = zodiac;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public String getName() {
 		return name;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public int getAppearOffline() {
 		return appearOffline;
 	}
 
 
-	// TODO: Javadoc
 	@Override
 	public void setAppearOffline(int appearOffline) {
 		this.appearOffline = appearOffline;
@@ -194,17 +189,18 @@ public class Profile implements ProfileInterface, Selectable
 		this.pictureURL = pictureURL;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public String getProfileDetails(){
 		String profileDetails = "Name: " + getName() +
 				"\nAbout Me: " + getAboutMe() +
+				"\nInterests: " + getInterests().toString() +
 				"\nAge: " + getAge() +
 				"\nGender Identity: " + getGenderId() +
 				"\nSexual Preference: " + getSexualPref() +
 				"\nMajor: " + getMajor() +
 				"\nSpirit Animal: " + getSpiritAnimal() +
-				"\nZodiac Sign: " + getZodiac();
+				"\nZodiac Sign: " + getZodiac()+
+				"\nInterests: "+getInterests();
 
 		return profileDetails;
 	}
@@ -216,7 +212,6 @@ public class Profile implements ProfileInterface, Selectable
 			return "Online";
 		}
 	}
-	// TODO: Javadoc
 	@Override
 	public String toString(){
 		return getProfileDetails();
@@ -236,6 +231,7 @@ public class Profile implements ProfileInterface, Selectable
 	 * @param profile_pic
 	 */
 	public void setProfile_pic(BufferedImage profile_pic) {
+		if(profile_pic==null)return;
         Image scaledImage = profile_pic.getScaledInstance(40,40,Image.SCALE_SMOOTH);
 
         BufferedImage bimage = new BufferedImage(scaledImage.getWidth(null), scaledImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
@@ -245,5 +241,10 @@ public class Profile implements ProfileInterface, Selectable
         bGr.drawImage(scaledImage, 0, 0, null);
         bGr.dispose();
 		this.profile_pic = bimage;
+	}
+	
+	public static void main(String[] args)
+	{
+		JSONArray ja = new JSONArray("[]");
 	}
 }

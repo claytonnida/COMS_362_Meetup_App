@@ -9,6 +9,11 @@ import java.net.URL;
 import java.util.*;
 
 public class Server {
+
+   public static String HOST = "cs362meetupdb.redirectme.net";
+   // public static String HOST = "localhost";
+    public static int PORT = 8000;
+
     ServerSocket socket;
     public static void main(String[] args){
         Server s = new Server();
@@ -17,7 +22,7 @@ public class Server {
     static Map<Integer, List<ClientSender>> groupMaps = new HashMap<>() ;
     public Server(){
         try{
-            socket = new ServerSocket(8000);
+            socket = new ServerSocket(PORT);
 
             String publicIpAddress = "unknown";
 

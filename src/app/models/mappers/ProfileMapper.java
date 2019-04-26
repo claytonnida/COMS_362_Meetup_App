@@ -1,7 +1,6 @@
 package app.models.mappers;
 
 import app.MySQL.MySQLHelper;
-import app.models.Group;
 import app.models.Profile;
 
 import java.sql.ResultSet;

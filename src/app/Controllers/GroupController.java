@@ -1,13 +1,5 @@
 package app.Controllers;
 
-import static app.MySQL.MySQLHelper.executeQuery;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-
 import app.App;
 import app.InputReader;
 import app.MySQL.MySQLHelper;
@@ -20,13 +12,30 @@ import app.models.mappers.GroupAssociationMapper;
 import app.models.mappers.GroupMapper;
 import app.serverclient.ChatGUI;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import static app.MySQL.MySQLHelper.executeQuery;
+
 public class GroupController implements GroupControllerInterface {
 
-    //TODO: Javadoc
-    public void inviteToGroup(int groupId) {
-        new GroupAssociationController().inviteToGroup(groupId);
+    // For debugging porpoises.
+    public static void main(String[] args){
+        GroupController gc = new GroupController();
+        gc.inviteToGroup(21);
     }
 
+    /**
+     * @see app.Controllers.GroupInvitationController#inviteToGroup(int)
+     */
+    public void inviteToGroup(int groupId) {
+        new GroupInvitationController().inviteToGroup(groupId);
+    }
+
+    // TODO: Add Javadoc
     public List<Group> getGroupsForUser(Profile p){
         try {
 
@@ -51,11 +60,16 @@ public class GroupController implements GroupControllerInterface {
     }
 
     /**
+<<<<<<< HEAD
     * This method searches and lists every group that contains any form of the user's input. If the user's input
     * is blank, the method will simply list every group
     *
     * @param sub_string The search criteria provided by the user for their search
     */
+=======
+     * @see app.interfaces.GroupControllerInterface#searchGroup(java.lang.String)
+     */
+>>>>>>> f2589526040129d10bcf2d4d84f9c25c0a20cba2
     @Override
     public List<Group> searchGroup(String sub_string) {
         try {
@@ -81,6 +95,7 @@ public class GroupController implements GroupControllerInterface {
     }
 
     /**
+<<<<<<< HEAD
     * Removes the {@link app.models.GroupAssociation} between a {@link Profile} and a {@link Group}.
     *
     * @param profileId
@@ -88,12 +103,17 @@ public class GroupController implements GroupControllerInterface {
     * @param groupId
     * 		The ID of the {@link Group} to disassociate.
     */
+=======
+     * @see app.interfaces.GroupControllerInterface#leaveGroup(int, int)
+     */
+>>>>>>> f2589526040129d10bcf2d4d84f9c25c0a20cba2
     @Override
     public void leaveGroup(int profileId, int groupId) {
         new GroupAssociationController().leaveGroup(profileId, groupId);
     }
 
     /**
+<<<<<<< HEAD
     *Joins the {@link app.models.GroupAssociation} between a {@link Profile} and a {@link Group}.
     *
     * @param profileId
@@ -107,6 +127,10 @@ public class GroupController implements GroupControllerInterface {
     }
 
     // TODO: Add JavaDocs
+=======
+     * @see GroupControllerInterface#createGroup(app.models.Profile)
+     */
+>>>>>>> f2589526040129d10bcf2d4d84f9c25c0a20cba2
     @Override
     public void createGroup(Profile p) {
         Group group = new Group();
@@ -136,6 +160,7 @@ public class GroupController implements GroupControllerInterface {
         System.out.println("Group creation complete.");
     }
 
+    // TODO: Add Javadoc
     public static boolean createGroupInDB(Group group){
         try{
             GroupMapper gm = new GroupMapper();
@@ -163,8 +188,12 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
+<<<<<<< HEAD
 
     /**
+=======
+    /** 
+>>>>>>> f2589526040129d10bcf2d4d84f9c25c0a20cba2
      * @see app.interfaces.GroupControllerInterface#removeGroup(app.models.Group)
      */
     @Override
@@ -183,7 +212,10 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> f2589526040129d10bcf2d4d84f9c25c0a20cba2
     /**
      * @see app.interfaces.GroupControllerInterface#rankGroup(app.models.Group)
      */
@@ -217,15 +249,20 @@ public class GroupController implements GroupControllerInterface {
     }
 
     /**
+<<<<<<< HEAD
     * A series of prompts to guide user through editing their profile
     *
     * @param g The {@link Group} whose fields will be modified.
     */
+=======
+     * @see GroupControllerInterface#editGroupFields(app.models.Group)
+     */
+>>>>>>> f2589526040129d10bcf2d4d84f9c25c0a20cba2
     @Override
     public void editGroupFields(Group g){
 
         boolean edit = true;
-        String[] options = new String[]{"done","name","visibility"};
+        String[] options = new String[]{"done","name","visibility","Delete Chat History", "Delete Group"};
         while(edit) {
             String option = InputReader.readFromOptions("Which field would you like to edit?", options);
 
@@ -237,7 +274,26 @@ public class GroupController implements GroupControllerInterface {
                 editGroupName(g);
                 break;
                 case "visibility":
+<<<<<<< HEAD
                 editGroupVisibility(g);
+=======
+                    editGroupVisibility(g);
+                    break;
+                case "Delete Chat History":
+                	try
+					{
+						deleteChatHistory(g);
+					}
+					catch (SQLException e)
+					{
+						System.out.println("SQL Error when trying to delete chat.");
+						e.printStackTrace();
+					}
+                	break;
+                case "Delete Group":
+                    removeGroup(g);
+                    break;
+>>>>>>> f2589526040129d10bcf2d4d84f9c25c0a20cba2
             }
         }
     }
@@ -264,10 +320,15 @@ public class GroupController implements GroupControllerInterface {
     }
 
     /**
+<<<<<<< HEAD
     * Changes the group visibility to public.
     *
     * @param g The {@link Group} whose fields will be modified.
     */
+=======
+     * @see GroupControllerInterface#editGroupName(app.models.Group)
+     */
+>>>>>>> f2589526040129d10bcf2d4d84f9c25c0a20cba2
     @Override
     public void editGroupVisibility(Group g){
         System.out.print("Your current group visibility is:\t");
@@ -288,6 +349,25 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
+    // TODO: Javadocs
+    public void deleteChatHistory(Group group)throws SQLException{
+   	 boolean confirm = InputReader.requestConfirmation("Are you sure you want to remove chat history from " + group.getName());
+        if(confirm){
+        	try {
+        		Statement stmt = MySQLHelper.createStatement();
+        		stmt.executeUpdate("DELETE FROM meetup.message WHERE to_id =" + group.getId() +";");
+        		System.out.println("Chat for " + group.getName() + " was deleted.");
+        	}catch (Exception e){
+        		System.out.println("Failed to remove chat history.");
+                if(App.DEV_MODE)
+                    e.printStackTrace();
+        	}
+        }
+   }
+
+    /**
+     * @see GroupControllerInterface#editGroupVisibility(app.models.Group)
+     */
     public void manageGroups(Account account){
         GroupController gc = new GroupController();
         List<Group> groups = null;
@@ -342,6 +422,7 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
+    // TODO: Javadoc
     public List<Group> getGroupsByUser(Account account){
         GroupMapper gm = new GroupMapper();
         try {
@@ -354,19 +435,25 @@ public class GroupController implements GroupControllerInterface {
         }
     }
 
+<<<<<<< HEAD
 
 
+=======
+    // TODO: Javadoc
+>>>>>>> f2589526040129d10bcf2d4d84f9c25c0a20cba2
     public void joinGroup(int profileId, int groupId){
         GroupAssociationController gac = new GroupAssociationController();
         gac.joinGroup(profileId, groupId);
     }
 
+    // TODO: Javadoc
     public List<Group> findGroups(){
         String input = InputReader.collectInput("Please enter a sub string to search all Groups containing the search value");
         GroupController gc = new GroupController();
         return gc.searchGroup(input);
     }
 
+    // TODO: Javadoc
     public Group selectGroup(List<Group> groups, Account account){
 
         Group g = (Group)InputReader.readFromOptions("Choose a group",new ArrayList<>(groups));
@@ -379,7 +466,7 @@ public class GroupController implements GroupControllerInterface {
     * @param group
     */
     public void manageGroup(Account account, Group group){
-        String[] options = new String[]{"Open Chat","Edit Group","Leave Group","Join Group","Rank Group","Delete Group","Exit"};
+        String[] options = new String[]{"Open Chat","Edit Group","Leave Group","Join Group", "Invite User", "Rank Group","Exit"};
         GroupMapper gm = new GroupMapper();
 
         //Ask user what they would like to do
@@ -394,6 +481,9 @@ public class GroupController implements GroupControllerInterface {
                     if(App.DEV_MODE)
                     e.printStackTrace();
                 }
+                break;
+            case "Invite User":
+                inviteToGroup(group.getId());
                 break;
             case "Join Group":
                 joinGroup(account.getProfile().getId(),group.getId());
@@ -419,6 +509,7 @@ public class GroupController implements GroupControllerInterface {
             	rankGroup(group);
                 manageGroups(account);
             	break;
+<<<<<<< HEAD
             case "Delete Group":
             if(isOwnerOfGroup(account,group)) {
                 removeGroup(group);
@@ -429,12 +520,15 @@ public class GroupController implements GroupControllerInterface {
             //TODO Implement remove group
 
             //don't add a break; - That way we go back to manageGroups if editGroupFields is denied
+=======
+>>>>>>> f2589526040129d10bcf2d4d84f9c25c0a20cba2
             case "Exit":
             manageGroups(account);
             break;
         }
     }
 
+    // TODO: Javadoc
     public boolean isOwnerOfGroup(Account a, Group g){
         try{
 
