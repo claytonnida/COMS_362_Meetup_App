@@ -14,6 +14,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -22,15 +24,17 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import app.App;
 import app.InputReader;
 import app.MySQL.MySQLHelper;
 import app.interfaces.ProfileControllerInterface;
 import app.models.Account;
+import app.models.GroupInvitation;
 import app.models.Profile;
+import app.models.mappers.GroupInvitationMapper;
 import app.models.mappers.ProfileMapper;
+import javafx.util.Pair;
 
 public class ProfileController implements ProfileControllerInterface {
 
@@ -135,6 +139,8 @@ public class ProfileController implements ProfileControllerInterface {
 
                 File image_file = new File(input);
                 String file_name = input;
+
+                //TODO: Make sure to remove this before submitting
                 //URL url = new URL(input);
                 //URLConnection connection = url.openConnection();
                 //connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36");
@@ -378,7 +384,41 @@ public class ProfileController implements ProfileControllerInterface {
             }
         }
     }
-    
+
+    // TODO: Javadocs
+    public void sortByInterestCommonality(Profile target, List<Profile> otherProfies){
+        //Build a sortable list
+        List<Pair<Integer,Profile>> profilePairs = new ArrayList<>();
+        for(Profile p: otherProfies){
+            int similarities = 0;
+            for(int i = 0; i < target.getInterests().length(); i++){
+                String myInterest = target.getInterests().getString(i);
+                for(int j = 0; j < p.getInterests().length(); j++){
+                    if(myInterest.equalsIgnoreCase(p.getInterests().getString(j))){
+                        similarities++;
+                    }
+                }
+            }
+            Pair<Integer,Profile> pair = new Pair<>(similarities,p);
+            profilePairs.add(pair);
+        }
+
+        otherProfies.clear();
+        Collections.sort(profilePairs, new Comparator<Pair<Integer, Profile>>() {
+            @Override
+            public int compare(Pair<Integer, Profile> o1, Pair<Integer, Profile> o2) {
+                return o2.getKey() - o1.getKey();
+            }
+        });
+
+        //Put profiles in proper order
+        for(Pair<Integer,Profile> pair: profilePairs){
+            if(pair.getKey()==0)continue;
+            otherProfies.add(pair.getValue());
+        }
+    }
+
+    //TODO: Javadocs
     @Override
     public void editInterests(Profile p) {
     	String option;
@@ -466,7 +506,6 @@ public class ProfileController implements ProfileControllerInterface {
 
         
     }
-    
 
     /**
      * A series of prompts to guide user through editing their gender identity.
@@ -536,7 +575,7 @@ public class ProfileController implements ProfileControllerInterface {
             byte[] buf = out.toByteArray();
             // setup stream for blob
             ByteArrayInputStream inStream = new ByteArrayInputStream(buf);
-            
+
             ProfileMapper pm = new ProfileMapper();
             String query = pm.toUpdateQueryQuery(p);
             PreparedStatement ps = MySQLHelper.getConnection().prepareStatement(query);
@@ -572,11 +611,9 @@ public class ProfileController implements ProfileControllerInterface {
 
     /**
      * Lists {@link Profile}s.
-     *
-     * @return A {@link List} containing the IDs of the profiles.
      */
     @Override
-    public List<Integer> listProfiles() {
+    public void listProfiles() {
         List<Integer> profileIdList = new ArrayList<>();
 
         try {
@@ -599,46 +636,13 @@ public class ProfileController implements ProfileControllerInterface {
             if (App.DEV_MODE)
                 e.printStackTrace();
         }
-
-        return profileIdList;
-    }
-
-    /**
-     * Prints out the columns of rows in database with profile IDs matching those in given {@link List}
-     * @param profileIdList The {@link List<Integer>} of {@link Profile} IDs to print database rows of.
-     *
-     * @throws SQLException If an error occurs when executing the MySQL query.
-     */
-    public void printProfileIdList(List<Integer> profileIdList) throws SQLException {
-        if(profileIdList == null) {
-            throw new IllegalArgumentException("ERROR! Profile ID List cannot be null!");
-        }
-        StringBuilder queryStringBuilder = new StringBuilder("SELECT * FROM meetup.profile WHERE id IN (");
-        for(int id : profileIdList) {
-            queryStringBuilder.append(String.format("\'%s\', ", id));
-        }
-        queryStringBuilder.deleteCharAt(queryStringBuilder.length() - 2);
-        queryStringBuilder.append(")");
-
-        Statement statement = MySQLHelper.createStatement();
-        ResultSet resultSet = statement.executeQuery(queryStringBuilder.toString());
-
-        while(resultSet.next()) {
-            ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-
-            for(int i = 1; i < resultSetMetaData.getColumnCount(); i++) {
-                System.out.print(resultSet.getString(i) + ",\t");
-            }
-            System.out.println();
-        }
     }
 
     /**
      * This is a helper class for the setPicture method
      * It creates a useable/displayable Panel to display the Profile picture
      */
-    static class ImagePanel extends JPanel
-    {
+    static class ImagePanel extends JPanel {
         private final BufferedImage image;
 
         ImagePanel(BufferedImage image)
@@ -647,18 +651,15 @@ public class ProfileController implements ProfileControllerInterface {
         }
 
         @Override
-        public Dimension getPreferredSize()
-        {
-            if (super.isPreferredSizeSet())
-            {
+        public Dimension getPreferredSize() {
+            if (super.isPreferredSizeSet()) {
                 return super.getPreferredSize();
             }
             return new Dimension(image.getWidth(), image.getHeight());
         }
 
         @Override
-        protected void paintComponent(Graphics g)
-        {
+        protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             g.drawImage(image, 0, 0, null);
         }
@@ -676,7 +677,7 @@ public class ProfileController implements ProfileControllerInterface {
      * @throws SQLException
      */
     @Override
-    public int saveProfile(Profile p)throws SQLException{
+    public int saveProfile(Profile p)throws SQLException {
         ProfileMapper pm = new ProfileMapper();
 
         try {
@@ -708,7 +709,7 @@ public class ProfileController implements ProfileControllerInterface {
         return p.getId();
     }
 
-    //TODO: Add this to the UI!
+    //TODO: Add this to the UI! Dan!
     /**
      * Returns a version of the given {@link List<Integer>} with "offline" connections removed.
      *
@@ -736,35 +737,6 @@ public class ProfileController implements ProfileControllerInterface {
         return profileIdList;
     }
 
-    public static void main(String[] args)throws Exception{
-        ProfileController profileController = new ProfileController();
-
-        List<Integer> profileIdList = profileController.listProfiles();
-
-        System.out.println();
-
-        for(int id : profileIdList) {
-            System.out.println(id + ", ");
-        }
-
-        System.out.println();
-
-        profileController.printProfileIdList(profileIdList);
-
-        //        ProfileMapper pm = new ProfileMapper();
-//
-//        List<Profile> profiles = pm.createObjectList("select id from meetup.profile");
-//        List<Integer> ints = new ArrayList<>();
-//        for(Profile p: profiles){
-//            System.out.println("origins - "+p.getId());
-//            ints.add(p.getId());
-//        }
-//        ProfileController pc = new ProfileController();
-//        List<Integer> filetered = pc.filterOnlineConnections(ints);
-//        for(Integer i: filetered){
-//            System.out.println("Filtered online "+i);
-//        }
-    }
 
     /**
      * Queries the database for the "appearsOffline" column for the given Profile ID.
@@ -831,16 +803,85 @@ public class ProfileController implements ProfileControllerInterface {
         return p;
     }
 
-    //TODO: Javadoc
-    //TODO: Add to UI! (and interface?)
+    /**
+     * @see ProfileControllerInterface#viewInvitations(int)
+     */
+    public void viewInvitations(int profileId) {
+
+        try {
+            List<GroupInvitation> invitationList = new GroupInvitationMapper().createObjectList("SELECT * FROM meetup.groupInvitation WHERE profileid = " + profileId);
+
+            GroupInvitation groupInvitation = (GroupInvitation) InputReader.readFromOptions("Select an invitation from the list to respond.",
+                    new ArrayList<>(invitationList));
+
+            if(groupInvitation != null) { // True, when the user has selected an invitation. False, if they select "Cancel"
+                respondToGroupInvite(groupInvitation.getProfileid(), groupInvitation.getGroupid());
+            }
+
+            System.out.println(groupInvitation == null ? null : groupInvitation.getSelectionPrompt());
+
+        }
+        catch(SQLException e) {
+            System.out.println("Error! Unable to get invitation list!");
+
+            if(App.DEV_MODE) e.printStackTrace();
+        }
+    }
+
+    /**
+     * @see ProfileControllerInterface#respondToGroupInvite(int, int)
+     */
     public void respondToGroupInvite(int profileId, int groupId) {
         boolean acceptGroupInvite = InputReader.inputYesNo("Would you like to join the group " + groupId + "?");
 
-        GroupAssociationController groupAssociationController = new GroupAssociationController();
+        if(acceptGroupInvite) new GroupAssociationController().joinGroup(profileId, groupId);
 
+        new GroupInvitationController().removeInvite(profileId, groupId);
+    }
 
-        if(acceptGroupInvite) groupAssociationController.joinGroup(profileId, groupId);
+    // TODO: Javadocs
+    public void viewSuggestedProfiles(Account acc) {
+        Profile myProfile = acc.getProfile();
+        ProfileMapper pm = new ProfileMapper();
+        try {
+            List<Profile> profiles = pm.createObjectList("Select * from meetup.profile where id != " + myProfile.getId());
+            sortByInterestCommonality(myProfile,profiles);
+            if(profiles.size() == 0){
+                System.out.println("Sorry, no one has the same interests as you. You're one of a kind!");
+                return;
+            }
+            Profile selected = (Profile)InputReader.readFromOptions("Select a profile to view",
+                    new ArrayList<>(profiles));
 
-        groupAssociationController.removeInvite(profileId, groupId);
+            System.out.println(selected);
+        }catch (Exception e){
+            if(App.DEV_MODE)
+                e.printStackTrace();
+            System.out.println("Sorry, we're having trouble doing that right now.");
+        }
+    }
+
+    // TODO: Javadocs
+    public void browseProfiles(Account acc) {
+        switch (InputReader.readFromOptions("Please choose one.",
+                new String[]{"All Profiles","Suggested Profiles","Random Match"})){
+            case "Suggested Profiles":
+                if(acc.getProfile().getInterests().length()==0) {
+                    System.out.println("You need to set some interests before we can do that!");
+                    editInterests(acc.getProfile());
+                }else
+                    viewSuggestedProfiles(acc);
+                break;
+            case "All Profiles":
+                try {
+                    ProfileMapper pm = new ProfileMapper();
+                    List<Profile> profileList = pm.createObjectList("Select * from meetup.profile where id != " +
+                            acc.getProfile().getId());
+                    Profile p = selectProfile(profileList,acc);
+                    System.out.println(p);
+                }catch (Exception e){
+                    System.out.println("Can't browse files at this time.");
+                }
+        }
     }
 }

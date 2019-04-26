@@ -1,6 +1,5 @@
 package app.interfaces;
 
-import app.models.Account;
 import app.models.Group;
 import app.models.Profile;
 
@@ -8,7 +7,12 @@ import java.util.List;
 
 public interface GroupControllerInterface {
 
-    // TODO: Add JavaDocs
+    /**
+     * This method searches and lists every group that contains any form of the user's input. If the user's input
+     * is blank, the method will simply list every group
+     *
+     * @param sub_string The search criteria provided by the user for their search
+     */
     List<Group> searchGroup(String sub_string);
 
 	/**
@@ -34,7 +38,6 @@ public interface GroupControllerInterface {
     // TODO: Add JavaDocs
     void createGroup(Profile p);
 
-    
     /**
      * Removes the group from the system. This will also remove any associations 
      * from anyone that was a member of the group.
@@ -44,7 +47,6 @@ public interface GroupControllerInterface {
      */
     public void removeGroup(Group group);
 
-    
     /**
      * Gives the group a rating of 1-5.
      * 

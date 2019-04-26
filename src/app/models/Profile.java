@@ -58,25 +58,21 @@ public class Profile implements ProfileInterface, Selectable
 		}
 	}
 
-    // TODO: Javadoc
 	@Override
 	public int getId() {
 		return id;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public void setId(int id) {
 		this.id = id;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public String getAboutMe() {
 		return aboutMe;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public void setAboutMe(String aboutMe) {
 		this.aboutMe = aboutMe;
@@ -84,7 +80,6 @@ public class Profile implements ProfileInterface, Selectable
 	
 	@Override
 	public JSONArray getInterests() {
-		System.out.println(interests);
 		return new JSONArray(interests);
 	}
 	
@@ -93,103 +88,86 @@ public class Profile implements ProfileInterface, Selectable
 		this.interests  = interests;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public int getAge() {
 		return age;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public void setAge(int age) {
 		this.age = age;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public String getGenderId() {
 		return genderId;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public void setGenderId(String genderId) {
 		this.genderId = genderId;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public String getSexualPref() {
 		return sexualPref;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public void setSexualPref(String sexualPref) {
 		this.sexualPref = sexualPref;
 	}
 
-	// TODO: Javadoc
 	public BufferedImage getPicture() { return picture; }
 
 	public void setPicture(BufferedImage picture) { this.picture = picture; }
 
-	// TODO: Javadoc
 	@Override
 	public String getMajor() {
 		return major;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public void setMajor(String major) {
 		this.major = major;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public String getSpiritAnimal() {
 		return spiritAnimal;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public void setSpiritAnimal(String spiritAnimal) {
 		this.spiritAnimal = spiritAnimal;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public String getZodiac() {
 		return zodiac;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public void setZodiac(String zodiac) {
 		this.zodiac = zodiac;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public String getName() {
 		return name;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public int getAppearOffline() {
 		return appearOffline;
 	}
 
 
-	// TODO: Javadoc
 	@Override
 	public void setAppearOffline(int appearOffline) {
 		this.appearOffline = appearOffline;
@@ -211,7 +189,6 @@ public class Profile implements ProfileInterface, Selectable
 		this.pictureURL = pictureURL;
 	}
 
-	// TODO: Javadoc
 	@Override
 	public String getProfileDetails(){
 		String profileDetails = "Name: " + getName() +
@@ -222,7 +199,8 @@ public class Profile implements ProfileInterface, Selectable
 				"\nSexual Preference: " + getSexualPref() +
 				"\nMajor: " + getMajor() +
 				"\nSpirit Animal: " + getSpiritAnimal() +
-				"\nZodiac Sign: " + getZodiac();
+				"\nZodiac Sign: " + getZodiac()+
+				"\nInterests: "+getInterests();
 
 		return profileDetails;
 	}
@@ -234,7 +212,6 @@ public class Profile implements ProfileInterface, Selectable
 			return "Online";
 		}
 	}
-	// TODO: Javadoc
 	@Override
 	public String toString(){
 		return getProfileDetails();
