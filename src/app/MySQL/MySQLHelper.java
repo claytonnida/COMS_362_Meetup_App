@@ -31,14 +31,17 @@ public class MySQLHelper {
         //executeUpdate("delete from meetup.accoutnt where id >= 7");
         describeDataBase();
         System.out.println("Groups");
-        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.message" +
-                " where to_id = 20 and time >= '0000-00-00 00:00:00.0'"))){
+        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.profile"))){
             System.out.println(s);
         }
 
 
+        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.account"))){
+            System.out.println(s);
+        }
 
-        executeUpdate("delete from meetup.message where to_id = 21");
+
+        //executeUpdate("delete from meetup.message where to_id = 21");
         // executeUpdate("delete from meetup.message where to_id = 21");
 
 //        System.out.println("GroupAssociations");
@@ -52,7 +55,8 @@ public class MySQLHelper {
     //Tells the program what driver to use at startup
     static{
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+//            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
         }catch (ClassNotFoundException cnf){
             System.out.println("DEPENDENCY ERROR!! Don't worry, its an easy fix for us!\n" +
                     "1.\tDownload 'mysql-connector-java' version '5.1.39' from 'https://dev.mysql.com/downloads/connector/j/5.1.html'\n" +
