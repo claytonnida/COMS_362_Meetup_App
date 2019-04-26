@@ -17,7 +17,7 @@ import java.util.Map;
 public class App
 {
 	public static final boolean DEV_MODE = true;
-	//TODO create account here or in Account.java
+
 	public static Map<String,Object> sessionVariables = new HashMap<>();
 
 	public static void main(String[] args) {
@@ -49,15 +49,12 @@ public class App
 						myAccount = accountController.createAccount(username, password, comparisonPassword);
 						myAccount.setProfile(new Profile());
 
-
-						//TODO update to database
 						try {
 							accountController.addAccount(myAccount);
 						}catch (Exception e){
 							System.out.println(e.getMessage());
 						}
 
-						// TODO: Remove once server is implemented.
 						MySQLHelper.executeUpdate("update meetup.profile set isOnline = 1 where id = " + myAccount.getProfileid());
 
 						sessionVariables.put("account", myAccount);
@@ -87,7 +84,6 @@ public class App
 							myAccount = acc;
 							sessionVariables.put("account", myAccount);
 
-							// TODO: Remove once server is implemented.
 							MySQLHelper.executeUpdate("update meetup.profile set isOnline = 1 where id = " + myAccount.getProfileid());
 
 							System.out.println("Successfully loaded everything");
@@ -111,7 +107,6 @@ public class App
 	private static void exitApp() {
 		System.out.println("Okay then. Have a good day!");
 
-		// TODO: Remove once server is implemented.
 		if(sessionVariables.containsKey("account"))
 		MySQLHelper.executeUpdate("update meetup.profile set isOnline = 0 where id = " +
 				((Account) sessionVariables.get("account")).getProfileid());
@@ -134,7 +129,6 @@ public class App
 					new ProfileController().editProfileFields(((Account)sessionVariables.get("account")).getProfile());
 					break;
 				case "Manage Groups":
-					//TODO this
 					GroupController gc = new GroupController();
 					gc.manageGroups(((Account)sessionVariables.get("account")));
 					break;
@@ -145,7 +139,6 @@ public class App
 					new ProfileController().viewInvitations(((Account)sessionVariables.get("account")).getProfile().getId());
 					break;
 				case "Browse Profiles":
-					//TODO implement fully and elsewhere
 					pc.browseProfiles(((Account)sessionVariables.get("account")));
                     break;
 				case "Filter Profiles":

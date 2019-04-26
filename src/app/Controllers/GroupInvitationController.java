@@ -110,9 +110,4 @@ public class GroupInvitationController implements GroupInvitationControllerInter
 
         System.out.println("Successfully removed invitation for profile ID: " + profileId + " to group ID: " + groupId + "!");
     }
-
-    // For debugging purposes.
-    public static void main(String[] args) {
-        new GroupInvitationController().removeInvite(5, 21);
-    }
 }

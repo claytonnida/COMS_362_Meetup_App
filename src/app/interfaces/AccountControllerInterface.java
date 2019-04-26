@@ -1,7 +1,7 @@
 package app.interfaces;
 
-
 import app.models.Account;
+import app.models.Profile;
 
 import java.sql.SQLException;
 
@@ -52,14 +52,30 @@ public interface AccountControllerInterface {
 	int addAccount(Account account) throws SQLException;
 
 	/**
-	 * Selects the Account from database and attempts to fill the Profile field
-	 * @param id
-	 * @return
-	 * @throws SQLException
+	 *  Overloaded method.
+	 *  @see AccountControllerInterface#fetchAccount(java.lang.String, java.lang.String)
+	 *
+	 *  @param id ID of the {@link Account} to fetch.
+	 *
+	 *  @return The fetched {@link Account}
+	 *
+	 * 	@throws SQLException If there is an error getting the {@link Account} from the database.
 	 */
 	Account fetchAccount(int id) throws SQLException;
 
-	// TODO: Add javadoc
+	/**
+	 * Selects the {@link Account} from database and attempts to fill the {@link Profile} field
+	 *
+	 * @param user
+	 * 		Username of the {@link Account}
+	 * @param pass
+	 * 		Password of the {@link Account}
+	 *
+	 * @return The fetched {@link Account}
+	 *
+	 * @throws SQLException
+	 * 		If there is an error getting the {@link Account} from the database.
+	 */
 	Account fetchAccount(String user, String pass) throws SQLException;
 
 }

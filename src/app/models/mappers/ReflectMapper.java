@@ -18,16 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import app.App;
-import app.Controllers.AccountController;
-import app.MySQL.MySQLHelper;
-import app.models.Account;
-
 public class ReflectMapper<T> {
 
     private Class<T> clazz;

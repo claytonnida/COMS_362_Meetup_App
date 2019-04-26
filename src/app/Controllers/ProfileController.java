@@ -1,41 +1,30 @@
 package app.Controllers;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
-import org.json.JSONArray;
-
 import app.App;
 import app.InputReader;
 import app.MySQL.MySQLHelper;
 import app.interfaces.ProfileControllerInterface;
 import app.models.Account;
-import app.models.Group;
 import app.models.GroupInvitation;
 import app.models.Profile;
 import app.models.mappers.GroupInvitationMapper;
 import app.models.mappers.ProfileMapper;
 import javafx.util.Pair;
+import org.json.JSONArray;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 public class ProfileController implements ProfileControllerInterface {
 
@@ -56,7 +45,6 @@ public class ProfileController implements ProfileControllerInterface {
 
             boolean confirm = InputReader.requestConfirmation(newProfile);
             if(confirm){
-                //TODO push changes to database
                 System.out.println("Profile confirmed.");
                 editProf = false;
             }
@@ -133,21 +121,14 @@ public class ProfileController implements ProfileControllerInterface {
      * A series of prompts to guide the user through creating their Profile picture
      */
     public static void setPicture(Profile p) {
-        //String input = InputReader.collectInput("Is the picture you wish to use saved in the file structure? [y/n]");
-        //boolean upload_complete = false;
-        //if (input.equals("y")) {
+
         if(p.getPictureURL() == null) {
             String input = InputReader.collectInput("Please paste the URL of the image you wish to save");
             try {
-                ///////
 
                 File image_file = new File(input);
                 String file_name = input;
 
-                //TODO: Make sure to remove this before submitting
-                //URL url = new URL(input);
-                //URLConnection connection = url.openConnection();
-                //connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36");
                 BufferedImage input_picture = ImageIO.read(image_file);
                 boolean confirm = InputReader.requestConfirmation(input);
                 if (confirm) {
@@ -155,11 +136,7 @@ public class ProfileController implements ProfileControllerInterface {
                     p.setProfile_pic(input_picture);
                     p.setPictureURL(file_name.replaceAll("\\\\","/"));
                     System.out.println(p.getPictureURL());
-                    //Quick Test
-                    //
-                    //BufferedImage test_image = ImageIO.read(new File(p.getPictureURL()));
-                    //displayPicture(test_image);
-                    //
+
                     System.out.println("Your profile picture was added successfully! The following picture will be displayed.");
                     displayPicture(p.getPicture());
                 } else {
@@ -205,10 +182,11 @@ public class ProfileController implements ProfileControllerInterface {
      */
     @Override
     public void editOnlineStatus(Profile p) {
-            System.out.print("Your are currently appearing:\t");
-            System.out.println((p.getAppearOffline() == 1 ? "Offline" : "Online"));
+	    System.out.print("Your are currently appearing:\t");
+	    System.out.println((p.getAppearOffline() == 1 ? "Offline" : "Online"));
 
-            String input = (InputReader.readFromOptions("Select Online Status", new String[]{"Online", "Appear Offline"}));
+	    String input = (InputReader.readFromOptions("Select Online Status", new String[]{"Online", "Appear Offline"}));
+
         boolean  confirm = InputReader.requestConfirmation(input);
         if(confirm){
             if(input.contains("Offline")){
@@ -409,12 +387,7 @@ public class ProfileController implements ProfileControllerInterface {
         }
 
         otherProfies.clear();
-        Collections.sort(profilePairs, new Comparator<Pair<Integer, Profile>>() {
-            @Override
-            public int compare(Pair<Integer, Profile> o1, Pair<Integer, Profile> o2) {
-                return o2.getKey() - o1.getKey();
-            }
-        });
+	    Collections.sort(profilePairs, (o1, o2) -> o2.getKey() - o1.getKey());
 
         //Put profiles in proper order
         for(Pair<Integer,Profile> pair: profilePairs){
@@ -507,9 +480,6 @@ public class ProfileController implements ProfileControllerInterface {
    	            }
    	        }
         }
-
-
-
     }
 
     /**
@@ -783,7 +753,6 @@ public class ProfileController implements ProfileControllerInterface {
         return p.getId();
     }
 
-    //TODO: Add this to the UI! Dan!
     /**
      * Returns a version of the given {@link List<Integer>} with "offline" connections removed.
      *

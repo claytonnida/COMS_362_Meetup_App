@@ -19,12 +19,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-
 import java.util.List;
 import java.util.*;
 
@@ -38,20 +36,6 @@ public class ChatGUI {
     private Profile profile;
     private String lastUpdate = "00000000 00:00:00.000";
     private PrintWriter out;
-
-    public static void main(String[] args)throws Exception{
-        ProfileMapper pm = new ProfileMapper();
-        Profile me = pm.createObjectList("Select * from meetup.profile where id = 7").get(0);
-        //Profile me = new Profile();
-        Group g = new Group();
-        g.setId(23);
-        g.setName("Maverick");
-
-        ChatGUI tg = new ChatGUI(g, me);
-        tg.loadMessages();
-        tg.open();
-        tg.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    }
 
     /**
      * Setup a chat interface for communicating with the group
@@ -346,13 +330,7 @@ public class ChatGUI {
             scaledPic = picture.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
             pic = new JLabel(new ImageIcon(scaledPic));
         }
-        /*
-        if(picture != null){
-            pic.add(header, BorderLayout.NORTH);
-            pic.add(body, BorderLayout.SOUTH);
 
-        }
-        */
         JLabel username = new JLabel(from);
 
         text.addMouseListener(new ThemeMouseListener(text));
@@ -379,17 +357,14 @@ public class ChatGUI {
         text.add(header,BorderLayout.NORTH);
         text.add(body,BorderLayout.SOUTH);
         text.add(body,BorderLayout.CENTER);
-        //TODO change box containing username and message
         text.setBackground(null);
         text.setBorder(new EmptyBorder(5,5,5,5));
-
 
         //display picture
         if(picture != null) {
             text.add(pic, BorderLayout.SOUTH);
         }
 
-        //TODO edit location of image?
         //add pic to row
         gbc.anchor = GridBagConstraints.WEST;
         gbc.gridx = 0;
@@ -398,8 +373,6 @@ public class ChatGUI {
         panel.add(picLabel,gbc);
         gbc.insets = new Insets(0,0,0,0);
 
-
-        //TODO edit location of username?
         //Add username and their message
         gbc.gridx = 1;
         gbc.gridy = 0;
@@ -410,12 +383,9 @@ public class ChatGUI {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel.add(text,gbc);
 
-
         //tidy up
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
         row.setBorder(new EmptyBorder(5,10,5,10));
-
-
 
         //beautify
         row.setBackground(null);
@@ -455,7 +425,6 @@ public class ChatGUI {
         String dd = includeDate?date.replaceAll("-","/"):"";
         return hour+":"+split[1]+" "+half+"  "+dd;
     }
-
 
     public Profile getOwner(Group g){
         ProfileMapper pm = new ProfileMapper();

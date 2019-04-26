@@ -22,14 +22,8 @@ import static app.MySQL.MySQLHelper.executeQuery;
 
 public class GroupController implements GroupControllerInterface {
 
-    // For debugging porpoises.
-    public static void main(String[] args){
-        GroupController gc = new GroupController();
-        gc.inviteToGroup(21);
-    }
-
     /**
-     * @see app.Controllers.GroupInvitationController#inviteToGroup(int)
+     * @see app.Controllers.GroupController#inviteToGroup(int)
      */
     public void inviteToGroup(int groupId) {
         new GroupInvitationController().inviteToGroup(groupId);

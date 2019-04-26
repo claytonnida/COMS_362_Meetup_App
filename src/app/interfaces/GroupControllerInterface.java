@@ -8,6 +8,14 @@ import java.util.List;
 public interface GroupControllerInterface {
 
     /**
+     * Handles sending an invite to join a {@link Group} to another user.
+     *
+     * @param groupId
+     * 		The ID of the {@link Group} that the invite is to.
+     */
+    void inviteToGroup(int groupId);
+
+    /**
      * This method searches and lists every group that contains any form of the user's input. If the user's input
      * is blank, the method will simply list every group
      *
@@ -45,7 +53,7 @@ public interface GroupControllerInterface {
      * @param group
      * 		The group to be removed.
      */
-    public void removeGroup(Group group);
+    void removeGroup(Group group);
 
     /**
      * Gives the group a rating of 1-5.

@@ -1,7 +1,6 @@
 package app.MySQL;
 
 import app.App;
-import app.Controllers.ProfileController;
 import app.InputReader;
 
 import java.sql.*;
@@ -11,30 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 public class MySQLHelper {
-
-
-    public static void main(String[] args)throws Exception{
-
-
-        //executeUpdate("delete from meetup.accoutnt where id >= 7");
-        describeDataBase();
-        System.out.println("Groups");
-        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.account" ))){
-            System.out.println(s);
-        }
-
-
-
-       // executeUpdate("update  meetup.profile where to_id = 23");
-       // executeUpdate("delete from meetup.message where to_id = 21");
-
-//        System.out.println("GroupAssociations");
-//        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.groupAssociation"))){
-//            System.out.println(s);
-//        }
-    }
-    //TODO: Note for later https://www.tutorialspoint.com/springjdbc/springjdbc_rowmapper.htm
-
 
     //Tells the program what driver to use at startup
     static{
@@ -64,17 +39,6 @@ public class MySQLHelper {
     public static Statement createStatement() throws SQLException{
         return getConnection().createStatement();
     }
-
-    /* create table example
-    Statement stmt = con.createStatement();
-    stmt.executeUpdate("create table meetup.group_chat (" +
-                    "group_id INT NOT NULL AUTO_INCREMENT, " +
-                    "name VARCHAR(100), " +
-                    "status VARCHAR(20), " +
-                    "PRIMARY KEY ( group_id )" +
-                    ");");
-
-     */
 
     /**
      * List the tables in the DB and the Columns in each table

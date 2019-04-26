@@ -1,6 +1,5 @@
 package app.interfaces;
 
-import app.models.Group;
 import app.models.Profile;
 
 import java.sql.SQLException;

@@ -3,18 +3,14 @@ package app.Controllers;
 import app.MySQL.MySQLHelper;
 import app.models.Message;
 import app.models.mappers.MessageMapper;
-import app.models.mappers.ProfileMapper;
-import app.models.mappers.ReflectMapper;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 
 public class MessageController {
@@ -22,8 +18,6 @@ public class MessageController {
     public List<Message> getMessagesByGroupID(int groupid)throws SQLException{
         return getMessagesByGroupID(groupid,"0000-00-00 00:00:00.0");
     }
-
-
 
     public List<Message> getMessagesByGroupID(int groupid,String date)throws SQLException {
         MessageMapper mm = new MessageMapper();
@@ -84,8 +78,6 @@ public class MessageController {
             e.printStackTrace();
         }
     }
-
-
 
     public static BufferedImage resize(BufferedImage img, int newW, int newH) {
         Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);

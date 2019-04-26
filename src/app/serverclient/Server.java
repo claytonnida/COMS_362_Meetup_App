@@ -19,6 +19,7 @@ public class Server {
         Server s = new Server();
         s.begin();
     }
+
     static Map<Integer, List<ClientSender>> groupMaps = new HashMap<>() ;
     public Server(){
         try{

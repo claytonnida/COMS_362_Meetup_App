@@ -169,7 +169,9 @@ public class InputReader {
 		return InputReader.inputYesNo("Would you like to cancel?");
 	}
 
-	// TODO: Javadocs
+	/**
+	 * Closes the input reader's {@link Scanner}.
+	 */
 	public static void closeInputReader() {
 		 scanner.close();
 	 }

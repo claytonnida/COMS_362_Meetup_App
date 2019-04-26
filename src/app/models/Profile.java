@@ -1,18 +1,14 @@
 package app.models;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
+import app.interfaces.ProfileInterface;
+import app.interfaces.Selectable;
+import org.json.JSONArray;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
-
-import org.json.JSONArray;
-
-import app.interfaces.ProfileInterface;
-import app.interfaces.Selectable;
 
 
 public class Profile implements ProfileInterface, Selectable

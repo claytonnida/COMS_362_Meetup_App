@@ -13,14 +13,7 @@ import java.sql.SQLException;
 public class GroupAssociationController implements GroupAssociationControllerInterface {
 
     /**
-     * Checks the database to see if a {@link GroupAssociation} with the given IDs exists.
-     *
-     * @param profileId The ID of the {@link Profile} in the {@link GroupAssociation}.
-     * @param groupId The ID of the {@link Group} in the {@link GroupAssociation}.
-     *
-     * @return {@code true}, if the {@link GroupAssociation} does exist on the database. {@code false} otherwise.
-     *
-     * @throws SQLException Occurs if there is an error when querying the database.
+     * @see GroupAssociationControllerInterface#doesGroupAssociationExist(int, int)
      */
     public boolean doesGroupAssociationExist(int  profileId, int groupId) throws SQLException {
         ResultSet resultSet = MySQLHelper.executeQuery(
@@ -31,11 +24,6 @@ public class GroupAssociationController implements GroupAssociationControllerInt
         );
 
         return resultSet != null && resultSet.first();
-    }
-
-    // For debugging purposes
-    public static void main(String[] args) {
-
     }
 
     /**
