@@ -1,8 +1,21 @@
 package app.MySQL;
 
 import app.App;
+import app.Controllers.ProfileController;
 import app.InputReader;
+import app.models.Account;
+import app.models.GroupAssociation;
+import app.models.Profile;
+import app.models.mappers.AccountMapper;
+import app.models.mappers.GroupAssociationMapper;
+import app.models.mappers.ProfileMapper;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -18,14 +31,15 @@ public class MySQLHelper {
         //executeUpdate("delete from meetup.accoutnt where id >= 7");
         describeDataBase();
         System.out.println("Groups");
-        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.account" ))){
+        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.message" +
+                " where to_id = 20 and time >= '0000-00-00 00:00:00.0'"))){
             System.out.println(s);
         }
 
 
 
-       // executeUpdate("update  meetup.profile where to_id = 23");
-       // executeUpdate("delete from meetup.message where to_id = 21");
+        executeUpdate("delete from meetup.message where to_id = 21");
+        // executeUpdate("delete from meetup.message where to_id = 21");
 
 //        System.out.println("GroupAssociations");
 //        for(String s: fullResultSetToStringList(executeQuery("Select * from meetup.groupAssociation"))){
@@ -61,9 +75,7 @@ public class MySQLHelper {
 
     //Creates a statement for a query
     public static Statement createStatement() throws SQLException{
-        Connection con = DriverManager.getConnection(
-                "jdbc:mysql://cs362meetupdb.redirectme.net", "cs362admin", "q1w2e3r4t5000");
-        return con.createStatement();
+        return getConnection().createStatement();
     }
 
     /* create table example
@@ -74,7 +86,6 @@ public class MySQLHelper {
                     "status VARCHAR(20), " +
                     "PRIMARY KEY ( group_id )" +
                     ");");
-
      */
 
     /**
@@ -156,7 +167,7 @@ public class MySQLHelper {
                 vals += String.format("'%s'", val.toString().replaceAll("'", "\\\\'"));
             }else if(val.getClass().getName().contains("BufferedImage")){
                 if(allowBlob && val!=null)
-                vals += "?";
+                    vals += "?";
             }else{
                 vals += val.toString();
             }
@@ -186,7 +197,7 @@ public class MySQLHelper {
                 sets += key + " = '" + val.toString().replaceAll("'", "\\\\'") + "'";
             }else if(val.getClass().getName().contains("BufferedImage")){
                 if(allowBlob && val != null)
-                sets += key + " = ?";
+                    sets += key + " = ?";
             }else{
                 sets += key+" = "+val.toString();
             }
@@ -210,13 +221,12 @@ public class MySQLHelper {
     public static String getPrimaryKeyForTable(String tableName)throws SQLException{
 
 
-            String query = String.format("describe meetup.%s",tableName);
-            Connection con = getConnection();
-            ResultSet trs = con.createStatement().executeQuery(query);
-            while (trs.next()){
-                if(trs.getString("Key").equals("PRI"))
-                    return trs.getString("FIELD");
-            }
+        String query = String.format("describe meetup.%s",tableName);
+        ResultSet trs = createStatement().executeQuery(query);
+        while (trs.next()){
+            if(trs.getString("Key").equals("PRI"))
+                return trs.getString("FIELD");
+        }
 
 
         return null;
@@ -229,9 +239,7 @@ public class MySQLHelper {
      */
     public static boolean executeUpdate(String query){
         try{
-            Connection con = getConnection();
-            con.createStatement().executeUpdate(query);
-            con.close();
+            createStatement().executeUpdate(query);
             return true;
         }catch (SQLException sql){
             System.out.println("Oops! Server error! Sorry, whatever was supposed to happen didn't.");
@@ -248,10 +256,8 @@ public class MySQLHelper {
      */
     public static ResultSet executeQuery(String query) {
         try {
-            Connection con = getConnection();
-            ResultSet rs = con.createStatement().executeQuery(query);
-            con.close();
-            return rs;
+            return createStatement().executeQuery(query);
+
         } catch (SQLException sql) {
             System.out.println("Oops! Server error! Sorry, whatever was supposed to happen didn't.");
             if (App.DEV_MODE)
@@ -262,7 +268,7 @@ public class MySQLHelper {
 
     private static void resetDatabase()throws SQLException{
         if(InputReader.inputYesNo("Are your really sure?")
-            && InputReader.inputYesNo("Like... REALLY sure?")){
+                && InputReader.inputYesNo("Like... REALLY sure?")){
 
             ResultSet rs = createStatement().executeQuery("show tables in meetup");
             while(rs.next()){

@@ -372,10 +372,16 @@ public class ChatGUI {
         body.setBorder(null);
         body.setBackground(null);
         text.add(header,BorderLayout.NORTH);
-        text.add(body,BorderLayout.SOUTH);
+        text.add(body,BorderLayout.CENTER);
         //TODO change box containing username and message
         text.setBackground(null);
         text.setBorder(new EmptyBorder(5,5,5,5));
+
+
+        //display picture
+        if(picture != null) {
+            text.add(pic, BorderLayout.SOUTH);
+        }
 
         //TODO edit location of image?
         //add pic to row
@@ -400,15 +406,6 @@ public class ChatGUI {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel.add(text,gbc);
 
-        //display picture
-        if(picture != null) {
-            gbc.anchor = GridBagConstraints.WEST;
-            gbc.gridx = 1;
-            gbc.gridy = 2;
-            gbc.insets = new Insets(4, 70, 4, 50);
-            panel.add(pic, gbc);
-            gbc.insets = new Insets(0, 0, 0, 0);
-        }
 
         //tidy up
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -511,7 +508,9 @@ public class ChatGUI {
             File file = new File(text.getText());
             BufferedImage img = ImageIO.read(file);
             m.setImage(img);
-            m.setBody("");
+            m.setBody(text.getText()
+                    .replaceAll("\\w:","")
+                    .replaceAll("([\\s\\w]+[\\\\/])",""));
             text.setText("");
             MessageController.sendMessageToDB(m);
         }
