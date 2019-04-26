@@ -112,14 +112,10 @@ public class ProfileController implements ProfileControllerInterface {
                     setPicture(p);
                     break;
                 case "Blocked Users":
-<<<<<<< HEAD
                     blockUser(p);
                     break;
                 case "Unblocked Users":
                     unblockUser(p);
-=======
-                   // editBlockedUsers(p);
->>>>>>> 09c40af29a4f0e5d03996557448f964896d61a09
                     break;
             }
         }
