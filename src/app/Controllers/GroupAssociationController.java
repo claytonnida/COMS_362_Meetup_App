@@ -71,10 +71,6 @@ public class GroupAssociationController implements GroupAssociationControllerInt
         ga.setProfileid(profileId);
         MySQLHelper.executeUpdate(gam.toInsertQueryQuery(ga));
 
-<<<<<<< HEAD
-        System.out.println("Successfully added GroupAssociation between profile ID: " + profileId + " and group ID: " + groupId + "!");
-=======
         System.out.println("Successfully created GroupAssociation between profile ID: " + profileId + " and group ID: " + groupId + "!");
->>>>>>> f2589526040129d10bcf2d4d84f9c25c0a20cba2
     }
 }
