@@ -128,7 +128,7 @@ public class App
 		ProfileController pc = new ProfileController();
 		while(play){
 			switch (InputReader.readFromOptions("What would you like to do?",new String[]
-					{"Edit My Profile","Edit Online Status",
+					{"Edit My Profile","Edit Online Status","View Invites",
 							"Browse Profiles", "Filter Profiles", "Manage Groups","Exit"})){
 				case "Edit My Profile":
 					new ProfileController().editProfileFields(((Account)sessionVariables.get("account")).getProfile());
