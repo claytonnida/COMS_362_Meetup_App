@@ -231,7 +231,6 @@ public class MySQLHelper {
         try{
             Connection con = getConnection();
             con.createStatement().executeUpdate(query);
-            con.close();
             return true;
         }catch (SQLException sql){
             System.out.println("Oops! Server error! Sorry, whatever was supposed to happen didn't.");
@@ -250,7 +249,6 @@ public class MySQLHelper {
         try {
             Connection con = getConnection();
             ResultSet rs = con.createStatement().executeQuery(query);
-            con.close();
             return rs;
         } catch (SQLException sql) {
             System.out.println("Oops! Server error! Sorry, whatever was supposed to happen didn't.");
